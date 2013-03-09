@@ -3,11 +3,11 @@
 This is an entry for the Disquiet Junto project of March 7-10 2013.
 
 The instructions were:
-1. Devise which three sine waves you will employ. They should be different from each other in some evident way.
-2. The track should open with just one of the sine waves.
-3. Add the second sine wave at 5 seconds.
-4. Add the third sine wave at 10 seconds.
-5. Only at 15 seconds should you begin to in any way manipulate any of the source waves.
+1.  Devise which three sine waves you will employ. They should be different from each other in some evident way.
+2.  The track should open with just one of the sine waves.
+3.  Add the second sine wave at 5 seconds.
+4.  Add the third sine wave at 10 seconds.
+5.  Only at 15 seconds should you begin to in any way manipulate any of the source waves.
 
 I wrote a Csound program that generates three sine waves.
 - The first tone is a 240Hz tone that sounds for the entire piece.
