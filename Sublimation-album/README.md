@@ -1,7 +1,9 @@
 Sublimation-album
 =================
 
-Source code for the music on my release Sublimation. The code is for Csound (*.csd) and blue (*.blue).
+Source code for the music on the mysterybear release Sublimation. The code is for Csound (*.csd) and blue (*.blue). There are also a few Scala files (scale definitions for Scala the microtonal music software, not Scala the programming language).
+
+The title piece, Sublimation, has been revised a bit for higher sound quality, so it is no longer identical to the code used to make the original CD-R/netlabel/Bandcamp release. The other pieces have not been revised yet, but probably will be eventually. 
 
 Licensing
 =========
