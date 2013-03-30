@@ -3,9 +3,9 @@ csound-convolver
 
 Convolver tool, applies an impulse respone (IR) file to a sound file.
 
-usage: convolve INPUT_FILE IMPULSE_FILE GAIN_ADJUST OUTPUT_FILE
+Usage: convolve INPUT_FILE IMPULSE_FILE GAIN_ADJUST OUTPUT_FILE
 
-where:
+Where:
 - INPUT_FILE is the name of the sound file to be convolved (assumed to be 96K 24-bit WAV)
 - IMPULSE_FILE is a sound file consisting of an impulse response recording (WAV file assumed, should be 96K or 48K)
 - GAIN_ADJUST is the amount by which the gain of the input file should be scaled (numeric, 0.1 means 10%)
@@ -16,7 +16,7 @@ Notes:
 - The IR input file should 96K or an even divisor of 96K (e.g., 48K).
 - The GAIN_ADJUST parameter is used to reduce the level of the input file to avoid clipping; depending on the IR, convolution can add a lot of gain.
 
-The "convolve" shell script requires the Csound script "convolver.csd", which must be located in the same directory as "convole".
+The "convolve" shell script requires the Csound script "convolver.csd", which must be located in the same directory as "convolve".
 
 Tested with Csound 5.19 under Xubuntu 12.10 (Quantal Quetzal).
 
