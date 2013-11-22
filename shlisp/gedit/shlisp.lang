@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Author: Dave Seidel <dave.seidel@gmail.com>
+ Version: 1.0 (21-Nov-2013) - first release
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+
+ You should have received a copy of the GNU Library General Public
+ License along with this library; if not, write to the
+ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ Boston, MA 02111-1307, USA.
+
+-->
+<language id="shlisp" _name="shlisp" version="2.0" _section="Scripts">
+  <metadata>
+    <property name="globs">*.txt</property>
+    <property name="line-comment-start">;</property>
+  </metadata>
+
+  <styles>
+    <style id="comment"   _name="Comment"         map-to="def:comment"/>
+    <style id="decimal"   _name="Decimal number"  map-to="def:decimal"/>
+    <style id="keyword"   _name="Keyword"         map-to="def:keyword"/>
+    <style id="function"  _name="Function"        map-to="def:function"/>
+  </styles>
+
+  <definitions>
+    <context id="comment" style-ref="comment" class="comment" end-at-line-end="true">
+      <start>;</start>
+      <end>$</end>
+      <include>
+        <context ref="def:in-comment"/>
+      </include>
+    </context>
+    
+    <context id="integer" style-ref="decimal">
+      <match extended="true">[0-9]*</match>
+    </context>
+
+    <!-- mexp -->
+    <context id="butt" style-ref="keyword">
+      <prefix>\[</prefix>
+      <suffix>\]</suffix>
+      <keyword>wind</keyword>
+      <keyword>corp[ab]?</keyword>
+      <keyword>bar[a-d]?</keyword>
+      <keyword>minor[a-d]?</keyword>
+      <keyword>major[a-d]?</keyword>
+      <keyword>tar</keyword>
+    </context>
+    
+    <!-- mexp -->
+    <context id="nut" style-ref="function">
+      <prefix>\[</prefix>
+      <suffix>\]</suffix>
+      <keyword>left</keyword>
+      <keyword>pan</keyword>
+      <keyword>right</keyword>
+      <keyword>srate</keyword>
+      <keyword>jump</keyword>
+      <keyword>mul</keyword>
+      <keyword>add</keyword>
+      <keyword>reflect</keyword>
+      <keyword>return</keyword>
+      <keyword>and</keyword>
+      <keyword>xor</keyword>
+      <keyword>modo</keyword>
+      <keyword>short</keyword>
+      <keyword>arab</keyword>
+      <keyword>dirac</keyword>
+      <keyword>lights</keyword>
+    </context>
+    
+    <!-- mexp -->
+    <context id="opcode" style-ref="function">
+      <prefix>\[</prefix>
+      <suffix>\]</suffix>
+      <keyword>horn[a-h]?</keyword>
+      <keyword>saw[a-h]?</keyword>
+      <keyword>toggle[a-h]?</keyword> 
+      <keyword>togo[a-h]?</keyword>
+      <keyword>swoop[a-h]?</keyword>
+      <keyword>mount[a-h]?</keyword>
+      <keyword>smoke[a-d]?</keyword>
+      <keyword>dust[a-d]?</keyword>
+      <keyword>fog[a-d]?</keyword>
+      <keyword>haze[a-d]?</keyword>
+      <keyword>swamp[a-d]?</keyword>
+      <keyword>string[a-d]?</keyword>
+      <keyword>comb[a-d]?</keyword>
+      <keyword>zither[a-d]?</keyword>
+      <keyword>wave[a-d]?</keyword>
+      <keyword>water[a-d]?</keyword>
+      <keyword>salt[a-d]?</keyword>
+      <keyword>horse[a-d]?</keyword>
+      <keyword>slew[a-h]?</keyword>
+      <keyword>wheel[a-d]?</keyword>
+      <keyword>sauce[a-d]?</keyword>
+      <keyword>salsa[a-d]?</keyword>
+      <keyword>square</keyword>
+    </context>
+
+    <context id="sexp" class="no-spell-check">
+      <start>\(</start>
+      <end>\)</end>
+      <include>
+        <context ref="integer"/>
+        <context ref="butt"/>
+        <context ref="nut"/>
+        <context ref="opcode"/>
+        <context ref="sexp"/>
+      </include>
+    </context>
+
+    <context id="situation" class="no-spell-check">
+      <start>\{</start>
+      <end>\}</end>
+      <include>
+        <context ref="comment"/>
+        <context ref="sexp"/>
+      </include>
+    </context>
+
+    <context id="shlisp">
+      <include>
+        <context ref="comment"/>
+        <context ref="situation"/>
+      </include>
+    </context>
+  </definitions>
+</language>
