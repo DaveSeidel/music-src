@@ -34,6 +34,8 @@
   </styles>
 
   <definitions>
+    <define-regex id="opord"> ?[a-z]?</define-regex>
+
     <context id="comment" style-ref="comment" class="comment" end-at-line-end="true">
       <start>;</start>
       <end>$</end>
@@ -43,25 +45,19 @@
     </context>
     
     <context id="integer" style-ref="decimal">
-      <match extended="true">[0-9]*</match>
+      <match>[0-9]*</match>
     </context>
 
-    <!-- mexp -->
     <context id="butt" style-ref="keyword">
-      <prefix>\[</prefix>
-      <suffix>\]</suffix>
       <keyword>wind</keyword>
-      <keyword>corp[ab]?</keyword>
-      <keyword>bar[a-d]?</keyword>
-      <keyword>minor[a-d]?</keyword>
-      <keyword>major[a-d]?</keyword>
+      <keyword>corp ?[ab]?</keyword>
+      <keyword>bar ?[a-d]?</keyword>
+      <keyword>minor ?[a-d]?</keyword>
+      <keyword>major ?[a-d]?</keyword>
       <keyword>tar</keyword>
     </context>
     
-    <!-- mexp -->
     <context id="nut" style-ref="function">
-      <prefix>\[</prefix>
-      <suffix>\]</suffix>
       <keyword>left</keyword>
       <keyword>pan</keyword>
       <keyword>right</keyword>
@@ -80,33 +76,40 @@
       <keyword>lights</keyword>
     </context>
     
-    <!-- mexp -->
     <context id="opcode" style-ref="function">
-      <prefix>\[</prefix>
-      <suffix>\]</suffix>
-      <keyword>horn[a-h]?</keyword>
-      <keyword>saw[a-h]?</keyword>
-      <keyword>toggle[a-h]?</keyword> 
-      <keyword>togo[a-h]?</keyword>
-      <keyword>swoop[a-h]?</keyword>
-      <keyword>mount[a-h]?</keyword>
-      <keyword>smoke[a-d]?</keyword>
-      <keyword>dust[a-d]?</keyword>
-      <keyword>fog[a-d]?</keyword>
-      <keyword>haze[a-d]?</keyword>
-      <keyword>swamp[a-d]?</keyword>
-      <keyword>string[a-d]?</keyword>
-      <keyword>comb[a-d]?</keyword>
-      <keyword>zither[a-d]?</keyword>
-      <keyword>wave[a-d]?</keyword>
-      <keyword>water[a-d]?</keyword>
-      <keyword>salt[a-d]?</keyword>
-      <keyword>horse[a-d]?</keyword>
-      <keyword>slew[a-h]?</keyword>
-      <keyword>wheel[a-d]?</keyword>
-      <keyword>sauce[a-d]?</keyword>
-      <keyword>salsa[a-d]?</keyword>
+      <keyword>horn ?[a-h]?</keyword>
+      <keyword>saw ?[a-h]?</keyword>
+      <keyword>toggle ?[a-h]?</keyword> 
+      <keyword>togo ?[a-h]?</keyword>
+      <keyword>swoop ?[a-h]?</keyword>
+      <keyword>mount ?[a-h]?</keyword>
+      <keyword>smoke ?[a-d]?</keyword>
+      <keyword>dust ?[a-d]?</keyword>
+      <keyword>fog ?[a-d]?</keyword>
+      <keyword>haze ?[a-d]?</keyword>
+      <keyword>swamp ?[a-d]?</keyword>
+      <keyword>string ?[a-d]?</keyword>
+      <keyword>comb ?[a-d]?</keyword>
+      <keyword>zither ?[a-d]?</keyword>
+      <keyword>wave ?[a-d]?</keyword>
+      <keyword>water ?[a-d]?</keyword>
+      <keyword>salt ?[a-d]?</keyword>
+      <keyword>horse ?[a-d]?</keyword>
+      <keyword>slew ?[a-h]?</keyword>
+      <keyword>wheel ?[a-d]?</keyword>
+      <keyword>sauce ?[a-d]?</keyword>
+      <keyword>salsa ?[a-d]?</keyword>
       <keyword>square</keyword>
+    </context>
+    
+    <context id="mexp" class="no-spell-check">
+      <start>\[</start>
+      <end>\]</end>
+      <include>
+        <context ref="butt"/>
+        <context ref="nut"/>
+        <context ref="opcode"/>
+      </include>
     </context>
 
     <context id="sexp" class="no-spell-check">
@@ -117,6 +120,7 @@
         <context ref="butt"/>
         <context ref="nut"/>
         <context ref="opcode"/>
+        <context ref="mexp"/>
         <context ref="sexp"/>
       </include>
     </context>
