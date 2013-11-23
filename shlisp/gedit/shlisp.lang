@@ -116,6 +116,7 @@
       <start>\(</start>
       <end>\)</end>
       <include>
+        <context ref="comment"/>
         <context ref="integer"/>
         <context ref="butt"/>
         <context ref="nut"/>
