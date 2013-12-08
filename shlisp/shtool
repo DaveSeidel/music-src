@@ -161,7 +161,7 @@ else
   op = ARGV.shift
   case op
     when "help"
-      Ops.collect {|op| [op.name, op.description]}.each { |h| puts "#{h[0]}: #{h[1]}" }
+      Ops.each { |op| puts "#{op.name}: #{op.description}" }
     when "sr"
       sr = OpSr.get(ARGV)
       puts "(srate (short #{sr[:args][0]} #{sr[:args][1]})) = #{sr[:result]}" if sr
