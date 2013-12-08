@@ -1,0 +1,182 @@
+#!/usr/bin/env ruby
+
+#------------------------------------------------------------------------------
+# ops
+#------------------------------------------------------------------------------
+
+class Op
+  def self.name
+    ""
+  end
+  
+  def self.get(args)
+  end
+  
+  def self.usage(err=nil)
+    puts "#{name} error: #{err}" if err
+  end
+
+  def self.description
+    ""
+  end
+end
+
+class OpSr < Op
+  CLOCK = 72000000.0
+
+  def self.name
+    "sr"
+  end
+
+  def self.description
+    "given args for short to be passed to srate, computes resulting base pitch"
+  end
+
+  def self.get(args)
+    if args.length < 2
+      usage "too few args"
+    else
+      { :args => args, :result => (CLOCK / ((args[0].to_i * 256.0) + args[0].to_i)).round(2) }
+    end
+  end
+
+  def self.usage(err=nil)
+    super err
+    puts "#{name} args: bigg smal"
+    puts description
+  end
+end
+
+class OpRatMul < Op
+  def self.name
+    "mul"
+  end
+
+  def self.description
+    "given a ratio in nume/deno form, applies a multiplier to both sides (for scaling)"
+  end
+
+  def self.get(args)
+    if ARGV.length < 2
+      usage "too few args"
+    else
+      matches = /(\d+)\/(\d+)/.match(args[0])
+      if matches.nil? || matches.captures.length < 2
+        usage "bad args"
+      else
+        nume = matches[1].to_i
+        deno = matches[2].to_i
+        mul = args[1].to_i
+        { :args => args, :result => [nume*mul, deno*mul] }
+      end
+    end
+  end
+
+  def self.usage(err=nil)
+    super err
+    puts "#{name} args: nume/deno mul"
+    puts description
+  end
+end
+
+class OpRange < Op
+  Min = -128
+  Max = 128
+
+  def self.name
+    "range"
+  end
+
+  def self.description
+    "given a mul and an add, computes the resulting range as [low, nominal, high]"
+  end
+
+  def self.get(args)
+    if args.length < 2
+      usage "too few args"
+    else
+      mul = args[0].to_i
+      add = args[1].to_i
+      lo = ((Min * mul) / Max) + add
+      hi = ((Max * mul) / Max) + add
+      { :args => args, :result => [lo, add, hi] }
+    end
+  end
+
+  def self.usage(err=nil)
+    super err
+    puts "#{name} args: nume deno"
+    puts description
+  end
+end
+
+class OpReduce < Op
+  def self.name
+    "reduce"
+  end
+
+  def self.description
+    "given a ratio in nume/deno form, computes the reduced version"
+  end
+
+  def self.get(args)
+    if args.length < 1
+      usage "too few args"
+    else
+      matches = /(\d+)\/(\d+)/.match(ARGV[0])
+      if matches.nil? || matches.captures.length < 2
+        usage "bad args"
+      else
+        nume = matches[1].to_i
+        deno = matches[2].to_i
+        r = Rational(nume, deno)
+        { :args => args, :result => [r.numerator, r.denominator] }
+      end
+    end
+  end
+
+  def self.usage(err=nil)
+    super err
+    puts "#{name} args: nume/deno"
+    puts description
+  end
+end
+
+#------------------------------------------------------------------------------
+# mainline code
+#------------------------------------------------------------------------------
+
+Ops = [ OpSr, OpRatMul, OpRange, OpReduce ]
+
+def usage
+  puts "usage: 'shtool OP [args ...]'"
+  puts "where OP is one of: #{Ops.collect{ |op| op.name}.join(" ") }"
+  puts "or try 'shtool help'"
+  exit 1
+end
+
+if ARGV.length < 1
+  usage
+else
+  op = ARGV.shift
+  case op
+    when "help"
+      Ops.collect {|op| [op.name, op.description]}.each { |h| puts "#{h[0]}: #{h[1]}" }
+    when "sr"
+      sr = OpSr.get(ARGV)
+      puts "(srate (short #{sr[:args][0]} #{sr[:args][1]})) = #{sr[:result]}" if sr
+    when "mul"
+      mul = OpRatMul.get(ARGV)
+      puts "#{mul[:args][0]} * #{mul[:args][1]} -> #{mul[:result][0]}/#{mul[:result][1]}" if mul
+    when "range"
+      range = OpRange.get(ARGV)
+      puts "#{range[:args][0]} #{range[:args][1]} -> [#{range[:result].join(",")}]" if range
+    when "reduce"
+      reduce = OpReduce.get(ARGV)
+      puts "#{reduce[:args][0]} -> #{reduce[:result][0]}/#{reduce[:result][1]}" if reduce
+    else
+      puts "Unrecognized operation #{op}"
+      usage
+  end
+
+end
