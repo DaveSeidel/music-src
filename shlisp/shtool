@@ -78,7 +78,7 @@ class OpSr < Op
 
   private
     def self.impl(args)
-      (CLOCK / ((args[0].to_i * 256.0) + args[0].to_i)).round(2)
+      (CLOCK / ((args[0].to_i * 256) + args[1].to_i)).round(2)
     end
 end
 
