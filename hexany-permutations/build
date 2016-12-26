@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+set -e
+
+
+function _write_meta() {
+    prefix=$1
+    track=$2
+    soundfile=$3
+
+    cat >output/${prefix}_meta.txt <<EOF
+[__track__]
+album=Hexany Permutations
+title=Part ${track}
+track=${track}
+year=2016
+artist=Dave Seidel
+composer=Dave Seidel
+genre=Electroacoustic
+publisher=Mysterybear Music, ASCAP
+copyright=Copyright (c) 2016 by Dave Seidel, some rights reserved. Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
+EOF
+}
+
+
+function _cs() {
+    part=$1
+    track=$2
+    prefix=hexany_catalog_part${part}
+    soundfile_suffix=_master.wav
+
+    mkdir -p output
+
+    # compile sound file
+    csound ${prefix}.csd --sample-accurate -m6 -d -3 -W -R -o output/${prefix}.wav
+    
+    # boost bass and normalize
+    sox output/${prefix}.wav output/${prefix}${soundfile_suffix} bass +10 norm -3
+
+    # make a flac version
+    flac --silent --best --keep-foreign-metadata output/${prefix}_master.wav -f -o output/${prefix}.flac
+    
+    # metadata file for us with yt-render
+    _write_meta ${prefix} ${track} ${prefix}${soundfile_suffix}
+}
+
+
+if [ -n "$1" ]; then
+    if [ "$1" = "--help" ]; then
+        echo "Usage: build [part_number]"
+        exit 1
+    else
+        _cs $1
+    fi
+else
+    t=1
+    for i in {1,2,4,6,8,5}
+    do
+       _cs $i $t
+       ((t++))
+    done
+fi
+
