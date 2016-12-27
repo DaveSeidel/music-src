@@ -6,6 +6,8 @@ I mapped the derived melody to La Monte Young's Well-Tuned Piano tuning, which i
 
 I made the piece entirely with Csound, using Steven Yi's graphical composition environment blue. The instrument I used is called "Sine modulo pluck" and was designed by Mark Van Peteghem for use within blue.
 
+The resulting track is called "Maxine's Bells", and can be found at https://soundcloud.com/mysterybear/maxines-bells-disquiet0097
+
 ---
 
 More on this 97th Disquiet Junto project, in which music is decoded from a phrase in a book, at:
