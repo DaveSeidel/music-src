@@ -1,0 +1,1 @@
+I wrote Threefold Soliloquoy to serve as continuous background sound for a production of Samuel Beckett's PLAY. It is a generative piece that will be slightly different every time it is performed or rendered. For PLAY, I run this on a Google Nexus 7 tablet using the Csound Android app.
