@@ -1,0 +1,8 @@
+My entry for Disquiet Junto project 148: "Make music inspired by and suitable for listening to while reading William Gibson’s novel The Peripheral." The tracks is called "A Wintery Light" and can be found at https://soundcloud.com/mysterybear/a-wintery-light-disquiet0148-peripherallistening
+
+More from the project description: "You will make two minutes of loopable background music. The music will be inspired by a phrase from William Gibson’s novel The Peripheral. Think about music that is suitable to reading."
+
+We were provided three different passages to use as possible starting points. I chose this one from Chapter 56 (“The Light in Her Voice Mail”): “The ambient sound was glum as the light, as calculated to unsettle.” The title comes from the previous sentence in the book: "A wintery light found its way down, as from unseen windows."
+
+I wrote this in Csound, using the blue frontend. After looking into ultrasound and infrasound, and rejecting them as impractical for MP3s, computer speakers, and headphones, I decided to stick with the general idea of using a high sound and a low sound. The high sound consists of three pitches at or near 1920 Hz, expressed using binaural beating. The low sound is at 45 Hz and also uses binaural beating. I used only sine waves, with a bit of digital reverb and finally some convolution reverb using an IR from York Minster in the UK as provided by the Openair project: www.openairlib.net/auralizationdb/…nt/york-minster. This was all done in Csound, then normalized and converted to MP3 in Audacity. Total working time, once I started actually making it, about 2 hours.
+

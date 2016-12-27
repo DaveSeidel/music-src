@@ -1,0 +1,486 @@
+<blueData version='2.5.14'>
+  <projectProperties>
+    <title>a wintery light [disquiet0148-peripherallistening]</title>
+    <author>Dave Seidel</author>
+    <notes></notes>
+    <sampleRate>48000</sampleRate>
+    <ksmps>1</ksmps>
+    <channels>2</channels>
+    <useZeroDbFS>true</useZeroDbFS>
+    <zeroDbFS>1</zeroDbFS>
+    <diskSampleRate>48000</diskSampleRate>
+    <diskKsmps>1</diskKsmps>
+    <diskChannels>2</diskChannels>
+    <diskUseZeroDbFS>true</diskUseZeroDbFS>
+    <diskZeroDbFS>1</diskZeroDbFS>
+    <useAudioOut>true</useAudioOut>
+    <useAudioIn>true</useAudioIn>
+    <useMidiIn>false</useMidiIn>
+    <useMidiOut>false</useMidiOut>
+    <noteAmpsEnabled>true</noteAmpsEnabled>
+    <outOfRangeEnabled>true</outOfRangeEnabled>
+    <warningsEnabled>true</warningsEnabled>
+    <benchmarkEnabled>true</benchmarkEnabled>
+    <advancedSettings></advancedSettings>
+    <completeOverride>false</completeOverride>
+    <fileName>/home/dave/work/disquiet0148/a_wintery_light.wav</fileName>
+    <askOnRender>false</askOnRender>
+    <diskNoteAmpsEnabled>true</diskNoteAmpsEnabled>
+    <diskOutOfRangeEnabled>true</diskOutOfRangeEnabled>
+    <diskWarningsEnabled>true</diskWarningsEnabled>
+    <diskBenchmarkEnabled>true</diskBenchmarkEnabled>
+    <diskAdvancedSettings></diskAdvancedSettings>
+    <diskCompleteOverride>false</diskCompleteOverride>
+    <diskAlwaysRenderEntireProject>false</diskAlwaysRenderEntireProject>
+  </projectProperties>
+  <arrangement>
+    <instrumentAssignment arrangementId='1' isEnabled='true'>
+      <instrument type='blue.orchestra.GenericInstrument'>
+        <name>binaural beater - gkdiff/expseg</name>
+        <comment></comment>
+        <globalOrc></globalOrc>
+        <globalSco></globalSco>
+        <instrumentText>idur  = p3          ; duration
+iamp  = ampdb(p4)/2 ; amplitude
+icent = p5          ; center frequency (Hz)
+idiff = p6          ; difference (Hz)
+itab  = p7          ; waveform (table)
+irise = p8          ; envelope rise time
+ifall = p9          ; envelope fall time
+
+; amplitude envelope
+ae	linen	iamp, irise, idur, ifall
+
+; determine pitches
+kdiff	=	idiff * gkdiff
+kp1	=	icent + (kdiff/2)
+kp2	=	icent - (kdiff/2)
+
+	printks	&quot;center=%f beat=%f =&gt; freq1=%f freq2=%f\\n&quot;, 1000, icent, idiff, kp1, kp2
+
+; generate tones
+asig1	poscil3	ae*iamp, kp1, itab
+asig2	poscil3	ae*iamp, kp2, itab
+
+; output
+blueMixerOut	asig1, asig2
+</instrumentText>
+        <opcodeList/>
+      </instrument>
+    </instrumentAssignment>
+  </arrangement>
+  <mixer>
+    <enabled>true</enabled>
+    <extraRenderTime>0.0</extraRenderTime>
+    <channelList list='channels'>
+      <channel>
+        <name>1</name>
+        <outChannel>Master</outChannel>
+        <level>-6.4</level>
+        <muted>false</muted>
+        <solo>false</solo>
+        <effectsChain bin='pre'/>
+        <effectsChain bin='post'/>
+        <parameter uniqueId='1828406965' name='Volume' label='dB' min='-96.0' max='12.0' resolution='-1.0' automationEnabled='false' value='-6.4'>
+          <line name='' version='2' max='12.0' min='-96.0' resolution='-1.0' color='-8355712' rightBound='false' endPointsLinked='false'>
+            <linePoint x='0.0' y='-6.4'/>
+          </line>
+        </parameter>
+      </channel>
+    </channelList>
+    <channelList list='subChannels'/>
+    <channel>
+      <name>Master</name>
+      <outChannel>Master</outChannel>
+      <level>0.0</level>
+      <muted>false</muted>
+      <solo>false</solo>
+      <effectsChain bin='pre'>
+        <effect>
+          <name>ReverbSC</name>
+          <enabled>true</enabled>
+          <numIns>2</numIns>
+          <numOuts>2</numOuts>
+          <code>aout1, aout2  reverbsc ain1, ain2, &lt;feedback&gt;, &lt;cutoff&gt;
+
+aout1 = (ain1 * &lt;wetdry&gt;) + (aout1 * (1 - &lt;wetdry&gt;))
+aout2 = (ain2 * &lt;wetdry&gt;) + (aout2 * (1 - &lt;wetdry&gt;))
+
+</code>
+          <comments/>
+          <opcodeList/>
+          <graphicInterface editEnabled='true'>
+            <gridSettings>
+              <width>15</width>
+              <height>15</height>
+              <gridStyle>NONE</gridStyle>
+              <snapGridEnabled>false</snapGridEnabled>
+            </gridSettings>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>7</x>
+              <y>7</y>
+              <label>&lt;html&gt;&lt;font size=&quot;+1&quot;&gt;ReverbSC&lt;/font&gt;&lt;/html&gt;</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBKnob' version='2'>
+              <objectName>feedback</objectName>
+              <x>8</x>
+              <y>55</y>
+              <automationAllowed>false</automationAllowed>
+              <minimum>0.0</minimum>
+              <maximum>1.0</maximum>
+              <value>0.5</value>
+              <knobWidth>60</knobWidth>
+              <randomizable>true</randomizable>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>11</x>
+              <y>36</y>
+              <label>Feedback</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBKnob' version='2'>
+              <objectName>cutoff</objectName>
+              <x>72</x>
+              <y>55</y>
+              <automationAllowed>false</automationAllowed>
+              <minimum>20.0</minimum>
+              <maximum>20000.0</maximum>
+              <value>8000.0</value>
+              <knobWidth>60</knobWidth>
+              <randomizable>true</randomizable>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>80</x>
+              <y>36</y>
+              <label>Cut-Off</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBKnob' version='2'>
+              <objectName>wetdry</objectName>
+              <x>136</x>
+              <y>55</y>
+              <automationAllowed>false</automationAllowed>
+              <minimum>0.0</minimum>
+              <maximum>1.0</maximum>
+              <value>0.6</value>
+              <knobWidth>60</knobWidth>
+              <randomizable>true</randomizable>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>139</x>
+              <y>36</y>
+              <label>Wet/Dry</label>
+            </bsbObject>
+          </graphicInterface>
+          <bsbParameterList/>
+        </effect>
+        <effect>
+          <name>PConvolve</name>
+          <enabled>true</enabled>
+          <numIns>2</numIns>
+          <numOuts>2</numOuts>
+          <code>iwet = &lt;wetDry&gt;
+idry = 1 - iwet
+
+; size of each convolution partion -- for best performance, this parameter needs to be tweaked
+ipartitionsize = &lt;paritionSize&gt;
+
+; calculate latency of pconvolve opcode
+idel    = (ksmps &lt; ipartitionsize ? ipartitionsize + ksmps : ipartitionsize)/sr
+
+prints &quot;Convolving with a latency of %f seconds%n&quot;, idel
+
+awetl, awetr pconvolve    iwet*(ain1+ain2), &quot;&lt;impulseResponse&gt;&quot;, ipartitionsize
+
+; Delay dry signal, to align it with the convoled sig
+adryl        delay  idry * ain1, idel
+adryr        delay   idry * ain2, idel
+
+aout1 = adryl+awetl
+aout2 = adryr+awetr</code>
+          <comments>Convolution Effect using pconvolve opcode by Matt Ingalls
+
+The code for this effect is based on code by Matt Ingalls found in the Csound Manual; please see the manual for more information regarding pconvolve.</comments>
+          <opcodeList/>
+          <graphicInterface editEnabled='true'>
+            <gridSettings>
+              <width>15</width>
+              <height>15</height>
+              <gridStyle>NONE</gridStyle>
+              <snapGridEnabled>false</snapGridEnabled>
+            </gridSettings>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>3</x>
+              <y>6</y>
+              <label>&lt;html&gt;&lt;font size=&quot;+1&quot;&gt;PConvolve&lt;/font&gt;&lt;/html&gt;</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>13</x>
+              <y>43</y>
+              <label>Impulse Response</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>43</x>
+              <y>76</y>
+              <label>Partition Size</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBFileSelector'>
+              <objectName>impulseResponse</objectName>
+              <x>130</x>
+              <y>32</y>
+              <fileName>/home/dave/work/ir/minster1_000_ortf_48k.wav</fileName>
+              <textFieldWidth>300</textFieldWidth>
+              <stringChannelEnabled>false</stringChannelEnabled>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBDropdown'>
+              <objectName>paritionSize</objectName>
+              <x>130</x>
+              <y>73</y>
+              <automationAllowed>false</automationAllowed>
+              <bsbDropdownItemList>
+                <bsbDropdownItem uniqueId='1064032969'>
+                  <name>1</name>
+                  <value>1</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032970'>
+                  <name>2</name>
+                  <value>2</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032971'>
+                  <name>4</name>
+                  <value>4</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032972'>
+                  <name>8</name>
+                  <value>8</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032973'>
+                  <name>16</name>
+                  <value>16</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032974'>
+                  <name>32</name>
+                  <value>32</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032975'>
+                  <name>64</name>
+                  <value>64</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032976'>
+                  <name>128</name>
+                  <value>128</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032977'>
+                  <name>256</name>
+                  <value>256</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032978'>
+                  <name>512</name>
+                  <value>512</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032979'>
+                  <name>1024</name>
+                  <value>1024</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032980'>
+                  <name>2048</name>
+                  <value>2048</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032981'>
+                  <name>4096</name>
+                  <value>4096</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032982'>
+                  <name>8192</name>
+                  <value>8192</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032983'>
+                  <name>16384</name>
+                  <value>16384</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032984'>
+                  <name>32768</name>
+                  <value>32768</value>
+                </bsbDropdownItem>
+                <bsbDropdownItem uniqueId='1064032985'>
+                  <name>65536</name>
+                  <value>65536</value>
+                </bsbDropdownItem>
+              </bsbDropdownItemList>
+              <selectedIndex>10</selectedIndex>
+              <randomizable>true</randomizable>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>46</x>
+              <y>110</y>
+              <label>Wet/Dry Mix</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBHSlider'>
+              <objectName>wetDry</objectName>
+              <x>129</x>
+              <y>105</y>
+              <automationAllowed>false</automationAllowed>
+              <minimum>0.0</minimum>
+              <maximum>1.0</maximum>
+              <resolution>0.01</resolution>
+              <value>1.0</value>
+              <sliderWidth>280</sliderWidth>
+              <randomizable>true</randomizable>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>380</x>
+              <y>130</y>
+              <label>Wet</label>
+            </bsbObject>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel'>
+              <objectName></objectName>
+              <x>136</x>
+              <y>130</y>
+              <label>Dry</label>
+            </bsbObject>
+          </graphicInterface>
+          <bsbParameterList/>
+        </effect>
+      </effectsChain>
+      <effectsChain bin='post'/>
+      <parameter uniqueId='1828406746' name='Volume' label='dB' min='-96.0' max='12.0' resolution='-1.0' automationEnabled='false' value='0.0'>
+        <line name='' version='2' max='12.0' min='-96.0' resolution='-1.0' color='-8355712' rightBound='false' endPointsLinked='false'>
+          <linePoint x='0.0' y='0.0'/>
+        </line>
+      </parameter>
+    </channel>
+  </mixer>
+  <tables></tables>
+  <soundObjectLibrary/>
+  <globalOrcSco>
+    <globalOrc>gkdiff  init	1
+
+giTblSz	init	2097152+1
+
+; sine wave
+giFn1 	ftgen	1, 0, giTblSz, 10, 1
+</globalOrc>
+    <globalSco></globalSco>
+  </globalOrcSco>
+  <opcodeList/>
+  <liveData>
+    <commandLine>csound -Wdo devaudio -L stdin</commandLine>
+    <commandLineEnabled>false</commandLineEnabled>
+    <commandLineOverride>false</commandLineOverride>
+    <liveObjectBins columns='1' rows='8'>
+      <bin>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+      </bin>
+    </liveObjectBins>
+    <liveObjectSetList/>
+    <repeat>4</repeat>
+    <tempo>60</tempo>
+  </liveData>
+  <score>
+    <tempo>
+      <enabled>false</enabled>
+      <visible>false</visible>
+      <line name='' version='2' max='240.0' min='30.0' resolution='-1.0' color='-8355712' rightBound='false' endPointsLinked='false'>
+        <linePoint x='0.0' y='60.0'/>
+      </line>
+    </tempo>
+    <timeState>
+      <pixelSecond>20</pixelSecond>
+      <snapEnabled>true</snapEnabled>
+      <snapValue>1.0</snapValue>
+      <timeDisplay>1</timeDisplay>
+      <timeUnit>10</timeUnit>
+    </timeState>
+    <noteProcessorChain/>
+    <soundObject type='blue.soundObject.PolyObject'>
+      <subjectiveDuration>2.0</subjectiveDuration>
+      <startTime>0.0</startTime>
+      <name>SoundObject Layer Group</name>
+      <backgroundColor>-10066279</backgroundColor>
+      <timeBehavior>0</timeBehavior>
+      <noteProcessorChain/>
+      <isRoot>true</isRoot>
+      <defaultHeightIndex>0</defaultHeightIndex>
+      <timeState>
+        <pixelSecond>64</pixelSecond>
+        <snapEnabled>false</snapEnabled>
+        <snapValue>1.0</snapValue>
+        <timeDisplay>0</timeDisplay>
+        <timeUnit>5</timeUnit>
+      </timeState>
+      <soundLayer name='' muted='false' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.GenericScore'>
+          <subjectiveDuration>120.0</subjectiveDuration>
+          <startTime>0.0</startTime>
+          <name>GenericScore</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>0</timeBehavior>
+          <noteProcessorChain/>
+          <score>;idur  = p3          ; duration
+;iamp  = ampdb(p4)/2 ; amplitude
+;icent = p5          ; center frequency (Hz)
+;idiff = p6          ; difference (Hz)
+;itab  = p7          ; waveform (table)
+;irise = p8          ; envelope rise time
+;ifall = p9          ; envelope fall time
+
+i1 0 1  -15 1920           1.75  1 2 2
+i1 0 1    . [960*(7/4)]    1.25  . . .
+i1 0 1    . [960*(27/14)]  0.75  . . .
+
+i1 0 1   -4 45             0.375 . . .
+</score>
+        </soundObject>
+      </soundLayer>
+    </soundObject>
+  </score>
+  <scratchPadData>
+    <isWordWrapEnabled>true</isWordWrapEnabled>
+    <scratchText/>
+  </scratchPadData>
+  <noteProcessorChainMap/>
+  <renderStartTime>0.0</renderStartTime>
+  <renderEndTime>-1.0</renderEndTime>
+  <markersList/>
+  <loopRendering>false</loopRendering>
+  <midiInputProcessor>
+    <keyMapping>PCH</keyMapping>
+    <velMapping>MIDI</velMapping>
+    <pitchConstant/>
+    <ampConstant/>
+    <scale>
+      <scaleName>12TET</scaleName>
+      <baseFrequency>261.62558</baseFrequency>
+      <octave>2.0</octave>
+      <ratios>
+        <ratio>1.0</ratio>
+        <ratio>1.0594631</ratio>
+        <ratio>1.122462</ratio>
+        <ratio>1.1892071</ratio>
+        <ratio>1.2599211</ratio>
+        <ratio>1.3348398</ratio>
+        <ratio>1.4142135</ratio>
+        <ratio>1.4983071</ratio>
+        <ratio>1.587401</ratio>
+        <ratio>1.6817929</ratio>
+        <ratio>1.7817974</ratio>
+        <ratio>1.8877486</ratio>
+      </ratios>
+    </scale>
+  </midiInputProcessor>
+</blueData>
