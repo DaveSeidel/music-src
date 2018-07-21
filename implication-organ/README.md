@@ -4,7 +4,7 @@ This is a realtime microtonal Csound instrument with MIDI keyboard and controlle
 
 The Implication Organ (or IO) is duophonic, in that the performer can play no more than two notes at a time. "Implication" refers to the instrument's generation of chords built from pitches that are mathematically derived, or implied, from the two pitches currently being played. See below under "Features" for more on how this works.
 
-For an example of the IO in use, see https://www.youtube.com/watch?v=hmFTd8E61Ts. In practice, this app is the kernel of a larger system that includes a bunch of hardware that processes the Pisound output using a matrix mixer and a number of other effects devices, including loopers.
+For an example of the IO in use, see https://www.youtube.com/watch?v=hmFTd8E61Ts. In practice, this app is the kernel of a larger system that includes a bunch of hardware that processes the Csound output using a matrix mixer and a number of other effects devices, including loopers.
 
 ## Philosophy
 
