@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# get list of sound devices and find the Pisound output device
+csound --devices 2>&1 | grep -E '\(PS-' | grep -Eo 'dac:hw:[[:digit:]],[[:digit:]]'

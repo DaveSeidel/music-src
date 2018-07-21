@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# get the list of MIDI output devices and get the first Launch Control XL output device
+csound -+rtmidi=portmidi --midi-devices=out 2>&1 | grep "(Launch Control XL MIDI 1)" | grep -o "^ ."

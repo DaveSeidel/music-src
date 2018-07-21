@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+#
+# this script is called by the run_xxx.sh scripts
+# loads the implication organ initialized to a particular tuning
+#
+
+if [ -z "$1" ]; then
+  echo "usage: load TUNING_NUM"
+  exit 1
+fi
+tuning_num=$1
+
+# -Q must use be a Launch Control XL
+# -o will be the Pisound -- change to "-odac" for the generic case
+csound -Q$(get-midi-out) -o $(get-dac) --omacro:TUNING=$tuning_num implication-organ.csd
