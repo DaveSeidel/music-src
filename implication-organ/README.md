@@ -78,6 +78,7 @@ The IO incorporates work from several people. Thanks to:
 - Tarmo Johannes, for his system of presets for Csound's scanned synthesis opcodes. Tarmo's code is included as an example in [CsoundQT](https://csoundqt.github.io/), the powerful Csound front-end for which he is the primary author. Tarmo's code makes a very complex and powerful set of opcodes more approachable and usable than they might otherwise be.
 - Kyle Gann, for his [essential work on LMY's WTP tuning](http://www.kylegann.com/PNM-WellTunedPiano.pdf), without which I would have no rational basis (pun intended) for using it.
 - Art Hunkins, for advice on MIDI controllers, and for helping me understand how to use MIDI in Csound.
+- Kathleen, for infinite support and copy-editing.
 - As always, many thanks to the Csound development and documentation teams for their great and ongoing work.
 
 
