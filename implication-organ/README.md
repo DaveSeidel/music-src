@@ -39,7 +39,7 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
    - composite waveform based on harmonics in the Fibonacci series
    - composite waveform based on harmonics in the prime number series
 - Selectable microtonal tunings, which can be changed on the fly:
-  - A dual hexany scale, built by combining two alternating 1-3-5-7 hexanies, with one transposed upward by 16/15 (i.e., a major 5-limit half-step). On a conventional keyboard, this maps one hexany to the fingering of the whole tone scale beginning on C, and the other hexany to the fingering of the whole tone scale beginning on C#.
+  - A dual hexany scale, built by combining two interleaved 1-3-5-7 hexanies, with one transposed upward by 16/15 (i.e., a major 5-limit half-step). On a conventional keyboard, this maps one hexany to the fingering of the whole tone scale beginning on C, and the other hexany to the fingering of the whole tone scale beginning on C#. See the file dual-interleaved-hexany.scl in this repo.
   - Kraig Grady's [Centaur](http://www.anaphoria.com/centaur.html) tuning.
   - [Meta-Slendro](http://www.anaphoria.com/wilsonintroMERU.html) by Erv Wilson (by way of Kraig Grady); I am using the Meru #3 variant.
   - La Monte Young's Well Tuned Piano tuning.
