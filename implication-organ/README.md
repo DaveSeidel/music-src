@@ -63,6 +63,14 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
    - Main voices on channel 1
    - Generated voices on channel 2
 
+## TODO
+
+Things that I may or may not do:
+- Add file list to README
+- Add filter controls for main voice
+- Add alternate instrument definitions for the main voice
+- Add additional waveform options for the generated voices
+
 ## Acknowledgements and Thanks
 
 The IO incorporates work from several people. Thanks to:
