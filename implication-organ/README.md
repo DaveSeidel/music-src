@@ -33,11 +33,12 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
    - geometric mean
    - harmonic mean
    - golden mean
-   - Ring modulator (where one of the main pitches is used as the input, and the other is used as the carrier)
+   - ring modulator (where one of the main pitches is used as the input, and the other is used as the carrier)
  - Generated voices (except the ring modulator) are expressed using one of three different waveforms:
    - sine wave
    - composite waveform based on harmonics in the Fibonacci series
    - composite waveform based on harmonics in the prime number series
+   - David First's asymptotic sawtooth wave
 - Selectable microtonal tunings, which can be changed on the fly:
   - A dual hexany scale, built by combining two interleaved 1-3-5-7 hexanies, with one transposed upward by 16/15 (i.e., a major 5-limit half-step). On a conventional keyboard, this maps one hexany to the fingering of the whole tone scale beginning on C, and the other hexany to the fingering of the whole tone scale beginning on C#. See the file dual-interleaved-hexany.scl in this repo.
   - Kraig Grady's [Centaur](http://www.anaphoria.com/centaur.html) tuning.
@@ -78,6 +79,7 @@ The IO incorporates work from several people. Thanks to:
 - Tarmo Johannes, for his system of presets for Csound's scanned synthesis opcodes. Tarmo's code is included as an example in [CsoundQT](https://csoundqt.github.io/), the powerful Csound front-end for which he is the primary author. Tarmo's code makes a very complex and powerful set of opcodes more approachable and usable than they might otherwise be.
 - Kyle Gann, for his [essential work on LMY's WTP tuning](http://www.kylegann.com/PNM-WellTunedPiano.pdf), without which I would have no rational basis (pun intended) for using it.
 - Art Hunkins, for advice on MIDI controllers, and for helping me understand how to use MIDI in Csound.
+- David First, for his asymptotic sawtooth wave, from his [article on Schuman Resonances](http://www.davidfirst.com/schumann_resonances.pdf).
 - Kathleen, for infinite support and copy-editing.
 - As always, many thanks to the Csound development and documentation teams for their great and ongoing work.
 

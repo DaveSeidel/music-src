@@ -57,6 +57,7 @@ nchnls = 2
 #define BUTT_GENERATED_SIN    #$BUTT_1U#
 #define BUTT_GENERATED_FIB    #$BUTT_2U#
 #define BUTT_GENERATED_PRI    #$BUTT_3U#
+#define BUTT_GENERATED_ASY    #$BUTT_4U#
 
 #define BUTT_REDUCE_UPPER     #$BUTT_5U#
 #define BUTT_REDUCE_LOWER     #$BUTT_6U#
@@ -107,6 +108,22 @@ gi_prime = ftgen(3, 0, $TBLSIZ, 9, 1,1,0,
                                 23,0.0435,0,
                                 27,0.037,0)
 
+; David First's asymptotic sawtooth wave
+gi_asymp = ftgen(4, 0, $TBLSIZ, 9, 1,1,0,
+                                   1.732050807568877, 0.5773502691896259,  0,
+                                   2.449489742783178, 0.4082482904638631,  0,
+                                   3.162277660168379, 0.3162277660168379,  0,
+                                   3.872983346207417, 0.2581988897471611,  0,
+                                   4.58257569495584,  0.2182178902359924,  0,
+                                   5.291502622129182, 0.1889822365046136,  0,
+                                   6,                 0.1666666666666667,  0,
+                                   6.70820393249937,  0.1490711984999859,  0,
+                                   7.416198487095663, 0.1348399724926484,  0,
+                                   8.124038404635961, 0.1230914909793327,  0,
+                                   9.539392014169456, 0.1048284836721918,  0,
+                                   10.2469507659596,  0.0975900072948533,  0,
+                                   10.95445115010332, 0.0912870929175277,  0,
+                                   11.6619037896906,  0.08574929257125442, 0)
 
 ;;---------------
 ;; tuning tables
@@ -304,7 +321,7 @@ opcode combination_engine, a, kiiiii
   xout aout
 endop
 
-opcode means, a, kiiiii
+opcode means_engine, a, kiiiii
   ktab,iamp,ifreq1,ifreq2,imin,imax xin
 
   iamp /= 4
@@ -366,18 +383,27 @@ opcode set_generated_waveform, 0,i
   itab xin
 
   gk_generated_wave = itab
+
   if (itab == gi_sine) then
     butt_led_on($BUTT_GENERATED_SIN, $LED_RED_FULL)
     butt_led_off($BUTT_GENERATED_FIB)
     butt_led_off($BUTT_GENERATED_PRI)
+    butt_led_off($BUTT_GENERATED_ASY)
   elseif (itab == gi_fib) then
     butt_led_off($BUTT_GENERATED_SIN)
     butt_led_on($BUTT_GENERATED_FIB, $LED_RED_FULL)
     butt_led_off($BUTT_GENERATED_PRI)
+    butt_led_off($BUTT_GENERATED_ASY)
   elseif (itab == gi_prime) then
     butt_led_off($BUTT_GENERATED_SIN)
     butt_led_off($BUTT_GENERATED_FIB)
     butt_led_on($BUTT_GENERATED_PRI, $LED_RED_FULL)
+    butt_led_off($BUTT_GENERATED_ASY)
+  elseif (itab == gi_asymp) then
+    butt_led_off($BUTT_GENERATED_SIN)
+    butt_led_off($BUTT_GENERATED_FIB)
+    butt_led_off($BUTT_GENERATED_PRI)
+    butt_led_on($BUTT_GENERATED_ASY, $LED_RED_FULL)
   endif
 endop
 
@@ -570,7 +596,7 @@ instr Starter
   ; fractional instrument number embeds the note number
   instnum  = 23 + (inote_num * 0.001)
 
-  iamp = ampmidi(0dbfs * 0.33)
+  iamp = ampmidi(0dbfs * 0.5)
 
   ; determine which "side" this is
   ileft = gi_left_on == 0 ? 1 : 0
@@ -631,7 +657,7 @@ endin
 ; binaural scanned synth (main voice)
 instr 23
   kcps = p4
-  iamp = p5/3
+  iamp = (p5 * 0.7) / 3
 
   aenv = linsegr(0,
                  2, 1,
@@ -652,7 +678,7 @@ endin
 instr 24
   aenv = linsegr(0,
                  2, 1,
-                 1, 0)
+                 0.5, 0)
   a1 = combination_engine(gk_generated_wave, p4, p5, p6, p7, p8)
   aout = a1 * aenv * $CTL_COMBOS_LEVEL
   ga_combos_out = ga_combos_out + aout
@@ -662,8 +688,8 @@ endin
 instr 25
   aenv = linsegr(0,
                  2, 1,
-                 1, 0)
-  a1 = means(gk_generated_wave, p4, p5, p6, p7, p8)
+                 0.5, 0)
+  a1 = means_engine(gk_generated_wave, p4, p5, p6, p7, p8)
   aout = a1 * aenv * $CTL_MEANS_LEVEL
   ga_means_out = ga_means_out + aout
 endin
@@ -684,7 +710,7 @@ instr 26
   iamp = p4
   aenv = linsegr(0,
                  2, 1,
-                 1, 0)
+                 0.5, 0)
 
   ain = oscili(iamp, iin,  gi_sine)
   acarr = oscili(iamp, icarr,  gi_sine)
@@ -707,6 +733,8 @@ instr Buttons
     set_generated_waveform(gi_fib)
   elseif (ibutt == $BUTT_GENERATED_PRI) then
     set_generated_waveform(gi_prime)
+  elseif (ibutt == $BUTT_GENERATED_ASY) then
+    set_generated_waveform(gi_asymp)
   ; reduction type
   elseif (ibutt == $BUTT_REDUCE_NONE) then
     set_reduction_type($REDUCE_NONE)
