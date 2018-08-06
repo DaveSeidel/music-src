@@ -24,45 +24,45 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
 ## Features
 - Two main voices, each built from three instances of the Csound `scanu`/`scans` opcodes (scanned synthesis). The three sound sources for each voice consist of one exact pitch and two detuned pitches, one slightly sharp and one slightly flat. The main pitches are played on the MIDI keyboard; these are the only notes played by the performer.
 - Eleven generated voices derived from the currently-playing pair of main pitches, as follows:
- - Combination tones:
-   - first, second, and third-order difference tones
-   - first and second-order summation tones
-   - product
- - Pythagorean and other means:
-   - arithmetic mean
-   - geometric mean
-   - harmonic mean
-   - golden mean
-   - ring modulator (where one of the main pitches is used as the input, and the other is used as the carrier)
- - Generated voices (except the ring modulator) are expressed using one of three different waveforms:
-   - sine wave
-   - composite waveform based on harmonics in the Fibonacci series
-   - composite waveform based on harmonics in the prime number series
-   - David First's asymptotic sawtooth wave
+  - Combination tones:
+    - first, second, and third-order difference tones
+    - first and second-order summation tones
+    - product
+  - Pythagorean and other means:
+    - arithmetic mean
+    - geometric mean
+    - harmonic mean
+    - golden mean
+    - ring modulator (where one of the main pitches is used as the input, and the other is used as the carrier)
+  - Generated voices (except the ring modulator) are expressed using one of three different waveforms:
+    - sine wave
+    - composite waveform based on harmonics in the Fibonacci series
+    - composite waveform based on harmonics in the prime number series
+    - David First's asymptotic sawtooth wave
 - Selectable microtonal tunings, which can be changed on the fly:
-  - A dual hexany scale, built by combining two interleaved 1-3-5-7 hexanies, with one transposed upward by 16/15 (i.e., a major 5-limit half-step). On a conventional keyboard, this maps one hexany to the fingering of the whole tone scale beginning on C, and the other hexany to the fingering of the whole tone scale beginning on C#. See the file dual-interleaved-hexany.scl in this repo.
-  - Kraig Grady's [Centaur](http://www.anaphoria.com/centaur.html) tuning.
-  - [Meta-Slendro](http://www.anaphoria.com/wilsonintroMERU.html) by Erv Wilson (by way of Kraig Grady); I am using the Meru #3 variant.
-  - La Monte Young's Well Tuned Piano tuning.
-  - Heinz Bohlen's A12 and JI Harmonic tunings (from the [Scala](http://www.huygens-fokker.org/scala/) archives).
+   - A dual hexany scale, built by combining two interleaved 1-3-5-7 hexanies, with one transposed upward by 16/15 (i.e., a major 5-limit half-step). On a conventional keyboard, this maps one hexany to the fingering of the whole tone scale beginning on C, and the other hexany to the fingering of the whole tone scale beginning on C#. See the file dual-interleaved-hexany.scl in this repo.
+   - Kraig Grady's [Centaur](http://www.anaphoria.com/centaur.html) tuning.
+   - [Meta-Slendro](http://www.anaphoria.com/wilsonintroMERU.html) by Erv Wilson (by way of Kraig Grady); I am using the Meru #3 variant.
+   - La Monte Young's Well Tuned Piano tuning.
+   - Heinz Bohlen's A12 and JI Harmonic tunings (from the [Scala](http://www.huygens-fokker.org/scala/) archives).
 - MIDI control over a number of parameters (based on the Launch Control XL):
   - Sliders (left to right)
-   - master level for main voices
-   - master level for all generated voices
-   - level for all combination tones
-   - level for all mean tones
-   - level for ring modulator
+    - master level for main voices
+    - master level for all generated voices
+    - level for all combination tones
+    - level for all mean tones
+    - level for ring modulator
   - Knobs
-   - individual level for each combination tone (top row)
-   - individual level for each mean tone (middle row)
-   - detuning amount for main voices (bottom row)
+    - individual level for each combination tone (top row)
+    - individual level for each mean tone (middle row)
+    - detuning amount for main voices (bottom row)
   - Buttons
-   - waveform selection for generated voices, except ring modulator (top row, left)
-   - range/transposition selection for generated tones (top row, right)
-   - tuning selection (bottom row)
+    - waveform selection for generated voices, except ring modulator (top row, left)
+    - range/transposition selection for generated tones (top row, right)
+    - tuning selection (bottom row)
 - Outputs:
-   - Main voices on channel 1
-   - Generated voices on channel 2
+    - Main voices on channel 1
+    - Generated voices on channel 2
 
 ## TODO
 
