@@ -120,6 +120,8 @@ gkslider_8 init  0
 #define SLIDER_8 #gkslider_8#
 
 opcode read_controls, 0, 0
+  prints("Reading MIDI controls...\n")
+
   $KNOB_U1,  $KNOB_U2,  $KNOB_U3,  $KNOB_U4,  $KNOB_U5,  $KNOB_U6,  $KNOB_U7,  $KNOB_U8, \
   $KNOB_M1,  $KNOB_M2,  $KNOB_M3,  $KNOB_M4,  $KNOB_M5,  $KNOB_M6,  $KNOB_M7,  $KNOB_M8, \
   $KNOB_L1,  $KNOB_L2,  $KNOB_L3,  $KNOB_L4,  $KNOB_L5,  $KNOB_L6,  $KNOB_L7,  $KNOB_L8,  \

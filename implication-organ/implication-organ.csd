@@ -1,78 +1,55 @@
-;;------------------------
-;; Implication Organ v1.0
-;; Dave Seidel, July 2018
-;;------------------------
+;;--------------------------
+;; Implication Organ v2.0
+;; Dave Seidel, August 2018
+;;--------------------------
 
 <CsoundSynthesizer>
 <CsOptions>
- -d -m0 -+rtmidi=portmidi -+raw_controller_mode=1 -Ma -b 256 -B 4096 --realtime --sched -j4
+ -d -m0 -+rtmidi=portmidi -+raw_controller_mode=1 -Ma --realtime ;--sched -j4
 </CsOptions>
 <CsInstruments>
 
 sr = 48000
-ksmps = 20
+ksmps = 50
 nchnls = 2
 0dbfs = 1
 
 
 ; presets for Tarmo Johannes' scanned synthesis configurations
 #include "inc/scanu_presets.orc"
+; table ID
+#define SCANX_ID              #4#
+; default preset
+#define SCANX_DEFAULT_PRESET  #9#
+
 
 ; Steven Yi's implementation of Julian Parker's ring modulator
-#include "inc/ringmod.udo"
+; #include "inc/ringmod.udo"
 
-;;------------------
-;; MIDI controllers
-;;------------------
+;;-----------------------
+;; controller definitions
+;;-----------------------
 
-;; Launch Control XL
-#include "inc/lcxl.orc"
-#include "inc/lc-common.orc"
+#include "inc/controls.orc"
 
-; upper row of knobs
-#define CTL_COMBOS_DIFF       #$KNOB_U1#
-#define CTL_COMBOS_DIFF2      #$KNOB_U2#
-#define CTL_COMBOS_DIFF3      #$KNOB_U3#
-#define CTL_COMBOS_SUM        #$KNOB_U4#
-#define CTL_COMBOS_SUM2       #$KNOB_U5#
-#define CTL_COMBOS_PROD       #$KNOB_U6#
+#define CTL_MAIN_LEVEL        #gk_ctl_1#
+#define CTL_GENERATED_LEVEL   #gk_ctl_2#
 
-; middle row of knobs
-#define CTL_MEANS_ARI         #$KNOB_M1#
-#define CTL_MEANS_GEO         #$KNOB_M2#
-#define CTL_MEANS_HAR         #$KNOB_M3#
-#define CTL_MEANS_PHI         #$KNOB_M4#
+#define CTL_COMBOS_LEVEL      #gk_ctl_3#
+#define CTL_COMBOS_DIFF1      #gk_ctl_4#
+#define CTL_COMBOS_DIFF2      #gk_ctl_5#
+#define CTL_COMBOS_DIFF3      #gk_ctl_6#
+#define CTL_COMBOS_SUM1       #gk_ctl_7#
+#define CTL_COMBOS_SUM2       #gk_ctl_8#
+#define CTL_COMBOS_PROD       #gk_ctl_9#
 
-; lower row of knobs
-#define CTL_MAIN_DETUNE       #$KNOB_L1#
+#define CTL_MEANS_LEVEL       #gk_ctl_10#
+#define CTL_MEANS_ARI         #gk_ctl_11#
+#define CTL_MEANS_GEO         #gk_ctl_12#
+#define CTL_MEANS_HAR         #gk_ctl_13#
+#define CTL_MEANS_PHI         #gk_ctl_14#
 
-; sliders
-#define CTL_MAIN_LEVEL        #$SLIDER_1#
-#define CTL_GENERATED_LEVEL   #$SLIDER_2#
-#define CTL_RINGMOD_LEVEL     #$SLIDER_3#
-#define CTL_COMBOS_LEVEL      #$SLIDER_4#
-#define CTL_MEANS_LEVEL       #$SLIDER_5#
-
-; upper row of buttons
-#define BUTT_GENERATED_SIN    #$BUTT_1U#
-#define BUTT_GENERATED_FIB    #$BUTT_2U#
-#define BUTT_GENERATED_PRI    #$BUTT_3U#
-#define BUTT_GENERATED_ASY    #$BUTT_4U#
-
-#define BUTT_REDUCE_UPPER     #$BUTT_5U#
-#define BUTT_REDUCE_LOWER     #$BUTT_6U#
-#define BUTT_REDUCE_FIXED     #$BUTT_7U#
-#define BUTT_REDUCE_NONE      #$BUTT_8U#
-
-; lower row of buttons
-#define BUTT_TUNE_CENTAUR     #$BUTT_1L#
-#define BUTT_TUNE_HEXANY      #$BUTT_2L#
-#define BUTT_TUNE_BOHLEN_A12  #$BUTT_3L#
-#define BUTT_TUNE_BOHLEN_HARM #$BUTT_4L#
-#define BUTT_TUNE_METASLENDRO #$BUTT_5L#
-#define BUTT_TUNE_WTP         #$BUTT_6L#
-#define BUTT_TUNE_7           #$BUTT_7L#
-#define BUTT_TUNE_8           #$BUTT_8L#
+#define CTL_DETUNE            #gk_ctl_15#
 
 ;;-----------------
 ;; waveform tables
@@ -133,39 +110,54 @@ gi_asymp = ftgen(4, 0, $TBLSIZ, 9, 1,1,0,
 ; 1-3-5-7 hexany (odd keys) alternating with the same series transposed up by some
 ; semitone-type interval (even keys) -- these sub-scales have the same fingering as 12ET
 ; wholetone scales
-giHex  ftgen 100, 0, 128, -51, \
-            12, 2, 240, 60, \
-            1, 16/15, 7/6, 56/45, 5/4, 4/3, 35/24, 14/9, 5/3, 16/9, 7/4, 28/15, 2
+giHex = ftgen(200, 0, 128, -51,
+              12, 2, 240, 60,
+              1, 16/15, 7/6, 56/45, 5/4, 4/3, 35/24, 14/9, 5/3, 16/9, 7/4, 28/15, 2)
             ; 1, 21/20, 7/6, 49/40, 5/4, 21/16, 35/24, 49/32, 5/3, 7/4, 7/4, 147/80, 2
             ; 1, 12/11, 7/6, 14/11, 5/4, 15/11, 35/24, 35/22, 5/3, 20/11, 7/4, 21/11, 2
 
 ; LMY WTP
-giWTP  ftgen 101, 0, 128, -51, \
-             12, 2, 297.989, 63, \
-             1, 567/512, 9/8, 147/128, 21/16, 1323/1024, 189/128, 3/2, 49/32, 7/4, 441/256, 63/32, 2
+giWTP = ftgen(201, 0, 128, -51,
+              12, 2, 297.989, 63,
+              1, 567/512, 9/8, 147/128, 21/16, 1323/1024, 189/128, 3/2, 49/32, 7/4, 441/256, 63/32, 2)
 
 ; Grady Centaur
-giCent ftgen 102, 0, 128, -51, \
-             12, 2, 240, 60, \
-             1.0, 21/20, 9/8, 7/6, 5/4, 4/3, 7/5, 3/2, 14/9, 5/3, 7/4, 15/8, 2.0
+giCent = ftgen(202, 0, 128, -51,
+               12, 2, 240, 60,
+               1.0, 21/20, 9/8, 7/6, 5/4, 4/3, 7/5, 3/2, 14/9, 5/3, 7/4, 15/8, 2.0)
 
 ; Meta Slendro C (derived by me, also by Warren Burt)
-giMeta ftgen 103, 0, 128, -51, \
-             12, 2, 240, 60, \
-             1.0, 65/64, 9/8, 37/32, 151/128, 5/4, 21/16, 43/32, 3/2, 49/32, 25/16, 7/4, 57/32, 2.0
+giMeta = ftgen(203, 0, 128, -51,
+               12, 2, 240, 60,
+               1.0, 65/64, 9/8, 37/32, 151/128, 5/4, 21/16, 43/32, 3/2, 49/32, 25/16, 7/4, 57/32, 2.0)
 
 ; bohlen_12.scl: 12-tone scale by Bohlen generated from the 4:7:10 triad, Acustica 39/2, 1978
-giA12 ftgen 104, 0, 128, -51, \
-            12, 3, 240, 60, \
-            1.0, 11/10, 6/5, 30/23, 10/7, 11/7, 7/4, 21/11, 21/10, 23/10, 5/2, 11/4, 3.0
+giA12 = ftgen(204, 0, 128, -51,
+              12, 3, 240, 60,
+              1.0, 11/10, 6/5, 30/23, 10/7, 11/7, 7/4, 21/11, 21/10, 23/10, 5/2, 11/4, 3.0)
 
 ; bohlen_h_ji.scl: Bohlen's harmonic scale, just version
 ; as used in Prism, Mirror, Lens
 ;  1/1 27/25 9/7 7/5 5/3 9/5 15/7 7/3 63/25 3/1
-giBph ftgen 105, 0, 128, -51, \
-            12, 3, 240, 60, \
-            1.0, 27/25, 9/7, 7/5, $N, 5/3, 9/5, 15/7, 7/3, $N, $N, 63/25, 3.0
+giBph = ftgen(205, 0, 128, -51,
+              12, 3, 240, 60,
+              1.0, 27/25, 9/7, 7/5, $N, 5/3, 9/5, 15/7, 7/3, $N, $N, 63/25, 3.0)
           ; c    c+     d    d+       f    f+   g     g+           b      c
+
+; Harrison Revelation
+giRev = ftgen(206, 0, 128, -51,
+              12, 3, 240, 60,
+              1.0, 63/64, 9/8, 567/512, 81/64, 21/16, 729/512, 3/2, 189/128, 27/16, 7/4, 243/128, 2.0)
+
+; associate tuning table numbers with OSC button indices
+gi_tuning_map[] = fillarray(giCent, -1,
+                            giHex,  -1,
+                            giA12,  -1,
+                            giBph,  -1,
+                            giMeta, -1,
+                            giWTP,  -1,
+                            giRev,  -1,
+                            -1,     -1)
 
 ;;---------------
 ;; other globals
@@ -174,13 +166,13 @@ giBph ftgen 105, 0, 128, -51, \
 ; active tuning, set on commandline using "--omacro:TUNING=N"
 ; defaults to Centaur
 #ifdef TUNING
-gi_tuning init $TUNING
+gk_tuning init $TUNING
 #else
-gi_tuning init giCent
+gk_tuning init giCent
 #endif
 
 ; this is where we'll copy the active GEN51 tuning table
-gi_pitchmap[] init 128
+gk_pitchmap[] init 128
 
 ; global audio output busses
 ga_main_out init 0
@@ -191,335 +183,415 @@ ga_ringmod_out init 0
 ; wave tables assignments for secondary/derived instruments
 gk_generated_wave init gi_sine
 
-gi_left_on init 0
+gk_left_on init 0
 
-gi_left_freq init 0
-gi_right_freq init 0
+gk_left_freq init 0
+gk_right_freq init 0
 
-gi_left_note init 0
-gi_right_note init 0
+gk_left_note init 0
+gk_right_note init 0
 
 ; for fixed reduction range
-#define KBD_LOW_C     #48#
-#define KBD_HIGH_C    #72#
+#define LOW_NOTE_LIMIT  #36#
+#define HIGH_NOTE_LIMIT #84#
 
 #define REDUCE_NONE   #0#
 #define REDUCE_FIXED  #1#
 #define REDUCE_LOWER  #2#
 #define REDUCE_UPPER  #3#
 
-gi_reduction init $REDUCE_NONE
+gk_reduction init $REDUCE_NONE
 
-; table ID for scanned synthesis
-#define SCAN_ID #4#
+; 1 == main voices same as generated voices
+gk_blend init 0
 
+; global envelope values
+#define RISE  #2#
+#define FALL  #0.2#
+
+gi_osc_handle = OSCinit(7777)
 
 ;;--------
 ;; UDOs
 ;;--------
 
 ; transpose a frequency value by octave if it falls outside the defined range
-opcode reduce, k, kii
-  ksig, imin, imax xin
+opcode reduce, k, ikk
+  isig, kmin, kmax xin
+
+  printks("<<<<<\nreduce: isig=%f kmin=%f kmax=%f\n", 0, isig, kmin, kmax)
 
   ; if either setting is 0, return frequence as-is
-  if (imin == 0 || imax == 0) then
-    kout = ksig
+  if (kmin == 0 || kmax == 0) then
+    kout = isig
   else
-    kout = abs(ksig)
+    kout = abs(isig)
+    printks("reduce: kout=%f\n", 0, kout)
     if (kout != 0) then
-      if (kout < imin) then
-        while kout < imin do
+      if (kout < kmin) then
+        printks("reduce: kout < kmin\n", 0)
+        while kout < kmin do
           kout *= 2
+          printks("reduce: kout=%f\n", 0, kout)
         od
-      elseif (kout > imax) then
-        while kout > imax do
+      elseif (kout > kmax) then
+        printks("reduce: kout > kmax\n", 0)
+        while kout > kmax do
           kout *= 0.5
+          printks("reduce: kout=%f\n", 0, kout)
         od
       endif
     endif
   endif
 
+  printks("reduce: final kout=%f\n>>>>>\n", 0, kout)
   xout kout
 endop
 
 ; given a note number, calculate the C-based octave range to which the note
 ; belongs
-opcode _calc_8ve_range, ii,i
-  inote xin
+opcode _calc_8ve_range, kk,k
+  knote xin
 
-  ipitchclass = pchmidinn(inote)
-  imin_note = inote - (frac(ipitchclass) * 100)
-  imax_note = imin_note + 12
+  kpitchclass = pchmidinn(knote)
+  kmin_note = knote - (frac(kpitchclass) * 100)
+  kmax_note = kmin_note + 12
 
-  xout imin_note, imax_note
+  xout kmin_note, kmax_note
 endop
 
 ; given two notes, determine the range into which
 ; any derived tones must be transposed, based on
 ; the reduction type
 opcode get_minmax, ii,ii
-  ileft_note,iright_note xin
+  ileft_note, iright_note xin
 
-  if (ileft_note > iright_note) then
+  prints("get_minmax (i): left=%d right=%d\n", ileft_note, iright_note)
+
+  if (ileft_note < iright_note) then
     ilower_note = ileft_note
     iupper_note = iright_note
   else
     ilower_note = iright_note
     iupper_note = ileft_note
   endif
+  prints("get_minmax (i): ilower_note=%d iupper_note=%d\n", ilower_note, iupper_note)
 
   imin_note = 0
   imax_note = 0
 
-  if (gi_reduction == $REDUCE_FIXED) then
+  ireduce = i(gk_reduction)
+  prints("get_minmax (i): REDUCTION=%d\n", ireduce)
+  if (ireduce == $REDUCE_FIXED) then
     ; use a fixed (preset) range
-    imin_note = $KBD_LOW_C
-    imax_note = $KBD_HIGH_C
-  elseif (gi_reduction == $REDUCE_LOWER) then
+    imin_note = $LOW_NOTE_LIMIT
+    imax_note = $HIGH_NOTE_LIMIT
+  elseif (ireduce == $REDUCE_LOWER) then
     ; use range defined by C-based octave that contains lower note
-    imin_note, imax_note _calc_8ve_range ilower_note
-  elseif (gi_reduction == $REDUCE_UPPER) then
+    ; kmin_note, kmax_note _calc_8ve_range klower_note
+    ipitchclass = pchmidinn(ilower_note)
+    imin_note = ilower_note - (frac(ipitchclass) * 100)
+    imax_note = imin_note + 12
+  elseif (ireduce == $REDUCE_UPPER) then
+    ipitchclass = pchmidinn(iupper_note)
+    imin_note = ilower_note - (frac(iupper_note) * 100)
+    imax_note = imin_note + 12
     ; use range defined by C-based octave that contains upper note
-    imin_note, imax_note _calc_8ve_range iupper_note
+    ; kmin_note, kmax_note _calc_8ve_range kupper_note
   endif
 
-  imin = imin_note > 0 ? gi_pitchmap[imin_note] : 0
-  imax = imax_note > 0 ? gi_pitchmap[imax_note] : 0
+  prints("get_minmax (i): lower=%d, upper=%d, type: %d -> min: %d, max: %d\n",
+          ilower_note, iupper_note, i(gk_reduction), imin_note, imax_note)
 
-  ;prints("Min/max: lower=%d, upper=%d, type: %d -> min: %f (%d), max: %f (%d)\n",
-  ;       ilower_note, ilower_note, gi_reduction, imin, imin_note, imax, imax_note)
-
-  xout imin, imax
+  xout imin_note, imax_note
 endop
 
-opcode combination_engine, a, kiiiii
-  ktab,iamp,ifreq1,ifreq2,imin,imax xin
+opcode combination_engine, a, kiiikk
+  ktab, iamp, ifreq1, ifreq2, kmin, kmax xin
 
-  iamp /= 6
+  iamp /= 5
 
   idiff  = ifreq2 - ifreq1              ; difference tone
   idiff2 = (2 * ifreq2) - ifreq1        ; 2nd order difference tone
   idiff3 = (3 * ifreq2) - (2 * ifreq1)  ; 3rd order difference tone
   isum   = ifreq1 + ifreq2              ; summation tone
   isum2  = (2 * ifreq1) + ifreq2        ; 2nd order summation tone
-  iprod = ifreq1 * ifreq2               ; product
+  iprod  = ifreq1 * ifreq2              ; product
 
-  adiff  = oscilikt(iamp, reduce(idiff, imin, imax),  ktab)
-  adiff2 = oscilikt(iamp, reduce(idiff2, imin, imax), ktab)
-  adiff3 = oscilikt(iamp, reduce(idiff3, imin, imax), ktab)
-  asum   = oscilikt(iamp, reduce(isum, imin, imax),   ktab)
-  asum2  = oscilikt(iamp, reduce(isum2, imin, imax),  ktab)
-  aprod  = oscilikt(iamp, reduce(iprod, imin, imax),  ktab)
+  kstarted init 0
+  if (kstarted == 0) then
+    kstarted = 1
+    kdiff  = reduce(idiff, kmin, kmax)
+    kdiff2 = reduce(idiff2, kmin, kmax)
+    kdiff3 = reduce(idiff3, kmin, kmax)
+    ksum   = reduce(isum, kmin, kmax)
+    ksum2  = reduce(isum2, kmin, kmax)
+    kprod  = reduce(iprod, kmin, kmax)
+  endif
 
-  aout = (adiff  * $CTL_COMBOS_DIFF)  +
+  adiff  = oscilikt(iamp, kdiff,  ktab)
+  adiff2 = oscilikt(iamp, kdiff2, ktab)
+  adiff3 = oscilikt(iamp, kdiff3, ktab)
+  asum   = oscilikt(iamp, ksum,   ktab)
+  asum2  = oscilikt(iamp, ksum2,  ktab)
+  aprod  = oscilikt(iamp, kprod,  ktab)
+
+  prints("combos: idiff=%f idiff2=%f idiff3=%f isum=%f isum2=%f iprod=%f\n",
+         idiff, idiff2, idiff3, isum, isum2, iprod)
+  printks("combos (reduced): kdiff=%f kdiff2=%f kdiff3=%f ksum=%f ksum2=%f kprod=%f\n",
+         1, kdiff, kdiff2, kdiff3, ksum, ksum2, kprod)
+
+  aout = (adiff  * $CTL_COMBOS_DIFF1) +
          (adiff2 * $CTL_COMBOS_DIFF2) +
          (adiff3 * $CTL_COMBOS_DIFF3) +
-         (asum   * $CTL_COMBOS_SUM)   +
+         (asum   * $CTL_COMBOS_SUM1)  +
          (asum2  * $CTL_COMBOS_SUM2)  +
          (aprod  * $CTL_COMBOS_PROD)
   xout aout
 endop
 
-opcode means_engine, a, kiiiii
-  ktab,iamp,ifreq1,ifreq2,imin,imax xin
+opcode means_engine, a, kiii
+  ktab, iamp, ifreq1, ifreq2 xin
 
   iamp /= 4
 
   iari = (ifreq1 + ifreq2) / 2                      ; arithmetic mean
   igeo = sqrt(ifreq1 * ifreq2)                      ; geometric mean
-  ihar = (2 * ifreq1 * ifreq2) / (ifreq1 + ifreq2)    ; harmonic mean
-  iphi = ifreq1 + ((ifreq2 - ifreq1) * 0.618)        ; golden mean
-  ; prints("Means: ifreq1=%f ifreq2=%f\niari=%f igeo=%f ihar=%f iphi=%f\n",
+  ihar = (2 * ifreq1 * ifreq2) / (ifreq1 + ifreq2)  ; harmonic mean
+  iphi = ifreq1 + ((ifreq2 - ifreq1) * 0.618)       ; golden mean
+
+  ; prints("Means: ifreq1=%f ifreq2=%f iari=%f igeo=%f ihar=%f iphi=%f\n",
   ;        ifreq1, ifreq2, iari, igeo, ihar, iphi)
 
-  aari = oscilikt(iamp, reduce(iari, imin, imax), ktab)
-  ageo = oscilikt(iamp, reduce(igeo, imin, imax), ktab)
-  ahar = oscilikt(iamp, reduce(ihar, imin, imax), ktab)
-  aphi = oscilikt(iamp, reduce(iphi, imin, imax), ktab)
+  aari = oscilikt(iamp, iari, ktab)
+  ageo = oscilikt(iamp, igeo, ktab)
+  ahar = oscilikt(iamp, ihar, ktab)
+  aphi = oscilikt(iamp, iphi, ktab)
 
-  aout = (aari * $CTL_MEANS_ARI) + \
-         (ageo * $CTL_MEANS_GEO) + \
-         (ahar * $CTL_MEANS_HAR) + \
+  aout = (aari * $CTL_MEANS_ARI) +
+         (ageo * $CTL_MEANS_GEO) +
+         (ahar * $CTL_MEANS_HAR) +
          (aphi * $CTL_MEANS_PHI)
   xout aout
 endop
 
-opcode start_if_off, 0, iiiiii
-  iinst,iamp,ifreq1,ifreq2,imin,imax xin
+; start a named instrument if not already started
+opcode start_if_off, 0, Sikkkk
+  Sinst, iamp, kfreq1, kfreq2, knote1, knote2 xin
 
-  kgoto DONE
-
-  icount = active(iinst)
-  prints("    start_if_off: iinst=%f, iamp=%f icount=%d\n", iinst, iamp, icount)
-  if (icount == 0) then
-    event_i("i", iinst, 0, -1, iamp, ifreq1, ifreq2, imin, imax)
+  iinst = nstrnum(Sinst)
+  kcount = active(Sinst)
+  if (kcount == 0) then
+    kstarted = 1
+    event("i", Sinst, 0, -1, iamp, kfreq1, kfreq2, knote1, knote2)
   endif
-
-  DONE:
 endop
 
-opcode stop_if_on, 0,i
-  iinst xin
+; stop a named instrument if it's running
+opcode stop_if_on, 0,S
+  Sinst xin
 
-  kgoto DONE
+  icount = active(Sinst)
+  inum = nstrnum(Sinst)
 
-  icount = active(iinst)
   ; ensure negative inst number so it will stop
-  if (iinst > 0) then
-    iinst = 0 - iinst
+  if (inum > 0) then
+    inum = 0 - inum
   endif
 
-  prints("    stop_if_on: iinst=%f, icount=%d\n", iinst, icount)
   if (icount > 0) then
-    event_i("i", iinst, 0, 1)
+    event_i("i", inum, 0, 1)
   endif
-
-  DONE:
 endop
 
-; set wave table to be used for generated tones (except ringmod)
+; set wave table to be used for generated tones
 opcode set_generated_waveform, 0,i
   itab xin
-
   gk_generated_wave = itab
-
-  if (itab == gi_sine) then
-    butt_led_on($BUTT_GENERATED_SIN, $LED_RED_FULL)
-    butt_led_off($BUTT_GENERATED_FIB)
-    butt_led_off($BUTT_GENERATED_PRI)
-    butt_led_off($BUTT_GENERATED_ASY)
-  elseif (itab == gi_fib) then
-    butt_led_off($BUTT_GENERATED_SIN)
-    butt_led_on($BUTT_GENERATED_FIB, $LED_RED_FULL)
-    butt_led_off($BUTT_GENERATED_PRI)
-    butt_led_off($BUTT_GENERATED_ASY)
-  elseif (itab == gi_prime) then
-    butt_led_off($BUTT_GENERATED_SIN)
-    butt_led_off($BUTT_GENERATED_FIB)
-    butt_led_on($BUTT_GENERATED_PRI, $LED_RED_FULL)
-    butt_led_off($BUTT_GENERATED_ASY)
-  elseif (itab == gi_asymp) then
-    butt_led_off($BUTT_GENERATED_SIN)
-    butt_led_off($BUTT_GENERATED_FIB)
-    butt_led_off($BUTT_GENERATED_PRI)
-    butt_led_on($BUTT_GENERATED_ASY, $LED_RED_FULL)
-  endif
 endop
 
 ; set how generated chords are reduced (or not)
 opcode set_reduction_type, 0,i
   itype xin
+  gk_reduction = itype
+endop
 
-  gi_reduction = itype
-  if (itype == $REDUCE_NONE) then
-    butt_led_on($BUTT_REDUCE_NONE, $LED_YELLOW_FULL)
-    butt_led_off($BUTT_REDUCE_FIXED)
-    butt_led_off($BUTT_REDUCE_LOWER)
-    butt_led_off($BUTT_REDUCE_UPPER)
-  elseif (itype == $REDUCE_FIXED) then
-    butt_led_off($BUTT_REDUCE_NONE)
-    butt_led_on($BUTT_REDUCE_FIXED, $LED_YELLOW_FULL)
-    butt_led_off($BUTT_REDUCE_LOWER)
-    butt_led_off($BUTT_REDUCE_UPPER)
-  elseif (itype == $REDUCE_LOWER) then
-    butt_led_off($BUTT_REDUCE_NONE)
-    butt_led_off($BUTT_REDUCE_FIXED)
-    butt_led_on($BUTT_REDUCE_LOWER, $LED_YELLOW_FULL)
-    butt_led_off($BUTT_REDUCE_UPPER)
-  elseif (itype == $REDUCE_UPPER) then
-    butt_led_off($BUTT_REDUCE_NONE)
-    butt_led_off($BUTT_REDUCE_FIXED)
-    butt_led_off($BUTT_REDUCE_LOWER)
-    butt_led_on($BUTT_REDUCE_UPPER, $LED_YELLOW_FULL)
+; set tuning table
+opcode set_tuning, 0,k
+  kscale xin
+  gk_tuning = kscale
+  copyf2array(gk_pitchmap, gk_tuning)
+endop
+
+; read an OSC control with a single value
+opcode _read_osc_control, k,SS
+  Spath, Stype xin
+  karg init 0
+  kout init -1
+
+  kk = OSClisten(gi_osc_handle, Spath, Stype, karg)
+  if (kk == 1) then
+    kout = karg
+  else
+    kout = -1
   endif
+
+  xout kout
 endop
 
-; copy tuning table to array for easy lookup by MIDI note number
-opcode set_tuning, 0,i
-  iscale xin
+opcode read_osc, 0,0
+  prints("Reading OSC...\n")
+  karg init 0
 
-  gi_tuning = iscale
-  prints("*** Tuning: %d ***\n", gi_tuning)
-  copyf2array(gi_pitchmap, gi_tuning)
+  kosc_count OSCcount
+  if (kosc_count == 0) kgoto end
+  printks("kosc_count=%d\n", 1, kosc_count)
 
-  if (iscale == giCent) then
-    butt_led_on($BUTT_TUNE_CENTAUR, $LED_GREEN_FULL)
-    butt_led_off($BUTT_TUNE_HEXANY)
-    butt_led_off($BUTT_TUNE_BOHLEN_A12)
-    butt_led_off($BUTT_TUNE_BOHLEN_HARM)
-    butt_led_off($BUTT_TUNE_METASLENDRO)
-    butt_led_off($BUTT_TUNE_WTP)
-    butt_led_off($BUTT_TUNE_7)
-    butt_led_off($BUTT_TUNE_8)
-  elseif (iscale == giHex) then
-    butt_led_off($BUTT_TUNE_CENTAUR)
-    butt_led_on($BUTT_TUNE_HEXANY, $LED_GREEN_FULL)
-    butt_led_off($BUTT_TUNE_BOHLEN_A12)
-    butt_led_off($BUTT_TUNE_BOHLEN_HARM)
-    butt_led_off($BUTT_TUNE_METASLENDRO)
-    butt_led_off($BUTT_TUNE_WTP)
-    butt_led_off($BUTT_TUNE_7)
-    butt_led_off($BUTT_TUNE_8)
-  elseif (iscale == giA12) then
-    butt_led_off($BUTT_TUNE_CENTAUR)
-    butt_led_off($BUTT_TUNE_HEXANY)
-    butt_led_on($BUTT_TUNE_BOHLEN_A12, $LED_GREEN_FULL)
-    butt_led_off($BUTT_TUNE_BOHLEN_HARM)
-    butt_led_off($BUTT_TUNE_METASLENDRO)
-    butt_led_off($BUTT_TUNE_WTP)
-    butt_led_off($BUTT_TUNE_7)
-    butt_led_off($BUTT_TUNE_8)
-  elseif (iscale == giBph) then
-    butt_led_off($BUTT_TUNE_CENTAUR)
-    butt_led_off($BUTT_TUNE_HEXANY)
-    butt_led_off($BUTT_TUNE_BOHLEN_A12)
-    butt_led_on($BUTT_TUNE_BOHLEN_HARM, $LED_GREEN_FULL)
-    butt_led_off($BUTT_TUNE_METASLENDRO)
-    butt_led_off($BUTT_TUNE_WTP)
-    butt_led_off($BUTT_TUNE_7)
-    butt_led_off($BUTT_TUNE_8)
-  elseif (iscale == giMeta) then
-    butt_led_off($BUTT_TUNE_CENTAUR)
-    butt_led_off($BUTT_TUNE_HEXANY)
-    butt_led_off($BUTT_TUNE_BOHLEN_A12)
-    butt_led_off($BUTT_TUNE_BOHLEN_HARM)
-    butt_led_on($BUTT_TUNE_METASLENDRO, $LED_GREEN_FULL)
-    butt_led_off($BUTT_TUNE_WTP)
-    butt_led_off($BUTT_TUNE_7)
-    butt_led_off($BUTT_TUNE_8)
-  elseif (iscale == giWTP) then
-    butt_led_off($BUTT_TUNE_CENTAUR)
-    butt_led_off($BUTT_TUNE_HEXANY)
-    butt_led_off($BUTT_TUNE_BOHLEN_A12)
-    butt_led_off($BUTT_TUNE_BOHLEN_HARM)
-    butt_led_off($BUTT_TUNE_METASLENDRO)
-    butt_led_on($BUTT_TUNE_WTP, $LED_GREEN_FULL)
-    butt_led_off($BUTT_TUNE_7)
-    butt_led_off($BUTT_TUNE_8)
+  next:
+
+  karg = _read_osc_control("/implication_organ/master/main", "f")
+  if (karg != -1) then
+    $CTL_MAIN_LEVEL = karg
+    kgoto next
   endif
+
+  karg = _read_osc_control("/implication_organ/master/generated", "f")
+  if (karg != -1) then
+    $CTL_GENERATED_LEVEL = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/combos/sub", "f")
+  if (karg != -1) then
+    $CTL_COMBOS_LEVEL = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/combos/diff1", "f")
+  if (karg != -1) then
+    $CTL_COMBOS_DIFF1 = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/combos/diff2", "f")
+  if (karg != -1) then
+    $CTL_COMBOS_DIFF2 = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/combos/diff3", "f")
+  if (karg != -1) then
+    $CTL_COMBOS_DIFF3 = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/combos/sum1", "f")
+  if (karg != -1) then
+    $CTL_COMBOS_SUM1 = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/combos/sum2", "f")
+  if (karg != -1) then
+    $CTL_COMBOS_SUM2 = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/combos/prod", "f")
+  if (karg != -1) then
+    $CTL_COMBOS_PROD = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/means/sub", "f")
+  if (karg != -1) then
+    $CTL_MEANS_LEVEL = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/means/ari", "f")
+  if (karg != -1) then
+    $CTL_MEANS_ARI = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/means/geo", "f")
+  if (karg != -1) then
+    $CTL_MEANS_GEO = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/means/har", "f")
+  if (karg != -1) then
+    $CTL_MEANS_HAR = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/means/phi", "f")
+  if (karg != -1) then
+    $CTL_MEANS_PHI = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/detune", "f")
+  if (karg != -1) then
+    $CTL_DETUNE = karg
+    kgoto next
+  endif
+
+  karg = _read_osc_control("/implication_organ/blend", "f")
+  if (karg != -1) then
+    gk_blend = karg
+    kgoto next
+  endif
+
+  kwaveform_data[] init 4
+  kwaveform_msg, kwaveform_data OSClisten gi_osc_handle, "/implication_organ/generated_waveform", "ffff"
+  if (kwaveform_msg == 1) then
+    k_, kwaveform maxarray kwaveform_data
+    kwaveform += 1
+    printks("new waveform: %d\n", 0, kwaveform)
+    gk_generated_wave = kwaveform
+    kgoto next
+  endif
+
+  kreduction_data[] init 4
+  kreduction_msg, kreduction_data OSClisten gi_osc_handle, "/implication_organ/reduction_type", "ffff"
+  if (kreduction_msg == 1) then
+    k_, kreduction maxarray kreduction_data
+    printks("new reduction: %d\n", 0, kreduction)
+    gk_reduction = kreduction
+    kgoto next
+  endif
+
+  kpreset_data[] init 30
+  kpreset_msg, kpreset_data OSClisten gi_osc_handle, "/implication_organ/preset", "ffffffffffffffffffffffffffffff"
+  if (kpreset_msg == 1) then
+    k_, kpreset maxarray kpreset_data
+    printks("new preset: %d\n", 0, kpreset)
+    event("i", "scanx_init", 0, 0, kpreset, $SCANX_ID)
+    kgoto next
+  endif
+
+  ktuning_data[] init 16
+  ktuning_msg, ktuning_data OSClisten gi_osc_handle, "/implication_organ/tuning", "ffffffffffffffff"
+  if (ktuning_msg == 1) then
+    k_, ktuning maxarray ktuning_data
+    ktuning = gi_tuning_map[ktuning]
+    if (ktuning != -1) then
+      printks("new tuning: %d\n", 0, ktuning)
+      set_tuning(ktuning)
+    else
+      printks("invalid tuning: %d\n", 0, ktuning)
+    endif
+    kgoto next
+  endif
+
+  end:
 endop
 
-opcode all_buttons_off, 0,0
-  butt_led_off($BUTT_1U)
-  butt_led_off($BUTT_2U)
-  butt_led_off($BUTT_3U)
-  butt_led_off($BUTT_4U)
-  butt_led_off($BUTT_5U)
-  butt_led_off($BUTT_6U)
-  butt_led_off($BUTT_7U)
-  butt_led_off($BUTT_8U)
-  butt_led_off($BUTT_1L)
-  butt_led_off($BUTT_2L)
-  butt_led_off($BUTT_3L)
-  butt_led_off($BUTT_4L)
-  butt_led_off($BUTT_5L)
-  butt_led_off($BUTT_6L)
-  butt_led_off($BUTT_7L)
-  butt_led_off($BUTT_8L)
-endop
 
-;;-------------
+;-------------
 ;; instruments
 ;;-------------
 
@@ -527,240 +599,183 @@ endop
 massign 1, "Starter"
 maxalloc "Starter", 2
 
-; ...and buttons/pads
-massign $BUTT_CHAN, "Buttons"
-
-; set stuff up and start polling MIDI controllers
+; set stuff up
 instr Init
   ; scanning synthesis initialization
-  ; values from Tarmo's presets
-  iinit = gip1
-  irate = (gip2 == 0) ? 0.01 : gip2 ; do not allow 0!
-  ifnvel = 60
-  ifnmass = gip3
-  ifnstif = 30
-  ifncentr = gip4
-  ifndamp = 50
-  kmass = 1
-  kstif = 0.1
-  kcentr = 0.1
-  kdamp = -0.001
-  ileft = 0.1
-  iright = 0.5
-  kpos = 0
-  kstrngth = 0
-  idisp = 0
-  itraj = gip5
-  ain = 0
+  event_i("i", "scanx_init", 0, 1, $SCANX_DEFAULT_PRESET, $SCANX_ID)
 
-  ; set up two identical instances with different IDs
-  ; they will be used as a detuned pair
-  scanu(iinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass,
-        kstif, kcentr, kdamp, ileft, iright, kpos, kstrngth, ain, idisp,
-        $SCAN_ID)
-  scanu(iinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass,
-        kstif, kcentr, kdamp, ileft, iright, kpos, kstrngth, ain, idisp,
-        $SCAN_ID+1)
-  scanu(iinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass,
-        kstif, kcentr, kdamp, ileft, iright, kpos, kstrngth, ain, idisp,
-        $SCAN_ID+2)
-
-  ; initialize button LEDs
-  all_buttons_off
   set_generated_waveform(gi_sine)
   set_reduction_type($REDUCE_NONE)
-  set_tuning(gi_tuning)
+  set_tuning(gk_tuning)
 
   turnoff
 endin
 
+; start polling MIDI/OSC controllers
 instr Listener
-  ; poll MIDI controllers
-  read_controls
-
-  ; printks("[ gi_left_on:%d gi_left_freq:%f gi_right_freq:%f ]\n", 2,
-  ;         gi_left_on, gi_left_freq, gi_right_freq)
+  ; poll OSC
+  read_osc
 endin
 
 ; process MIDI notes
 ; only two instances allowed
 instr Starter
-  ; get note number, map to pitch
-  inote_num = notnum()
-  ifreq = gi_pitchmap[inote_num]
-  if (ifreq == 0) then
-    prints("Skipping note 0 (%d)\n", inote_num)
-    goto DONE
-  endif
+  kstarted init 0
+  krel init 0
 
-  ; fractional instrument number embeds the note number
-  instnum  = 23 + (inote_num * 0.001)
+  if (kstarted == 1) kgoto test_release
+  kstarted = 1
 
+  ; get MIDI info
+  inote_num notnum
   iamp = ampmidi(0dbfs * 0.5)
 
+  ; fractional instrument number embeds the note number
+  iinstnum = 23 + (inote_num * 0.001)
+
+  kfreq = gk_pitchmap[inote_num]
+  ; if (kfreq == 0) then
+  ;   printks("Skipping note 0 (%d)\n", 0, inote_num)
+  ;   goto testrel
+  ; endif
+
   ; determine which "side" this is
-  ileft = gi_left_on == 0 ? 1 : 0
-  if (ileft == 1) then
-    gi_left_freq = ifreq
-    gi_left_note = inote_num
-    gi_left_on = 1
+  kleft = gk_left_on == 0 ? 1 : 0
+  if (kleft == 1) then
+    gk_left_freq = kfreq
+    gk_left_note = inote_num
+    gk_left_on = 1
   else
-    gi_right_freq = ifreq
-    gi_right_note = inote_num
+    gk_right_freq = kfreq
+    gk_right_note = inote_num
   endif
 
-  prints("Starting %d:%f (left:%d) %f Hz\n", inote_num, instnum, ileft, ifreq)
-  event_i("i", instnum, 0, -1, ifreq, iamp)
+  printks("Starter: gk_left_freq=%f (%d) gk_right_freq=%f (%d)\n",
+          0, gk_left_freq, gk_left_note, gk_right_freq, gk_right_note)
+  printks("Starting %d:%f (left:%d) %f Hz\n",0, inote_num, iinstnum, kleft, kfreq)
+  event("i", iinstnum, 0, -1, kfreq, iamp)
 
   ; if we have two frequencies to work with, build the derived tones/chords
-  if (gi_left_freq != 0 && gi_right_freq != 0) then
-    imin, imax get_minmax gi_left_note, gi_right_note
-    start_if_off(24, iamp, gi_left_freq, gi_right_freq, imin, imax)
-    start_if_off(25, iamp, gi_left_freq, gi_right_freq, imin, imax)
-    start_if_off(26, iamp, gi_left_freq, gi_right_freq, imin, imax)
+  printks("gk_left_freq=%f gk_right_freq=%f\n", 0, gk_left_freq, gk_right_freq)
+  printks("gk_left_note=%f gk_right_note=%f\n", 0, gk_left_note, gk_right_note)
+  if (gk_left_freq != 0 && gk_right_freq != 0) then
+    start_if_off("Deriver", iamp, gk_left_freq, gk_right_freq, gk_left_note, gk_right_note)
   endif
-  prints("\n");
 
+  test_release:
   krel = release()
   if (krel == 1) then
-    printks("Goodbye %d:%f\n", 1, inote_num, ifreq)
-    event("i", "Stopper", 0, 0.1, instnum, ileft)
+    printks("Goodbye %d:%f\n", 0, inote_num, kfreq)
+    event("i", "Stopper", 0, 0.1, iinstnum, kleft)
   endif
-
-  DONE:
 endin
 
 ; turn off a note and all derived tones
 instr Stopper
   instnum = p4
-  ileft = p5
+  kleft = p5
 
-  prints("Stopping %f (%d)\n", instnum, ileft)
+  prints("Stopping %f (%d)\n", instnum, kleft)
   turnoff2(instnum, 4, 1)
 
-  stop_if_on(24)
-  stop_if_on(25)
-  stop_if_on(26)
+  stop_if_on("Deriver")
+  ; stop_if_on(26)
 
-  if (ileft == 1) then
-    gi_left_freq = 0
-    gi_left_note = 0
-    gi_left_on = 0
+  if (kleft == 1) then
+    gk_left_freq = 0
+    gk_left_note = 0
+    gk_left_on = 0
   else
-    gi_right_freq = 0
-    gi_right_note = 0
+    gk_right_freq = 0
+    gk_right_note = 0
   endif
 
   turnoff
 endin
 
-; binaural scanned synth (main voice)
+; scanned synth (main voice)
 instr 23
   kcps = p4
-  iamp = (p5 * 0.7) / 3
+  kamp = p5
 
   aenv = linsegr(0,
-                 2, 1,
-                 1, 0)
+                 $RISE, 1,
+                 $FALL, 0)
 
-  ; determine amount of detuning based on percentage of frequency
-  kdiff = kcps * (scale($CTL_MAIN_DETUNE, 0.001, 0.0001) / 2)
+  if (gk_blend == 1) then
+    a1 = oscilikt(kamp * 0.5, kcps, gk_generated_wave)
+    aout = a1 * aenv
+  else
+    ; determine amount of detuning based on percentage of frequency
+    kdiff = kcps * (scale($CTL_DETUNE, 0.001, 0.0001) / 2)
+    a1 = scanx(kamp, kcps + kdiff, $SCANX_ID)
+    a2 = scanx(kamp, kcps - kdiff, $SCANX_ID+1)
+    aout = ntrpol(a1*0.6, a2*0.6, 0.5) * aenv
+  endif
 
-  a1 = scans(iamp, kcps + kdiff, gip5, $SCAN_ID)
-  a2 = scans(iamp, kcps - kdiff, gip5, $SCAN_ID+1)
-  a3 = scans(iamp, kcps,         gip5, $SCAN_ID+2)
-
-  aout = (a1 + a2 + a3) * aenv
   ga_main_out = ga_main_out + aout
 endin
 
-; Combination Engine driver
-instr 24
-  aenv = linsegr(0,
-                 2, 1,
-                 0.5, 0)
-  a1 = combination_engine(gk_generated_wave, p4, p5, p6, p7, p8)
-  aout = a1 * aenv * $CTL_COMBOS_LEVEL
-  ga_combos_out = ga_combos_out + aout
-endin
-
-; Pythagorean & Golden Means driver
-instr 25
-  aenv = linsegr(0,
-                 2, 1,
-                 0.5, 0)
-  a1 = means_engine(gk_generated_wave, p4, p5, p6, p7, p8)
-  aout = a1 * aenv * $CTL_MEANS_LEVEL
-  ga_means_out = ga_means_out + aout
-endin
-
-; RingMod driver
-instr 26
-  ileft_freq = p5
-  iright_freq = p6
-
-  if (ileft_freq < iright_freq) then
-    iin = ileft_freq
-    icarr = iright_freq
-  else
-    iin = iright_freq
-    icarr = ileft_freq
-  endif
-
+; derived tones: Combination Engine / Pythagorean & Golden Means
+instr +Deriver
   iamp = p4
+  ifreq1 = p5
+  ifreq2 = p6
+  inote1 = p7
+  inote2 = p8
+
+  prints("instr Deriver (i): ifreq1=%f ifreq2=%f inote1=%f inote2=%f\n",
+         ifreq1, ifreq2, inote1, inote2)
+
   aenv = linsegr(0,
-                 2, 1,
-                 0.5, 0)
+                 $RISE, 1,
+                 $FALL, 0)
 
-  ain = oscili(iamp, iin,  gi_sine)
-  acarr = oscili(iamp, icarr,  gi_sine)
-  a1 = ringmod(ain, acarr) * 1.5
+  imin_note, imax_note get_minmax inote1, inote2
 
-  aout = a1 * aenv * $CTL_RINGMOD_LEVEL
-  ga_ringmod_out = ga_ringmod_out + aout
+  kmin = imin_note > 0 ? gk_pitchmap[imin_note] : 0
+  kmax = imax_note > 0 ? gk_pitchmap[imax_note] : 0
+  printks("instr Deriver (k): imin_note=%d imax_note=%d kmin=%f kmax=%f\n",
+         2, imin_note,imax_note, kmin, kmax)
+
+  a1 = combination_engine(gk_generated_wave, iamp, ifreq1, ifreq2, kmin, kmax)
+  aout1 = a1 * aenv * $CTL_COMBOS_LEVEL
+  ga_combos_out = ga_combos_out + aout1
+
+  a2 = means_engine(gk_generated_wave, iamp, ifreq1, ifreq2)
+  aout2 = a2 * aenv * $CTL_MEANS_LEVEL
+  ga_means_out = ga_means_out + aout2
 endin
 
-; respond to buttons sending low-numbered notes
-; use to switch waveforms (tables)
-instr Buttons
-  ibutt = notnum()
-  prints("Buttons: %d\n", ibutt)
-
-  ; waveform for generated tones
-  if (ibutt == $BUTT_GENERATED_SIN) then
-    set_generated_waveform(gi_sine)
-  elseif (ibutt == $BUTT_GENERATED_FIB) then
-    set_generated_waveform(gi_fib)
-  elseif (ibutt == $BUTT_GENERATED_PRI) then
-    set_generated_waveform(gi_prime)
-  elseif (ibutt == $BUTT_GENERATED_ASY) then
-    set_generated_waveform(gi_asymp)
-  ; reduction type
-  elseif (ibutt == $BUTT_REDUCE_NONE) then
-    set_reduction_type($REDUCE_NONE)
-  elseif (ibutt == $BUTT_REDUCE_FIXED) then
-    set_reduction_type($REDUCE_FIXED)
-  elseif (ibutt == $BUTT_REDUCE_LOWER) then
-    set_reduction_type($REDUCE_LOWER)
-  elseif (ibutt == $BUTT_REDUCE_UPPER) then
-    set_reduction_type($REDUCE_UPPER)
-  ; tuning
-  elseif (ibutt == $BUTT_TUNE_CENTAUR) then
-    set_tuning(giCent)
-  elseif (ibutt == $BUTT_TUNE_HEXANY) then
-    set_tuning(giHex)
-  elseif (ibutt == $BUTT_TUNE_BOHLEN_A12) then
-    set_tuning(giA12)
-  elseif (ibutt == $BUTT_TUNE_BOHLEN_HARM) then
-    set_tuning(giBph)
-  elseif (ibutt == $BUTT_TUNE_METASLENDRO) then
-    set_tuning(giMeta)
-  elseif (ibutt == $BUTT_TUNE_WTP) then
-    set_tuning(giWTP)
-  else
-    prints("Button %d ignored\n", ibutt)
-  endif
-endin
+; ; RingMod driver
+; instr 26
+;   kleft_freq = p5
+;   iright_freq = p6
+;
+;   ; to avoid warnings
+;   idummy1 = p7
+;   idummy2 = p8
+;
+;   if (kleft_freq < iright_freq) then
+;     iin = kleft_freq
+;     icarr = iright_freq
+;   else
+;     iin = iright_freq
+;     icarr = kleft_freq
+;   endif
+;
+;   iamp = p4
+;   aenv = linsegr(0,
+;                  $RISE, 1,
+;                  $FALL, 0)
+;
+;   ain = oscili(iamp, iin,  gi_sine)
+;   acarr = oscili(iamp, icarr,  gi_sine)
+;   a1 = ringmod(ain, acarr) * 1.5
+;
+;   aout = a1 * aenv * $CTL_RINGMOD_LEVEL
+;   ga_ringmod_out = ga_ringmod_out + aout
+; endin
 
 ; audio output
 instr Output
@@ -780,12 +795,12 @@ endin
 </CsInstruments>
 <CsScore>
 
-; Tarmo's tables for scanned synthesis
-#include "inc/scanu_tables.sco"
-
 #define PLAY_FOR      #0#
 #define A_SHORT_TIME  #1#
 #define A_LONG_TIME   #[3600*24]#
+
+; Tarmo's tables for scanned synthesis
+#include "inc/scanu_tables.sco"
 
 i "Init"      $PLAY_FOR $A_SHORT_TIME
 i "Listener"  $PLAY_FOR $A_LONG_TIME
