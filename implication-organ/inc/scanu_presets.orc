@@ -1,4 +1,4 @@
-giPresets ftgen 0, 0, 256, -2, \
+gi_scanx_presets ftgen 0, 0, 256, -2, \
     18, 0.03, 22, 40, 71,  \ ; preset no 1 for instr preset_call, index 0 in table
     10, 0.02, 20, 40, 70, \
 	16, 0.01, 21, 40, 71, \
@@ -30,10 +30,75 @@ giPresets ftgen 0, 0, 256, -2, \
 	15, 0.128, 20, 41, 73, \
 	18, 0.122, 20, 42, 73 ; 30
 
-giScanId init 2
-giScanPreset init 11
-gip1 init tab_i(giScanPreset*5+0, giPresets)
-gip2 init tab_i(giScanPreset*5+1, giPresets)
-gip3 init tab_i(giScanPreset*5+2, giPresets)
-gip4 init tab_i(giScanPreset*5+3, giPresets)
-gip5 init tab_i(giScanPreset*5+4, giPresets)
+; gi_scanx_cur_preset init 11
+; gi_scanx_p1 init tab_i(gi_scanx_cur_preset*5+0, gi_scanx_presets)
+; gi_scanx_p2 init tab_i(gi_scanx_cur_preset*5+1, gi_scanx_presets)
+; gi_scanx_p3 init tab_i(gi_scanx_cur_preset*5+2, gi_scanx_presets)
+; gi_scanx_p4 init tab_i(gi_scanx_cur_preset*5+3, gi_scanx_presets)
+; gi_scanx_p5 init tab_i(gi_scanx_cur_preset*5+4, gi_scanx_presets)
+
+gi_scanx_cur_preset init 0
+gi_scanx_p1 init 0
+gi_scanx_p2 init 0
+gi_scanx_p3 init 0
+gi_scanx_p4 init 0
+gi_scanx_p5 init 0
+
+instr scanx_init
+    ipreset = p4
+    iscan_id = p5
+
+    prints("scanx_init: preset=%d, scan_id=%d, %f\n", ipreset, iscan_id, gi_scanx_presets)
+
+    gi_scanx_cur_preset = ipreset
+    iofs = gi_scanx_cur_preset*5
+    gi_scanx_p1 = tab_i(iofs+0, gi_scanx_presets)
+    gi_scanx_p2 = tab_i(iofs+1, gi_scanx_presets)
+    gi_scanx_p3 = tab_i(iofs+2, gi_scanx_presets)
+    gi_scanx_p4 = tab_i(iofs+3, gi_scanx_presets)
+    gi_scanx_p5 = tab_i(iofs+4, gi_scanx_presets)
+
+    ; prints("p1:%f p2:%f p3:%f p4:%f p5:%f\n",
+    ;        gi_scanx_p1, gi_scanx_p2, gi_scanx_p3, gi_scanx_p4, gi_scanx_p5)
+
+    iinit = gi_scanx_p1
+    irate = (gi_scanx_p2 == 0) ? 0.01 : gi_scanx_p2 ; do not allow 0!
+    ifnvel = 60
+    ifnmass = gi_scanx_p3
+    ifnstif = 30
+    ifncentr = gi_scanx_p4
+    ifndamp = 50
+    kmass = 1
+    kstif = 0.1
+    kcentr = 0.1
+    kdamp = -0.001
+    ileft = 0.1
+    iright = 0.5
+    kpos = 0
+    kstrngth = 0
+    idisp = 0
+    itraj = gi_scanx_p5
+    ain = 0
+
+    ; set up identical instances with different IDs
+    scanu(iinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass,
+          kstif, kcentr, kdamp, ileft, iright, kpos, kstrngth, ain, idisp,
+          iscan_id)
+    scanu(iinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass,
+          kstif, kcentr, kdamp, ileft, iright, kpos, kstrngth, ain, idisp,
+          iscan_id+1)
+    ; scanu(iinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass,
+    ;       kstif, kcentr, kdamp, ileft, iright, kpos, kstrngth, ain, idisp,
+    ;       iscan_id+2)
+    ; scanu(iinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass,
+    ;       kstif, kcentr, kdamp, ileft, iright, kpos, kstrngth, ain, idisp,
+    ;       iscan_id+3)
+
+    turnoff
+endin
+
+opcode scanx, a,kki
+    kamp, kcps, iscan_id xin
+    aout = scans(kamp, kcps, gi_scanx_p5, iscan_id)
+    xout aout
+endop
