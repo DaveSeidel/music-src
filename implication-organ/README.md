@@ -65,6 +65,7 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
 ## Changes between v1.0 and v2.0
 
 - replaced MIDI controller interface with OSC controller interface (I intend to eventually document the OSC interface)
+  - look in the lemur folder for the Lemur project and screenshots of the interface from my tablet
 - added blend switch to make the main voice blend with the generated voices by using the same oscillators
 - added preset selection for the main voices
 - added Revelation tuning
