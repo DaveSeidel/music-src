@@ -250,14 +250,14 @@ endop
 
 ; given a note number, calculate the C-based octave range to which the note
 ; belongs
-opcode _calc_8ve_range, kk,k
-  knote xin
+opcode _calc_8ve_range, ii,i
+  inote xin
 
-  kpitchclass = pchmidinn(knote)
-  kmin_note = knote - (frac(kpitchclass) * 100)
-  kmax_note = kmin_note + 12
+  ipitchclass = pchmidinn(inote)
+  imin_note = inote - (frac(ipitchclass) * 100)
+  imax_note = imin_note + 12
 
-  xout kmin_note, kmax_note
+  xout imin_note, imax_note
 endop
 
 ; given two notes, determine the range into which
@@ -266,7 +266,7 @@ endop
 opcode get_minmax, ii,ii
   ileft_note, iright_note xin
 
-  prints("get_minmax (i): left=%d right=%d\n", ileft_note, iright_note)
+  prints("get_minmax: left=%d right=%d\n", ileft_note, iright_note)
 
   if (ileft_note < iright_note) then
     ilower_note = ileft_note
@@ -275,32 +275,26 @@ opcode get_minmax, ii,ii
     ilower_note = iright_note
     iupper_note = ileft_note
   endif
-  prints("get_minmax (i): ilower_note=%d iupper_note=%d\n", ilower_note, iupper_note)
+  prints("get_minmax: ilower_note=%d iupper_note=%d\n", ilower_note, iupper_note)
 
   imin_note = 0
   imax_note = 0
 
   ireduce = i(gk_reduction)
-  prints("get_minmax (i): REDUCTION=%d\n", ireduce)
+  prints("get_minmax: REDUCTION=%d\n", ireduce)
   if (ireduce == $REDUCE_FIXED) then
     ; use a fixed (preset) range
     imin_note = $LOW_NOTE_LIMIT
     imax_note = $HIGH_NOTE_LIMIT
   elseif (ireduce == $REDUCE_LOWER) then
     ; use range defined by C-based octave that contains lower note
-    ; kmin_note, kmax_note _calc_8ve_range klower_note
-    ipitchclass = pchmidinn(ilower_note)
-    imin_note = ilower_note - (frac(ipitchclass) * 100)
-    imax_note = imin_note + 12
+    imin_note, imax_note _calc_8ve_range ilower_note
   elseif (ireduce == $REDUCE_UPPER) then
-    ipitchclass = pchmidinn(iupper_note)
-    imin_note = ilower_note - (frac(iupper_note) * 100)
-    imax_note = imin_note + 12
     ; use range defined by C-based octave that contains upper note
-    ; kmin_note, kmax_note _calc_8ve_range kupper_note
+    imin_note, imax_note _calc_8ve_range iupper_note
   endif
 
-  prints("get_minmax (i): lower=%d, upper=%d, type: %d -> min: %d, max: %d\n",
+  prints("get_minmax: lower=%d, upper=%d, type: %d -> min: %d, max: %d\n",
           ilower_note, iupper_note, i(gk_reduction), imin_note, imax_note)
 
   xout imin_note, imax_note
