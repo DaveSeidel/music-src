@@ -146,7 +146,7 @@ giBph = ftgen(205, 0, 128, -51,
 
 ; Harrison Revelation
 giRev = ftgen(206, 0, 128, -51,
-              12, 3, 240, 60,
+              12, 2, 240, 60,
               1.0, 63/64, 9/8, 567/512, 81/64, 21/16, 729/512, 3/2, 189/128, 27/16, 7/4, 243/128, 2.0)
 
 ; associate tuning table numbers with OSC button indices
@@ -216,36 +216,36 @@ gi_osc_handle = OSCinit(7777)
 ;;--------
 
 ; transpose a frequency value by octave if it falls outside the defined range
-opcode reduce, k, ikk
-  isig, kmin, kmax xin
+opcode reduce, i, iii
+  isig, imin, imax xin
 
-  printks("<<<<<\nreduce: isig=%f kmin=%f kmax=%f\n", 0, isig, kmin, kmax)
+  prints("<<<<<\nreduce: isig=%f imin=%f imax=%f\n", isig, imin, imax)
 
   ; if either setting is 0, return frequence as-is
-  if (kmin == 0 || kmax == 0) then
-    kout = isig
+  if (imin == 0 || imin == 0) then
+    iout = isig
   else
-    kout = abs(isig)
-    printks("reduce: kout=%f\n", 0, kout)
-    if (kout != 0) then
-      if (kout < kmin) then
-        printks("reduce: kout < kmin\n", 0)
-        while kout < kmin do
-          kout *= 2
-          printks("reduce: kout=%f\n", 0, kout)
+    iout = abs(isig)
+    prints("reduce: iout=%f\n", iout)
+    if (iout != 0) then
+      if (iout < imin) then
+        prints("reduce: iout < imin\n")
+        while iout < imin do
+          iout *= 2
+          prints("reduce: iout=%f\n", iout)
         od
-      elseif (kout > kmax) then
-        printks("reduce: kout > kmax\n", 0)
-        while kout > kmax do
-          kout *= 0.5
-          printks("reduce: kout=%f\n", 0, kout)
+      elseif (iout > imax) then
+        prints("reduce: iout > imax\n")
+        while iout > imax do
+          iout *= 0.5
+          prints("reduce: iout=%f\n", iout)
         od
       endif
     endif
   endif
 
-  printks("reduce: final kout=%f\n>>>>>\n", 0, kout)
-  xout kout
+  prints("reduce: final iout=%f\n>>>>>\n", iout)
+  xout iout
 endop
 
 ; given a note number, calculate the C-based octave range to which the note
@@ -300,8 +300,8 @@ opcode get_minmax, ii,ii
   xout imin_note, imax_note
 endop
 
-opcode combination_engine, a, kiiikk
-  ktab, iamp, ifreq1, ifreq2, kmin, kmax xin
+opcode combination_engine, a, kiiiii
+  ktab, iamp, ifreq1, ifreq2, imin, imax xin
 
   iamp /= 5
 
@@ -312,28 +312,25 @@ opcode combination_engine, a, kiiikk
   isum2  = (2 * ifreq1) + ifreq2        ; 2nd order summation tone
   iprod  = ifreq1 * ifreq2              ; product
 
-  kstarted init 0
-  if (kstarted == 0) then
-    kstarted = 1
-    kdiff  = reduce(idiff, kmin, kmax)
-    kdiff2 = reduce(idiff2, kmin, kmax)
-    kdiff3 = reduce(idiff3, kmin, kmax)
-    ksum   = reduce(isum, kmin, kmax)
-    ksum2  = reduce(isum2, kmin, kmax)
-    kprod  = reduce(iprod, kmin, kmax)
-  endif
-
-  adiff  = oscilikt(iamp, kdiff,  ktab)
-  adiff2 = oscilikt(iamp, kdiff2, ktab)
-  adiff3 = oscilikt(iamp, kdiff3, ktab)
-  asum   = oscilikt(iamp, ksum,   ktab)
-  asum2  = oscilikt(iamp, ksum2,  ktab)
-  aprod  = oscilikt(iamp, kprod,  ktab)
-
-  prints("combos: idiff=%f idiff2=%f idiff3=%f isum=%f isum2=%f iprod=%f\n",
+  prints("combos          : idiff=%f idiff2=%f idiff3=%f isum=%f isum2=%f iprod=%f\n",
          idiff, idiff2, idiff3, isum, isum2, iprod)
-  printks("combos (reduced): kdiff=%f kdiff2=%f kdiff3=%f ksum=%f ksum2=%f kprod=%f\n",
-         1, kdiff, kdiff2, kdiff3, ksum, ksum2, kprod)
+
+  idiff  = reduce(idiff,  imin, imax)
+  idiff2 = reduce(idiff2, imin, imax)
+  idiff3 = reduce(idiff3, imin, imax)
+  isum   = reduce(isum,   imin, imax)
+  isum2  = reduce(isum2,  imin, imax)
+  iprod  = reduce(iprod,  imin, imax)
+
+  prints("combos (reduced): idiff=%f idiff2=%f idiff3=%f isum=%f isum2=%f iprod=%f\n",
+         idiff, idiff2, idiff3, isum, isum2, iprod)
+
+  adiff  = oscilikt(iamp, idiff,  ktab)
+  adiff2 = oscilikt(iamp, idiff2, ktab)
+  adiff3 = oscilikt(iamp, idiff3, ktab)
+  asum   = oscilikt(iamp, isum,   ktab)
+  asum2  = oscilikt(iamp, isum2,  ktab)
+  aprod  = oscilikt(iamp, iprod,  ktab)
 
   aout = (adiff  * $CTL_COMBOS_DIFF1) +
          (adiff2 * $CTL_COMBOS_DIFF2) +
@@ -718,7 +715,7 @@ instr +Deriver
   inote1 = p7
   inote2 = p8
 
-  prints("instr Deriver (i): ifreq1=%f ifreq2=%f inote1=%f inote2=%f\n",
+  prints("Deriver: ifreq1=%f ifreq2=%f inote1=%f inote2=%f\n",
          ifreq1, ifreq2, inote1, inote2)
 
   aenv = linsegr(0,
@@ -727,12 +724,13 @@ instr +Deriver
 
   imin_note, imax_note get_minmax inote1, inote2
 
-  kmin = imin_note > 0 ? gk_pitchmap[imin_note] : 0
-  kmax = imax_note > 0 ? gk_pitchmap[imax_note] : 0
-  printks("instr Deriver (k): imin_note=%d imax_note=%d kmin=%f kmax=%f\n",
-         2, imin_note,imax_note, kmin, kmax)
+  imin = imin_note > 0 ? i(gk_pitchmap[imin_note]) : 0
+  imax = imax_note > 0 ? i(gk_pitchmap[imax_note]) : 0
 
-  a1 = combination_engine(gk_generated_wave, iamp, ifreq1, ifreq2, kmin, kmax)
+  prints("Deriver: imin_note=%d imax_note=%d imin=%f imax=%f\n",
+         imin_note,imax_note, imin, imax)
+
+  a1 = combination_engine(gk_generated_wave, iamp, ifreq1, ifreq2, imin, imax)
   aout1 = a1 * aenv * $CTL_COMBOS_LEVEL
   ga_combos_out = ga_combos_out + aout1
 
@@ -740,36 +738,6 @@ instr +Deriver
   aout2 = a2 * aenv * $CTL_MEANS_LEVEL
   ga_means_out = ga_means_out + aout2
 endin
-
-; ; RingMod driver
-; instr 26
-;   kleft_freq = p5
-;   iright_freq = p6
-;
-;   ; to avoid warnings
-;   idummy1 = p7
-;   idummy2 = p8
-;
-;   if (kleft_freq < iright_freq) then
-;     iin = kleft_freq
-;     icarr = iright_freq
-;   else
-;     iin = iright_freq
-;     icarr = kleft_freq
-;   endif
-;
-;   iamp = p4
-;   aenv = linsegr(0,
-;                  $RISE, 1,
-;                  $FALL, 0)
-;
-;   ain = oscili(iamp, iin,  gi_sine)
-;   acarr = oscili(iamp, icarr,  gi_sine)
-;   a1 = ringmod(ain, acarr) * 1.5
-;
-;   aout = a1 * aenv * $CTL_RINGMOD_LEVEL
-;   ga_ringmod_out = ga_ringmod_out + aout
-; endin
 
 ; audio output
 instr Output
