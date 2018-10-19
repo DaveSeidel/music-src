@@ -172,7 +172,7 @@ gk_tuning init giCent
 #endif
 
 ; this is where we'll copy the active GEN51 tuning table
-gk_pitchmap[] init 128
+; gk_pitchmap[] init 128
 
 ; global audio output busses
 ga_main_out init 0
@@ -411,7 +411,7 @@ endop
 opcode set_tuning, 0,k
   kscale xin
   gk_tuning = kscale
-  copyf2array(gk_pitchmap, gk_tuning)
+  ; copyf2array(gk_pitchmap, gk_tuning)
 endop
 
 ; read an OSC control with a single value
@@ -571,7 +571,8 @@ opcode read_osc, 0,0
     ktuning = gi_tuning_map[ktuning]
     if (ktuning != -1) then
       printks("new tuning: %d\n", 0, ktuning)
-      set_tuning(ktuning)
+      ; set_tuning(ktuning)
+      gk_tuning = ktuning
     else
       printks("invalid tuning: %d\n", 0, ktuning)
     endif
@@ -624,7 +625,8 @@ instr Starter
   ; fractional instrument number embeds the note number
   iinstnum = 23 + (inote_num * 0.001)
 
-  kfreq = gk_pitchmap[inote_num]
+  ; kfreq = gk_pitchmap[inote_num]
+  kfreq = tab(k(inote_num), i(gk_tuning))
   ; if (kfreq == 0) then
   ;   printks("Skipping note 0 (%d)\n", 0, inote_num)
   ;   goto testrel
@@ -724,8 +726,10 @@ instr +Deriver
 
   imin_note, imax_note get_minmax inote1, inote2
 
-  imin = imin_note > 0 ? i(gk_pitchmap[imin_note]) : 0
-  imax = imax_note > 0 ? i(gk_pitchmap[imax_note]) : 0
+  ; imin = imin_note > 0 ? i(gk_pitchmap[imin_note]) : 0
+  ; imax = imax_note > 0 ? i(gk_pitchmap[imax_note]) : 0
+  imin = imin_note > 0 ? tab_i(imin_note, i(gk_tuning)) : 0
+  imax = imax_note > 0 ? tab_i(imax_note, i(gk_tuning)) : 0
 
   prints("Deriver: imin_note=%d imax_note=%d imin=%f imax=%f\n",
          imin_note,imax_note, imin, imax)
