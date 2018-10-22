@@ -165,14 +165,10 @@ gi_tuning_map[] = fillarray(giCent, -1,
 
 ; active tuning, set on commandline using "--omacro:TUNING=N"
 ; defaults to Centaur
-#ifdef TUNING
-gk_tuning init $TUNING
-#else
-gk_tuning init giCent
+#ifndef TUNING
+#define TUNING #giCent#
 #endif
-
-; this is where we'll copy the active GEN51 tuning table
-; gk_pitchmap[] init 128
+gk_tuning init $TUNING
 
 ; global audio output busses
 ga_main_out init 0
@@ -411,7 +407,6 @@ endop
 opcode set_tuning, 0,k
   kscale xin
   gk_tuning = kscale
-  ; copyf2array(gk_pitchmap, gk_tuning)
 endop
 
 ; read an OSC control with a single value
@@ -571,8 +566,7 @@ opcode read_osc, 0,0
     ktuning = gi_tuning_map[ktuning]
     if (ktuning != -1) then
       printks("new tuning: %d\n", 0, ktuning)
-      ; set_tuning(ktuning)
-      gk_tuning = ktuning
+      set_tuning(ktuning)
     else
       printks("invalid tuning: %d\n", 0, ktuning)
     endif
@@ -598,14 +592,13 @@ instr Init
 
   set_generated_waveform(gi_sine)
   set_reduction_type($REDUCE_NONE)
-  set_tuning(gk_tuning)
+  set_tuning($TUNING)
 
   turnoff
 endin
 
-; start polling MIDI/OSC controllers
+; start polling OSC controls
 instr Listener
-  ; poll OSC
   read_osc
 endin
 
@@ -626,7 +619,7 @@ instr Starter
   iinstnum = 23 + (inote_num * 0.001)
 
   ; kfreq = gk_pitchmap[inote_num]
-  kfreq = tab(k(inote_num), i(gk_tuning))
+  kfreq = tab_i(inote_num, i(gk_tuning))
   ; if (kfreq == 0) then
   ;   printks("Skipping note 0 (%d)\n", 0, inote_num)
   ;   goto testrel
