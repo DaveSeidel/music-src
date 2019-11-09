@@ -1,10 +1,10 @@
 # Implication Organ
 
-This is a realtime microtonal Csound instrument with MIDI keyboard and OSC controller input. I designed it to my specific requirements as a composer based on several specific constraints. It is not intended to be a general-purpose instrument.
+This is a realtime microtonal Csound instrument with MIDI note input and OSC controller input. I designed it to my specific requirements as a composer based on several specific constraints. It is not intended to be a general-purpose instrument.
 
 The Implication Organ (or IO) is duophonic, in that the performer can play no more than two notes at a time. "Implication" refers to the instrument's generation of chords built from pitches that are mathematically derived, or implied, from the two pitches currently being played. See below under "Features" for more on how this works.
 
-For an example of v1.0 of the IO in use, see https://www.youtube.com/watch?v=hmFTd8E61Ts. In practice, this app is the kernel of a larger system that includes a bunch of hardware that processes the Csound output using a matrix mixer and a number of other effects devices, including loopers.
+In practice, I've been using this app in two ways: as part of a keyboard-driven system that processes output using a number effects devices, including loopers; and in conjunction with a Eurorack modular system that generates its own sound, but also generates MIDI to drive the IO.
 
 ## Philosophy
 
@@ -13,15 +13,15 @@ I designed the IO as a vehicle for exploring intervals in rational tunings, and 
 ## Requirements
 
 - Csound 6.12 beta or later (for the updated OSClisten opcode and the new OSCcount opcode)
-- MIDI keyboard; I use a QuNexus, but any generic MIDI keyboard should do
-- OSC controller; I am using Lemur with the UI running on a Google Nexus C tablet (Lemur project is included)
+- MIDI keyboard or other device that produces MIDI note messages; the IO expects to receive up to two simultaneous notes on different channels (specifically channels 1 and 2), so if it's a keyboard, it needs to support channel rotation (e.g., the QuNexus, which is what I use)
+- OSC controller; I am using Lemur with the UI running on an tablet (Lemur project is included)
 
 The IO was designed for a Raspberry Pi 3 with a Pisound sound card, but could easily be run on more powerful systems. The code makes no use of features specific to either the Raspberry Pi or the Pisound, but has been optimized to work well in that environment.
 
 Likewise, although I wrote this on Linux-based systems, and provide Linux-specific scripts for running it, nothing in the code should prevent it from running on a MacOS or Windows platform.
 
 ## Features
-- Two main voices, each built from three instances of the Csound `scanu`/`scans` opcodes (scanned synthesis). The three sound sources for each voice consist of one exact pitch and two detuned pitches, one slightly sharp and one slightly flat. The main pitches are played on the MIDI keyboard; these are the only notes played by the performer.
+- Two main voices, each built from three instances of the Csound `scanu`/`scans` opcodes (scanned synthesis). The three sound sources for each voice consist of one exact pitch and two detuned pitches, one slightly sharp and one slightly flat. The main pitches are activated by MIDI note messages.
 - Eleven generated voices derived from the currently-playing pair of main pitches, as follows:
   - Combination tones:
     - first, second, and third-order difference tones
@@ -32,7 +32,6 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
     - geometric mean
     - harmonic mean
     - golden mean
-    - ring modulator (where one of the main pitches is used as the input, and the other is used as the carrier)
   - Generated voices (except the ring modulator) are expressed using one of three different waveforms:
     - sine wave
     - composite waveform based on harmonics in the Fibonacci series
@@ -58,9 +57,15 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
   - blend switch (if on, main voice uses same oscillators as generated tone)
   - tuning selection
   - preset selection for main voice
-- Outputs:
+- Audio output (dual mono):
     - Main voices on channel 1
     - Generated voices on channel 2
+
+## Changes between v2.0 and v3.0
+
+- rewrote the MIDI handling to require channel 1 for the first note in the dyad and channel 2 for the second note; did this to allow use of Eurorack MIDI modules such as Doepfer A-192-2; still works with a keyboard but now requires one with channel rotation such as the QuNexus
+- new options (settable on the commandline as macros) to set the base frequency of the tuning tables and to set a multiplier to be applied to the frequencies of the derived tones
+- addition of a crude system for global presets so that the app can run without requiring OSC input (though the interface can still be used to modify parameters in the running system)
 
 ## Changes between v1.0 and v2.0
 
@@ -77,6 +82,7 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
 
 - v1.0, July 2018: initial release using Launch Control XL MIDI controller
 - v2.0, August 2018: substantial rewrite to replace MIDI controller interface with OSC interface (but still with MIDI keyboard)
+- v3.0, November 2019: rewrite of MIDI input handling, now using channels 1 and 2 to distinguish the two main pitches
 
 ## TODO
 
@@ -101,4 +107,4 @@ The IO incorporates work from several people. Thanks to:
 
 ### Licensing
 
-Copyright (c) Dave Seidel, 2018, some rights reserved. The contents of this repository are available under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported license (http://creativecommons.org/licenses/by-nc-sa/3.0/). You are welcome to fork this project as long as you abide by the licensing terms.
+Copyright (c) Dave Seidel, 2018-2019, some rights reserved. The contents of this repository are available under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported license (http://creativecommons.org/licenses/by-nc-sa/3.0/). You are welcome to fork this project as long as you abide by the licensing terms.
