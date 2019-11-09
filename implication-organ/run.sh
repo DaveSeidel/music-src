@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# -Q must use be a Launch Control XL
-# -o will be the Pisound -- change to "-odac" for the generic case
-# csound -Q$(../scripts/get-midi-out) -o $(../scripts/get-dac) implication-organ.csd
-csound -o $(./get-dac) implication-organ.csd
+_flags=
+if [ -n "$*" ]; then
+  _flags=$*
+fi
+
+csound $_flags -+rtaudio=alsa -odac -+rtmidi=portmidi --omacro:BASE_FREQ=261.626 --omacro:GLOBAL_PRESET=2 --omacro:FREQ_MULT=2 implication-organ.csd
