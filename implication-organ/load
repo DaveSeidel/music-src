@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-if [ -z "$1" ]; then
-  echo "usage: load TUNING_NUM"
-  exit 1
-fi
-tuning_num=$1
-
-csound -Q$(../scripts/get-midi-out) -o $(../scripts/get-dac) --omacro:TUNING=$tuning_num implication-organ.csd
