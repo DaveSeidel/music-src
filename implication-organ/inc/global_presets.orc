@@ -18,6 +18,8 @@
     $CTL_MEANS_GEO = 0
     $CTL_MEANS_HAR = 0
     $CTL_MEANS_PHI = 0
+    $CTL_LPF_CUTOFF = $CALC_FILTER_CUTOFF(0.98)
+    $CTL_LPF_Q = 0.8
 #
 
 #define GLOBAL_PRESET_INVOLUTION #
@@ -25,7 +27,7 @@
     set_generated_waveform(gi_sine)
     set_reduction_type($REDUCE_FIXED)
     set_tuning(giMeta)
-    $CTL_DETUNE = 0.0
+    $CTL_DETUNE = 0.33
     $CTL_MAIN_LEVEL = 1
     $CTL_GENERATED_LEVEL = 1
     $CTL_COMBOS_LEVEL = 1
@@ -40,4 +42,6 @@
     $CTL_MEANS_GEO = 0
     $CTL_MEANS_HAR = 0
     $CTL_MEANS_PHI = 0
+    $CTL_LPF_CUTOFF = $CALC_FILTER_CUTOFF(0.92)
+    $CTL_LPF_Q = 0.46
 #
