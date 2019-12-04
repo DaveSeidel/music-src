@@ -16,7 +16,7 @@
 <CsInstruments>
 
 sr = 48000
-ksmps = 10
+ksmps = 20
 nchnls = 2
 0dbfs = 1
 
@@ -32,8 +32,6 @@ nchnls = 2
 #define FILTER_MIN_CUTOFF       #20#
 #define FILTER_MAX_CUTOFF       #sr/4#
 #define CALC_FILTER_CUTOFF(VAL) #scale($VAL, 20, $FILTER_MAX_CUTOFF)#
-
-#include "inc/global_presets.orc"
 
 
 ;;-----------------------
@@ -161,15 +159,14 @@ giRev = ftgen(206, 0, 128, -51,
               12, 2, $BASE_FREQ, 60,
               1.0, 63/64, 9/8, 567/512, 81/64, 21/16, 729/512, 3/2, 189/128, 27/16, 7/4, 243/128, 2.0)
 
-; associate tuning table numbers with OSC button indices
-gi_tuning_map[] = fillarray(giCent, -1,
-                            giHex,  -1,
-                            giA12,  -1,
-                            giBph,  -1,
-                            giMeta, -1,
-                            giWTP,  -1,
-                            giRev,  -1,
-                            -1,     -1)
+; associate tuning table numbers with 0-based indices
+gi_tuning_map[] = fillarray(giCent,
+                            giHex,
+                            giA12,
+                            giBph,
+                            giMeta,
+                            giWTP,
+                            giRev)
 
 ;;---------------
 ;; other globals
@@ -195,10 +192,10 @@ gk_generated_wave init gi_sine
 #define LOW_NOTE_LIMIT  #36#
 #define HIGH_NOTE_LIMIT #84#
 
-#define REDUCE_NONE   #0#
-#define REDUCE_FIXED  #1#
-#define REDUCE_LOWER  #2#
-#define REDUCE_UPPER  #3#
+#define REDUCE_NONE   #1#
+#define REDUCE_FIXED  #2#
+#define REDUCE_LOWER  #3#
+#define REDUCE_UPPER  #4#
 
 gk_reduction init $REDUCE_NONE
 
@@ -206,7 +203,7 @@ gk_reduction init $REDUCE_NONE
 gk_blend init 0
 
 ; global envelope values
-#define RISE  #1#
+#define RISE  #3#
 #define FALL  #2#
 
 gi_osc_handle = OSCinit(7777)
@@ -228,6 +225,8 @@ gk_freq_mult init 1
 #define BINAURAL #0#
 #endif
 gi_binaural init $BINAURAL
+
+gk_tuning_mode init 0
 
 
 ;;--------
@@ -540,45 +539,43 @@ opcode read_osc, 0,0
     kgoto NEXT
   endif
 
-  kwaveform_data[] init 4
-  kwaveform_msg, kwaveform_data OSClisten gi_osc_handle, "/implication_organ/generated_waveform", "ffff"
-  if (kwaveform_msg == 1) then
-    k_, kwaveform maxarray kwaveform_data
-    kwaveform += 1
-    printks("new waveform: %d\n", 0, kwaveform)
-    gk_generated_wave = kwaveform
+  karg = _read_osc_control("/implication_organ/generated_waveform", "f")
+  if (karg != -1) then
+    printks("new waveform: %d\n", 0, karg)
+    gk_generated_wave = karg
     kgoto NEXT
   endif
 
-  kreduction_data[] init 4
-  kreduction_msg, kreduction_data OSClisten gi_osc_handle, "/implication_organ/reduction_type", "ffff"
-  if (kreduction_msg == 1) then
-    k_, kreduction maxarray kreduction_data
-    printks("new reduction: %d\n", 0, kreduction)
-    gk_reduction = kreduction
+  karg = _read_osc_control("/implication_organ/reduction_type", "f")
+  if (karg != -1) then
+    printks("new reduction: %d\n", 0, karg)
+    gk_reduction = karg
     kgoto NEXT
   endif
 
-  kpreset_data[] init 30
-  kpreset_msg, kpreset_data OSClisten gi_osc_handle, "/implication_organ/preset", "ffffffffffffffffffffffffffffff"
-  if (kpreset_msg == 1) then
-    k_, kpreset maxarray kpreset_data
-    printks("new preset: %d\n", 0, kpreset)
-    event("i", "scanx_init", 0, 0, kpreset, $SCANX_ID)
+  karg = _read_osc_control("/implication_organ/preset", "f")
+  if (karg != -1) then
+    printks("new preset: %d\n", 0, karg)
+    ; 0-based
+    event("i", "scanx_init", 0, 0, karg-1, $SCANX_ID)
     kgoto NEXT
   endif
 
-  ktuning_data[] init 16
-  ktuning_msg, ktuning_data OSClisten gi_osc_handle, "/implication_organ/tuning", "ffffffffffffffff"
-  if (ktuning_msg == 1) then
-    k_, ktuning maxarray ktuning_data
-    ktuning = gi_tuning_map[ktuning]
+  karg = _read_osc_control("/implication_organ/tuning", "f")
+  if (karg != -1) then
+    ; 0-based
+    ktuning = gi_tuning_map[karg-1]
     if (ktuning != -1) then
       printks("new tuning: %d\n", 0, ktuning)
       set_tuning(ktuning)
     else
       printks("invalid tuning: %d\n", 0, ktuning)
     endif
+  endif
+
+  karg = _read_osc_control("/implication_organ/tuning_mode", "f")
+  if (karg != -1) then
+    gk_tuning_mode = karg
     kgoto NEXT
   endif
 
@@ -609,6 +606,8 @@ endop
 ;-------------
 ;; instruments
 ;;-------------
+
+#include "inc/global_presets.orc"
 
 ; MIDI setup: all channels, no instrument bindings
 massign 0, 0
@@ -667,7 +666,7 @@ endin
 
 #define START_DERIVED_VOICES #
   if (kfreqs[0] != 0 && kfreqs[1] != 0) then
-    event("i", ideriver, 0, -1, kamp * 0.75, kfreqs[0], kfreqs[1], knotes[0], knotes[1], gk_tuning, gk_freq_mult, gk_reduction, gk_generated_wave)
+    event("i", ideriver, 0, -1, kamp*0.75, kfreqs[0], kfreqs[1], knotes[0], knotes[1], gk_tuning, gk_freq_mult, gk_reduction, gk_generated_wave)
   endif
 #
 
@@ -731,12 +730,16 @@ instr MIDIHandler
   kinstnum = ivoice + (kchan * 0.1) + (knote * 0.0001)
 
   ; convert note number to frequency based on the current tuning
-  ; kfreq = tab(knote, i(gk_tuning))
-  kfreq = tablekt(knote, gk_tuning)
+  if (gk_tuning_mode == 1) then
+    ; when using as a tuning reference for other instruments (e.g., modular)
+    kfreq = 0
+  else
+    kfreq = tablekt(knote, gk_tuning)
+  endif
 
   kfirst = (kchan == 1) ? 1 : 0
   kchanidx = kchan - 1
-  kamp = ampdb(-8)
+  kamp = ampdb(-6)
 
   ; 0 velocity indicates Note Off, regardless of what kstatus says
   if kveloc == 0 kgoto RELEASE
@@ -771,7 +774,7 @@ instr +Voice
   kwave = p6
   kblend = p7
 
-  xtratim 3
+  xtratim 2
   aenv = linsegr(0,
                  $RISE, 1,
                  $FALL, 0)
@@ -814,8 +817,8 @@ instr +Deriver
   prints("Deriver: 1:(%d, %f) 2:(%d, %f) tuning:%d mult:%f tied:%s\n",
          inote1, ifreq1, inote2, ifreq2, ituning, ifreq_mult, iskip == 1 ? "YES" : "NO")
 
+  xtratim 2
   tigoto SKIP_INIT
-  xtratim 3
   aenv = linsegr(0,
                  $RISE, 1,
                  1, 0)
