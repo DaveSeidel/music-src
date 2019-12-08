@@ -1,3 +1,13 @@
+#ifndef OSC_SEND_HOST
+#define OSC_SEND_HOST   #127.0.0.1#
+#endif
+
+#ifndef OSC_SEND_PORT
+#define OSC_SEND_PORT   #8080#
+#endif
+
+#define NUM_ENDPOINTS   #22#
+
 opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
     i_main, i_gen, i_cutoff, i_q, i_c_sub, i_c_diff1, i_c_diff2, i_c_diff3, i_c_sum1, i_c_sum2, i_c_prod, i_m_sub, i_m_ari, i_m_geo, i_m_har, i_m_phi, i_detune, i_blend, i_wave, i_reduce, i_preset, i_tuning xin
 
@@ -27,36 +37,35 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
     set_generated_waveform(i_wave)
     set_reduction_type(i_reduce)
     gi_scanx_preset = i_preset-1
-    set_tuning(i_tuning)
+    set_tuning(gi_tuning_map[i_tuning-1])
 
     ; send to GUI
-    Sdest[] init 23
-    Stype[] init 23
-    kdata[][] init 23, 1
+    Sdest[] init $NUM_ENDPOINTS
+    Stype[] init $NUM_ENDPOINTS
+    kdata[][] init $NUM_ENDPOINTS, 1
 
-    Sdest[0]    = "/implication_organ/master/main"
-    Sdest[1]    = "/implication_organ/master/generated"
-    Sdest[2]    = "/implication_organ/filter/cutoff"
-    Sdest[3]    = "/implication_organ/filter/q"
-    Sdest[4]    = "/implication_organ/combos/sub"
-    Sdest[5]    = "/implication_organ/combos/diff1"
-    Sdest[6]    = "/implication_organ/combos/diff2"
-    Sdest[7]    = "/implication_organ/combos/diff3"
-    Sdest[8]    = "/implication_organ/combos/sum1"
-    Sdest[9]    = "/implication_organ/combos/sum2"
-    Sdest[10]   = "/implication_organ/combos/prod"
-    Sdest[11]   = "/implication_organ/means/sub"
-    Sdest[12]   = "/implication_organ/means/ari"
-    Sdest[13]   = "/implication_organ/means/geo"
-    Sdest[14]   = "/implication_organ/means/harm"
-    Sdest[15]   = "/implication_organ/means/phi"
-    Sdest[16]   = "/implication_organ/detune"
-    Sdest[17]   = "/implication_organ/blend"
-    Sdest[18]   = "/implication_organ/generated_waveform"
-    Sdest[19]   = "/implication_organ/reduction_type"
-    Sdest[20]   = "/implication_organ/preset"
-    Sdest[21]   = "/implication_organ/tuning"
-    Sdest[22]   = "/implication_organ/tuning_mode"
+    Sdest[0]    = "/io/master/main"
+    Sdest[1]    = "/io/master/generated"
+    Sdest[2]    = "/io/filter/cutoff"
+    Sdest[3]    = "/io/filter/q"
+    Sdest[4]    = "/io/combos/sub"
+    Sdest[5]    = "/io/combos/diff1"
+    Sdest[6]    = "/io/combos/diff2"
+    Sdest[7]    = "/io/combos/diff3"
+    Sdest[8]    = "/io/combos/sum1"
+    Sdest[9]    = "/io/combos/sum2"
+    Sdest[10]   = "/io/combos/prod"
+    Sdest[11]   = "/io/means/sub"
+    Sdest[12]   = "/io/means/ari"
+    Sdest[13]   = "/io/means/geo"
+    Sdest[14]   = "/io/means/harm"
+    Sdest[15]   = "/io/means/phi"
+    Sdest[16]   = "/io/detune"
+    Sdest[17]   = "/io/blend"
+    Sdest[18]   = "/io/generated_waveform"
+    Sdest[19]   = "/io/reduction_type"
+    Sdest[20]   = "/io/preset"
+    Sdest[21]   = "/io/tuning"
 
     Stype[0]    = "f"
     Stype[1]    = "f"
@@ -80,7 +89,6 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
     Stype[19]   = "i"
     Stype[20]   = "i"
     Stype[21]   = "i"
-    Stype[22]   = "i"
 
     kdata fillarray i_main, i_gen,
                     i_cutoff, i_q,
@@ -91,12 +99,26 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
                     i_wave,
                     i_reduce,
                     i_preset,
-                    i_tuning,
-                    0
+                    i_tuning
 
-    OSCbundle(1, "127.0.0.1", 8080, Sdest, Stype, kdata)
-    OSCsend(1, "127.0.0.1", 8080, "/state", "s", "save")
+    OSCbundle(1, "$OSC_SEND_HOST", $OSC_SEND_PORT, Sdest, Stype, kdata)
+    OSCsend(1,   "$OSC_SEND_HOST", $OSC_SEND_PORT, "/io/state", "s", "save")
 endop
 
-#define GLOBAL_PRESET_MOON_METAL #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 1, 0, 1, 0.3, 0, 0, 0, 0.11, 0, gi_asymp, $REDUCE_FIXED, 27, 1)#
-#define GLOBAL_PRESET_INVOLUTION #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 1, 0, 1, 0.4, 0, 0, 0, 0.11, 0, gi_sine, $REDUCE_FIXED, 27, 5)#
+#define GLOBAL_PRESET_MOON_METAL #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 1,      0, 1, 0.3, 0, 0, 0, 0.005, 0, gi_asymp, $REDUCE_FIXED, 27, 1)#
+#define GLOBAL_PRESET_INVOLUTION #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 0.6, 0.05, 1, 0.4, 0, 0, 0, 0.005, 0, gi_sine,  $REDUCE_FIXED, 27, 5)#
+
+opcode plot_freq, 0,kkk
+    kfirst, knote, kfreq xin
+    if (kfirst == 0) then
+        Saddr = sprintfk("/io/%s", "first")
+    else
+        Saddr = sprintfk("/io/%s", "second")
+    endif
+    if (kfreq == 0) then
+        Smsg = sprintfk("%s", "--")
+    else
+        Smsg = sprintfk("Note %d : %f Hz", knote, kfreq)
+    endif
+    OSCsend(rand:k(100, 2), "$OSC_SEND_HOST", $OSC_SEND_PORT, Saddr, "s", Smsg)
+endop

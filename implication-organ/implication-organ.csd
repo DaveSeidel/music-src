@@ -1,12 +1,16 @@
 ;;----------------------------
-;; Implication Organ v3.0
-;; Dave Seidel, November 2019
+;; Implication Organ v4.0
+;; Dave Seidel, December 2019
 ;;----------------------------
 
 ;----------------------------------------------------------
 ; - Expects MIDI notes on channels 1 and 2
 ; - Responds to OSC on port 7777 for parameter control
-; - Dual mono output: 1 = main voices, 2 = derived voices
+; - Send OSC to
+; - Defaults to dual mono output: 1 = main dyad, 2 = derived voices
+; - Use --omacro:BINAURAL=1 for four-channel output, where 1 & 2 are
+;     the main dyad in binaural stereo, and 3 & 4 are the derived
+;     voices (duplicated)
 ;----------------------------------------------------------
 
 <CsoundSynthesizer>
@@ -16,7 +20,7 @@
 <CsInstruments>
 
 sr = 48000
-ksmps = 20
+ksmps = 10
 nchnls = 2
 0dbfs = 1
 
@@ -431,152 +435,142 @@ opcode read_osc, 0,0
 
   NEXT:
 
-  karg = _read_osc_control("/implication_organ/master/main", "f")
+  karg = _read_osc_control("/io/master/main", "f")
   if (karg != -1) then
     $CTL_MAIN_LEVEL = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/master/generated", "f")
+  karg = _read_osc_control("/io/master/generated", "f")
   if (karg != -1) then
     $CTL_GENERATED_LEVEL = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/sub", "f")
+  karg = _read_osc_control("/io/combos/sub", "f")
   if (karg != -1) then
     $CTL_COMBOS_LEVEL = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/diff1", "f")
+  karg = _read_osc_control("/io/combos/diff1", "f")
   if (karg != -1) then
     $CTL_COMBOS_DIFF1 = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/diff2", "f")
+  karg = _read_osc_control("/io/combos/diff2", "f")
   if (karg != -1) then
     $CTL_COMBOS_DIFF2 = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/diff3", "f")
+  karg = _read_osc_control("/io/combos/diff3", "f")
   if (karg != -1) then
     $CTL_COMBOS_DIFF3 = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/sum1", "f")
+  karg = _read_osc_control("/io/combos/sum1", "f")
   if (karg != -1) then
     $CTL_COMBOS_SUM1 = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/sum2", "f")
+  karg = _read_osc_control("/io/combos/sum2", "f")
   if (karg != -1) then
     $CTL_COMBOS_SUM2 = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/prod", "f")
+  karg = _read_osc_control("/io/combos/prod", "f")
   if (karg != -1) then
     $CTL_COMBOS_PROD = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/sub", "f")
+  karg = _read_osc_control("/io/means/sub", "f")
   if (karg != -1) then
     $CTL_MEANS_LEVEL = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/ari", "f")
+  karg = _read_osc_control("/io/means/ari", "f")
   if (karg != -1) then
     $CTL_MEANS_ARI = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/geo", "f")
+  karg = _read_osc_control("/io/means/geo", "f")
   if (karg != -1) then
     $CTL_MEANS_GEO = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/har", "f")
+  karg = _read_osc_control("/io/means/har", "f")
   if (karg != -1) then
     $CTL_MEANS_HAR = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/phi", "f")
+  karg = _read_osc_control("/io/means/phi", "f")
   if (karg != -1) then
     $CTL_MEANS_PHI = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/detune", "f")
+  karg = _read_osc_control("/io/detune", "f")
   if (karg != -1) then
     $CTL_DETUNE = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/blend", "f")
+  karg = _read_osc_control("/io/blend", "f")
   if (karg != -1) then
     gk_blend = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/filter/cutoff", "f")
+  karg = _read_osc_control("/io/filter/cutoff", "f")
   if (karg != -1) then
     $CTL_LPF_CUTOFF = $CALC_FILTER_CUTOFF(karg)
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/filter/q", "f")
+  karg = _read_osc_control("/io/filter/q", "f")
   if (karg != -1) then
     $CTL_LPF_Q = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/generated_waveform", "f")
+  karg = _read_osc_control("/io/generated_waveform", "f")
   if (karg != -1) then
-    printks("new waveform: %d\n", 0, karg)
     gk_generated_wave = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/reduction_type", "f")
+  karg = _read_osc_control("/io/reduction_type", "f")
   if (karg != -1) then
-    printks("new reduction: %d\n", 0, karg)
     gk_reduction = karg
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/preset", "f")
+  karg = _read_osc_control("/io/preset", "f")
   if (karg != -1) then
-    printks("new preset: %d\n", 0, karg)
     ; 0-based
     event("i", "scanx_init", 0, 0, karg-1, $SCANX_ID)
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/tuning", "f")
+  karg = _read_osc_control("/io/tuning", "f")
   if (karg != -1) then
     ; 0-based
     ktuning = gi_tuning_map[karg-1]
     if (ktuning != -1) then
-      printks("new tuning: %d\n", 0, ktuning)
       set_tuning(ktuning)
     else
       printks("invalid tuning: %d\n", 0, ktuning)
     endif
-  endif
-
-  karg = _read_osc_control("/implication_organ/tuning_mode", "f")
-  if (karg != -1) then
-    gk_tuning_mode = karg
-    kgoto NEXT
   endif
 
   END:
@@ -682,6 +676,7 @@ endin
     kfreqs[$IDX] = $FREQ
     knotes[$IDX] = $NOTE
     $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
+    plot_freq($IDX, $NOTE, $FREQ)
 #
 
 #define CLEAR_NOTE(IDX'INST'KILL) #
@@ -694,6 +689,7 @@ endin
     kfreqs[$IDX] = 0
     knotes[$IDX] = 0
     $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
+    plot_freq($IDX, 0, 0)
 #
 
 ; process MIDI notes, by channel
@@ -779,18 +775,18 @@ instr +Voice
                  $RISE, 1,
                  $FALL, 0)
 
+  ; determine amount of detuning based on binaural beating or percentage of frequency
+  kdiff = (gi_binaural == 0) ? kcps*(scale($CTL_DETUNE, 0.001, 0.0001) / 2) : $CTL_DETUNE
   if (kblend == 1) then
-    a1 = oscilikt(kamp * 0.5, kcps, kwave)
-    aout = a1 * aenv
+    a1 = oscilikt(kamp * 0.5, kcps - kdiff, kwave)
+    a2 = oscilikt(kamp * 0.5, kcps + kdiff, kwave)
   else
-    ; determine amount of detuning based on binaural beating or percentage of frequency
-    kdiff = (gi_binaural == 0) ? kcps*(scale($CTL_DETUNE, 0.001, 0.0001) / 2) : $CTL_DETUNE
-    a1 = scanx(kamp, kcps + kdiff, $SCANX_ID)
-    a2 = scanx(kamp, kcps - kdiff, $SCANX_ID+1)
-    aout = (gi_binaural == 0) ? ntrpol(a1*0.6, a2*0.6, 0.5)*aenv : 0
+    a1 = scanx(kamp, kcps - kdiff, $SCANX_ID)
+    a2 = scanx(kamp, kcps + kdiff, $SCANX_ID+1)
   endif
+  aout = (gi_binaural == 0) ? ntrpol(a1*0.6, a2*0.6, 0.5)*aenv : 0
 
-  if (gi_binaural == 1 && kblend == 0) then
+  if (gi_binaural == 1) then
       ga_main_out_1 = ga_main_out_1 + moogladder2(a1*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
       ga_main_out_2 = ga_main_out_2 + moogladder2(a2*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
   else
