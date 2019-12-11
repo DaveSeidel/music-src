@@ -6,10 +6,13 @@
 #define OSC_SEND_PORT   #8080#
 #endif
 
-#define NUM_ENDPOINTS   #22#
+#define NUM_ENDPOINTS   #26#
 
-opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
-    i_main, i_gen, i_cutoff, i_q, i_c_sub, i_c_diff1, i_c_diff2, i_c_diff3, i_c_sum1, i_c_sum2, i_c_prod, i_m_sub, i_m_ari, i_m_geo, i_m_har, i_m_phi, i_detune, i_blend, i_wave, i_reduce, i_preset, i_tuning xin
+opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiiiiiii
+    i_main, i_gen, i_cutoff, i_q, i_c_sub, i_c_diff1, i_c_diff2, i_c_diff3,
+    i_c_sum1, i_c_sum2, i_c_prod, i_m_sub, i_m_ari, i_m_geo, i_m_har, i_m_phi,
+    i_detune, i_blend, i_wave, i_reduce, i_preset, i_tuning,
+    i_r1_fb, i_r1_wet, i_r2_fb, i_r2_wet xin
 
     ; set locally
     $CTL_MAIN_LEVEL = i_main
@@ -39,6 +42,11 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
     gi_scanx_preset = i_preset-1
     set_tuning(gi_tuning_map[i_tuning-1])
 
+    $CTL_REV1_FB = i_r1_fb
+    $CTL_REV1_WET = i_r1_wet
+    $CTL_REV2_FB = i_r2_fb
+    $CTL_REV2_WET = i_r2_wet
+
     ; send to GUI
     Sdest[] init $NUM_ENDPOINTS
     Stype[] init $NUM_ENDPOINTS
@@ -66,6 +74,10 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
     Sdest[19]   = "/io/reduction_type"
     Sdest[20]   = "/io/preset"
     Sdest[21]   = "/io/tuning"
+    Sdest[22]   = "/io/reverb/1/fb"
+    Sdest[23]   = "/io/reverb/1/wet"
+    Sdest[24]   = "/io/reverb/2/fb"
+    Sdest[25]   = "/io/reverb/2/wet"
 
     Stype[0]    = "f"
     Stype[1]    = "f"
@@ -89,6 +101,10 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
     Stype[19]   = "i"
     Stype[20]   = "i"
     Stype[21]   = "i"
+    Stype[22]   = "f"
+    Stype[23]   = "f"
+    Stype[24]   = "f"
+    Stype[25]   = "f"
 
     kdata fillarray i_main, i_gen,
                     i_cutoff, i_q,
@@ -99,14 +115,15 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiii
                     i_wave,
                     i_reduce,
                     i_preset,
-                    i_tuning
+                    i_tuning,
+                    i_r1_fb, i_r1_wet, i_r2_fb, i_r2_wet
 
     OSCbundle(1, "$OSC_SEND_HOST", $OSC_SEND_PORT, Sdest, Stype, kdata)
     OSCsend(1,   "$OSC_SEND_HOST", $OSC_SEND_PORT, "/io/state", "s", "save")
 endop
 
-#define GLOBAL_PRESET_MOON_METAL #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 1,      0, 1, 0.3, 0, 0, 0, 0.005, 0, gi_asymp, $REDUCE_FIXED, 27, 1)#
-#define GLOBAL_PRESET_INVOLUTION #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 0.6, 0.05, 1, 0.4, 0, 0, 0, 0.005, 0, gi_sine,  $REDUCE_FIXED, 27, 5)#
+#define GLOBAL_PRESET_MOON_METAL #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 1,      0, 1, 0.3, 0, 0, 0, 0.005, 0, gi_asymp, $REDUCE_FIXED, 27, 1, 0, 0, 0, 0)#
+#define GLOBAL_PRESET_INVOLUTION #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 0.6, 0.05, 1, 0.4, 0, 0, 0, 0.005, 0, gi_sine,  $REDUCE_FIXED, 27, 5, 0.8, 0.75, 0.8, 0.75)#
 
 opcode plot_freq, 0,kkk
     kfirst, knote, kfreq xin
@@ -121,4 +138,9 @@ opcode plot_freq, 0,kkk
         Smsg = sprintfk("Note %d : %f Hz", knote, kfreq)
     endif
     OSCsend(rand:k(100, 2), "$OSC_SEND_HOST", $OSC_SEND_PORT, Saddr, "s", Smsg)
+endop
+
+opcode set_derived_state, 0, k
+    kstate xin
+    OSCsend(rand:k(100, 2), "$OSC_SEND_HOST", $OSC_SEND_PORT, "/io/derived", "d", kstate)
 endop

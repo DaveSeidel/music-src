@@ -888,8 +888,8 @@
         },
         {
           "type": "dropdown",
-          "top": 480,
-          "left": 710,
+          "top": 580,
+          "left": 740,
           "id": "dyad_preset",
           "linkId": "",
           "width": 100,
@@ -939,7 +939,7 @@
         },
         {
           "type": "dropdown",
-          "top": 580,
+          "top": 480,
           "left": 710,
           "id": "tuning",
           "linkId": "",
@@ -992,7 +992,7 @@
           "type": "text",
           "label": "auto",
           "top": 490,
-          "left": 970,
+          "left": 950,
           "id": "First",
           "linkId": "",
           "width": 200,
@@ -1010,7 +1010,7 @@
         {
           "type": "text",
           "top": 580,
-          "left": 970,
+          "left": 950,
           "id": "Second",
           "linkId": "",
           "width": 200,
@@ -1024,6 +1024,27 @@
           "default": "",
           "value": "",
           "address": "/io/second",
+          "preArgs": ""
+        },
+        {
+          "type": "led",
+          "top": 550,
+          "left": 1170,
+          "id": "Derived",
+          "linkId": "",
+          "width": 30,
+          "height": 30,
+          "label": false,
+          "color": "red",
+          "css": "text-transform: none;",
+          "range": {
+            "min": 0,
+            "max": 1
+          },
+          "logScale": false,
+          "default": 0,
+          "value": "",
+          "address": "/io/derived",
           "preArgs": ""
         }
       ],

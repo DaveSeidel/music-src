@@ -20,7 +20,7 @@
 <CsInstruments>
 
 sr = 48000
-ksmps = 10
+ksmps = 20
 nchnls = 2
 0dbfs = 1
 
@@ -65,6 +65,11 @@ nchnls = 2
 
 #define CTL_LPF_CUTOFF        #gk_ctl_16#
 #define CTL_LPF_Q             #gk_ctl_17#
+
+#define CTL_REV1_FB           #gk_ctl_18#
+#define CTL_REV1_WET          #gk_ctl_19#
+#define CTL_REV2_FB           #gk_ctl_20#
+#define CTL_REV2_WET          #gk_ctl_21#
 
 ;;-----------------
 ;; waveform tables
@@ -230,7 +235,15 @@ gk_freq_mult init 1
 #endif
 gi_binaural init $BINAURAL
 
-gk_tuning_mode init 0
+#ifndef MIDI_NOTE_OFFSET
+#define MIDI_NOTE_OFFSET #36#
+#endif
+
+#ifdef STRICT_DERIVED_TONES
+  #define TIED_TONES_OP #||#
+#else
+  #define TIED_TONES_OP #&&#
+#endif
 
 
 ;;--------
@@ -328,7 +341,7 @@ endop
 opcode combination_engine, a, kiiiiiii
   ktab, iamp, ifreq1, ifreq2, imin, imax, imult, iskip xin
 
-  iamp /= 5
+  iamp /= 3
 
   idiff  = ifreq2 - ifreq1              ; difference tone
   idiff2 = (2 * ifreq2) - ifreq1        ; 2nd order difference tone
@@ -531,18 +544,6 @@ opcode read_osc, 0,0
     kgoto NEXT
   endif
 
-  karg = _read_osc_control("/io/filter/cutoff", "f")
-  if (karg != -1) then
-    $CTL_LPF_CUTOFF = $CALC_FILTER_CUTOFF(karg)
-    kgoto NEXT
-  endif
-
-  karg = _read_osc_control("/io/filter/q", "f")
-  if (karg != -1) then
-    $CTL_LPF_Q = karg
-    kgoto NEXT
-  endif
-
   karg = _read_osc_control("/io/generated_waveform", "f")
   if (karg != -1) then
     gk_generated_wave = karg
@@ -573,6 +574,42 @@ opcode read_osc, 0,0
     endif
   endif
 
+  karg = _read_osc_control("/io/filter/cutoff", "f")
+  if (karg != -1) then
+    $CTL_LPF_CUTOFF = $CALC_FILTER_CUTOFF(karg)
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/filter/q", "f")
+  if (karg != -1) then
+    $CTL_LPF_Q = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/1/fb", "f")
+  if (karg != -1) then
+    $CTL_REV1_FB = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/1/wet", "f")
+  if (karg != -1) then
+    $CTL_REV1_WET = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/2/fb", "f")
+  if (karg != -1) then
+    $CTL_REV2_FB = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/2/wet", "f")
+  if (karg != -1) then
+    $CTL_REV2_WET = karg
+    kgoto NEXT
+  endif
+
   END:
 endop
 
@@ -580,19 +617,19 @@ opcode print_midi, 0, kkkk
   kstatus, kchan, kdata1, kdata2 xin
 
   if (kstatus == 144) then
-    printks("\n----- status=%d ch=%d note=%d velocity=%d\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d note=%d velocity=%d\tNote ON\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 128) then
-    printks("----- status=%d ch=%d\tnote=%d velocity=%d\tNote OFF\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\tnote=%d velocity=%d\tNote OFF\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 160) then
-    printks("----- status=%d ch=%d\tkdata1=%d kdata2=%d\tPolyphonic Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\tkdata1=%d kdata2=%d\tPolyphonic Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 176) then
-    printks("----- status=%d ch=%d\t CC=%d value=%d\tControl Change\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\t CC=%d value=%d\tControl Change\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 192) then
-    printks("----- status=%d ch=%d\tkdata1=%d kdata2=%d\tProgram Change\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\tkdata1=%d kdata2=%d\tProgram Change\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 208) then
-    printks( "----- status=%d ch=%d\tkdata1=%d kdata2=%d\tChannel Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks( "\n----- status=%d ch=%d\tkdata1=%d kdata2=%d\tChannel Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 224) then
-    printks("----- status=%d ch=%d\t (data1, kdata2)=(%d, %d)\tPitch Bend\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\t (data1, kdata2)=(%d, %d)\tPitch Bend\n", 0, kstatus, kchan, kdata1, kdata2)
   endif
 endop
 
@@ -611,6 +648,7 @@ instr Init
   prints("Using BASE_FREQ=%f\n", $BASE_FREQ)
   prints("Using FREQ_MULT=%f\n", i(gk_freq_mult))
   prints("BINAURAL = $BINAURAL\n")
+  prints("TIED_TONES_OP = $TIED_TONES_OP\n")
 
   if ($GLOBAL_PRESET > 0) then
     if ($GLOBAL_PRESET == 1) then
@@ -628,6 +666,10 @@ instr Init
     set_reduction_type($REDUCE_NONE)
     set_tuning($TUNING)
   endif
+
+  plot_freq(0, 0, 0)
+  plot_freq(1, 0, 0)
+  set_derived_state(0)
 
   ; scanning synthesis initialization
   event_i("i", "scanx_init", 0, 1, gi_scanx_preset, $SCANX_ID)
@@ -652,15 +694,17 @@ endin
 #
 
 #define STOP_DERIVED_VOICES #
-  if (kfreqs[0] == 0 && kfreqs[1] == 0) then
-    printks("<-- Stopping Deriver (%d)\n", 0, ideriver)
+  if (kfreqs[0] == 0 $TIED_TONES_OP kfreqs[1] == 0) then
+    printks("<-- Stopping Deriver\n", 0)
     turnoff2(ideriver, 1, 1)
+    set_derived_state(0)
   endif
 #
 
 #define START_DERIVED_VOICES #
   if (kfreqs[0] != 0 && kfreqs[1] != 0) then
     event("i", ideriver, 0, -1, kamp*0.75, kfreqs[0], kfreqs[1], knotes[0], knotes[1], gk_tuning, gk_freq_mult, gk_reduction, gk_generated_wave)
+    set_derived_state(1)
   endif
 #
 
@@ -713,32 +757,27 @@ instr MIDIHandler
   ; only channels 1 & 2
   if kchan > 2 kgoto READ_LOOP
 
-  ; we care only about 144 (Note On)
-  if kstatus != 144 kgoto READ_LOOP
+  ; only care about NOTE-ON and NOTE-OFF
+  if kstatus != 144 && kstatus != 128 kgoto READ_LOOP
 
   $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
 
   ; note numder and velocity
-  knote = kdata1
+  knote = kdata1 + $MIDI_NOTE_OFFSET
   kveloc = kdata2
 
   ; fractional instrument number embeds the channel and note numbers (e.g., "23.10056")
   kinstnum = ivoice + (kchan * 0.1) + (knote * 0.0001)
 
   ; convert note number to frequency based on the current tuning
-  if (gk_tuning_mode == 1) then
-    ; when using as a tuning reference for other instruments (e.g., modular)
-    kfreq = 0
-  else
-    kfreq = tablekt(knote, gk_tuning)
-  endif
+  kfreq = tablekt(knote, gk_tuning)
 
   kfirst = (kchan == 1) ? 1 : 0
   kchanidx = kchan - 1
   kamp = ampdb(-6)
 
   ; 0 velocity indicates Note Off, regardless of what kstatus says
-  if kveloc == 0 kgoto RELEASE
+  if kstatus == 128 || kveloc == 0 kgoto RELEASE
 
   ; clear out zombie notes first
   kprevious = kassign[kchanidx]
@@ -784,15 +823,20 @@ instr +Voice
     a1 = scanx(kamp, kcps - kdiff, $SCANX_ID)
     a2 = scanx(kamp, kcps + kdiff, $SCANX_ID+1)
   endif
-  aout = (gi_binaural == 0) ? ntrpol(a1*0.6, a2*0.6, 0.5)*aenv : 0
 
   if (gi_binaural == 1) then
-      ga_main_out_1 = ga_main_out_1 + moogladder2(a1*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
-      ga_main_out_2 = ga_main_out_2 + moogladder2(a2*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
+      aout = 0
+      afilt1 = moogladder2(a1*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
+      afilt2 = moogladder2(a2*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
+      aout1, aout2 reverbsc afilt1, afilt2, $CTL_REV1_FB, sr/4, sr, 0.1, 0
+      ga_main_out_1 = ga_main_out_1 + ((afilt1 * (1 - $CTL_REV1_WET)) + (aout1 * ($CTL_REV1_WET)))
+      ga_main_out_2 = ga_main_out_2 + ((afilt2 * (1 - $CTL_REV1_WET)) + (aout2 * ($CTL_REV1_WET)))
   else
-    aout = moogladder2(aout, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
-    ga_main_out_1 = ga_main_out_1 + aout
-    ga_main_out_2 = ga_main_out_2 + aout
+      aout = ntrpol(a1*0.6, a2*0.6, 0.5)*aenv
+      afilt1 = moogladder2(aout*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
+      afilt2 = afilt1
+      ga_main_out_1 = ga_main_out_1 + afilt1
+      ga_main_out_2 = ga_main_out_2 + afilt2
   endif
 endin
 
@@ -838,14 +882,22 @@ endin
 
 ; audio output
 instr Output
-  asub1 = ga_combos_out + ga_means_out
-
   a1 = ga_main_out_1 * $CTL_MAIN_LEVEL
   a2 = ga_main_out_2 * $CTL_MAIN_LEVEL
-  a3 = asub1 * $CTL_GENERATED_LEVEL
+
+  asub1 = ga_combos_out + ga_means_out
+  if (gi_binaural = 1) then
+    asub1 *= 1 - $CTL_REV2_WET
+    a3, a4 reverbsc asub1, asub1, $CTL_REV2_FB, sr/4, sr, 0.1, 0
+    a3 = (asub1 + (a3 * ($CTL_REV2_WET))) * $CTL_GENERATED_LEVEL
+    a4 = (asub1 + (a4 * ($CTL_REV2_WET))) * $CTL_GENERATED_LEVEL
+  else
+    a3 = asub1 * $CTL_GENERATED_LEVEL
+    a4 = a3
+  endif
 
   if (gi_binaural == 1) then
-    out(a1, a2, a3, a3)
+    out(a1, a2, a3, a4)
   else
     out(a1, a3)
   endif
