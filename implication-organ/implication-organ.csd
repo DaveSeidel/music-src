@@ -35,7 +35,7 @@ nchnls = 2
 ; low-pass filter for main voice
 #define FILTER_MIN_CUTOFF       #20#
 #define FILTER_MAX_CUTOFF       #sr/4#
-#define CALC_FILTER_CUTOFF(VAL) #scale($VAL, 20, $FILTER_MAX_CUTOFF)#
+#define CALC_FILTER_CUTOFF(VAL) #scale($VAL, $FILTER_MIN_CUTOFF, $FILTER_MAX_CUTOFF)#
 
 
 ;;-----------------------
@@ -212,7 +212,7 @@ gk_reduction init $REDUCE_NONE
 gk_blend init 0
 
 ; global envelope values
-#define RISE  #3#
+#define RISE  #2#
 #define FALL  #2#
 
 gi_osc_handle = OSCinit(7777)
@@ -231,7 +231,7 @@ gk_freq_mult init 1
 #endif
 
 #ifndef BINAURAL
-#define BINAURAL #0#
+#define BINAURAL #1#
 #endif
 gi_binaural init $BINAURAL
 
@@ -645,18 +645,25 @@ massign 0, 0
 
 ; set stuff up
 instr Init
-  prints("Using BASE_FREQ=%f\n", $BASE_FREQ)
-  prints("Using FREQ_MULT=%f\n", i(gk_freq_mult))
+  prints("\n-----------\n")
+  prints("BASE_FREQ=%f\n", $BASE_FREQ)
+  prints("FREQ_MULT=%f\n", i(gk_freq_mult))
   prints("BINAURAL = $BINAURAL\n")
   prints("TIED_TONES_OP = $TIED_TONES_OP\n")
-
+  prints("Global preset: ")
   if ($GLOBAL_PRESET > 0) then
-    if ($GLOBAL_PRESET == 1) then
-      prints("Using global presets for Moon Metal (%d)\n", $GLOBAL_PRESET)
+    if ($GLOBAL_PRESET == 666) then
+      prints("Moon Metal (%d)\n", $GLOBAL_PRESET)
       $GLOBAL_PRESET_MOON_METAL
+    elseif ($GLOBAL_PRESET == 1) then
+      prints("Involution 1 (%d)\n", $GLOBAL_PRESET)
+      $GLOBAL_PRESET_INVOLUTION_1
     elseif ($GLOBAL_PRESET == 2) then
-      prints("Using global presets for Involution (%d)\n", $GLOBAL_PRESET)
-      $GLOBAL_PRESET_INVOLUTION
+      prints("Involution 2 (%d)\n", $GLOBAL_PRESET)
+      $GLOBAL_PRESET_INVOLUTION_2
+    elseif ($GLOBAL_PRESET == 3) then
+      prints("Involution 3 (%d)\n", $GLOBAL_PRESET)
+      $GLOBAL_PRESET_INVOLUTION_3
     else
       prints("Unknown global preset $GLOBAL_PRESET\n")
     endif
@@ -666,6 +673,7 @@ instr Init
     set_reduction_type($REDUCE_NONE)
     set_tuning($TUNING)
   endif
+  prints("-----------\n\n")
 
   plot_freq(0, 0, 0)
   plot_freq(1, 0, 0)
@@ -774,7 +782,7 @@ instr MIDIHandler
 
   kfirst = (kchan == 1) ? 1 : 0
   kchanidx = kchan - 1
-  kamp = ampdb(-6)
+  kamp = ampdb(-3)
 
   ; 0 velocity indicates Note Off, regardless of what kstatus says
   if kstatus == 128 || kveloc == 0 kgoto RELEASE
@@ -809,7 +817,7 @@ instr +Voice
   kwave = p6
   kblend = p7
 
-  xtratim 2
+  ; xtratim 2
   aenv = linsegr(0,
                  $RISE, 1,
                  $FALL, 0)
@@ -829,8 +837,8 @@ instr +Voice
       afilt1 = moogladder2(a1*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
       afilt2 = moogladder2(a2*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
       aout1, aout2 reverbsc afilt1, afilt2, $CTL_REV1_FB, sr/4, sr, 0.1, 0
-      ga_main_out_1 = ga_main_out_1 + ((afilt1 * (1 - $CTL_REV1_WET)) + (aout1 * ($CTL_REV1_WET)))
-      ga_main_out_2 = ga_main_out_2 + ((afilt2 * (1 - $CTL_REV1_WET)) + (aout2 * ($CTL_REV1_WET)))
+      ga_main_out_1 = ga_main_out_1 + ((afilt1 * (1 - $CTL_REV1_WET)) + (aout1 * $CTL_REV1_WET))
+      ga_main_out_2 = ga_main_out_2 + ((afilt2 * (1 - $CTL_REV1_WET)) + (aout2 * $CTL_REV1_WET))
   else
       aout = ntrpol(a1*0.6, a2*0.6, 0.5)*aenv
       afilt1 = moogladder2(aout*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
@@ -857,7 +865,7 @@ instr +Deriver
   prints("Deriver: 1:(%d, %f) 2:(%d, %f) tuning:%d mult:%f tied:%s\n",
          inote1, ifreq1, inote2, ifreq2, ituning, ifreq_mult, iskip == 1 ? "YES" : "NO")
 
-  xtratim 2
+  ; xtratim 2
   tigoto SKIP_INIT
   aenv = linsegr(0,
                  $RISE, 1,
@@ -887,10 +895,9 @@ instr Output
 
   asub1 = ga_combos_out + ga_means_out
   if (gi_binaural = 1) then
-    asub1 *= 1 - $CTL_REV2_WET
     a3, a4 reverbsc asub1, asub1, $CTL_REV2_FB, sr/4, sr, 0.1, 0
-    a3 = (asub1 + (a3 * ($CTL_REV2_WET))) * $CTL_GENERATED_LEVEL
-    a4 = (asub1 + (a4 * ($CTL_REV2_WET))) * $CTL_GENERATED_LEVEL
+    a3 = ((asub1 * (1 - $CTL_REV2_WET)) + (a3 * $CTL_REV2_WET)) * $CTL_GENERATED_LEVEL
+    a4 = ((asub1 * (1 - $CTL_REV2_WET)) + (a4 * $CTL_REV2_WET)) * $CTL_GENERATED_LEVEL
   else
     a3 = asub1 * $CTL_GENERATED_LEVEL
     a4 = a3

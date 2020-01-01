@@ -122,8 +122,18 @@ opcode global_preset, 0, iiiiiiiiiiiiiiiiiiiiiiiiii
     OSCsend(1,   "$OSC_SEND_HOST", $OSC_SEND_PORT, "/io/state", "s", "save")
 endop
 
-#define GLOBAL_PRESET_MOON_METAL #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 1,      0, 1, 0.3, 0, 0, 0, 0.005, 0, gi_asymp, $REDUCE_FIXED, 27, 1, 0, 0, 0, 0)#
-#define GLOBAL_PRESET_INVOLUTION #global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 0.6, 0.05, 1, 0.4, 0, 0, 0, 0.005, 0, gi_sine,  $REDUCE_FIXED, 27, 5, 0.8, 0.75, 0.8, 0.75)#
+#define GLOBAL_PRESET_MOON_METAL #
+    global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 1,   0,    1, 0.3, 0, 0, 0, 0.005, 0, gi_asymp, $REDUCE_FIXED, 27, 1, 0,   0,    0,   0)
+#
+#define GLOBAL_PRESET_INVOLUTION_1 #
+    global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 0.6, 0.05, 1, 0.4, 0, 0, 0, 0.005, 0, gi_sine,  $REDUCE_FIXED, 27, 5, 0.7, 0.98, 0.8, 0.98)
+#
+#define GLOBAL_PRESET_INVOLUTION_2 #
+    global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 0.6, 0.05, 1, 0.4, 0, 0, 0, 0.005, 0, gi_sine,  $REDUCE_FIXED, 27, 1, 0.7, 0.98, 0.8, 0.98)
+#
+#define GLOBAL_PRESET_INVOLUTION_3 #
+    global_preset(1, 1, 0.92, 0.46, 1, 1, 1, 1, 1, 0.6, 0.05, 1, 0.4, 0, 0, 0, 0.005, 0, gi_sine,  $REDUCE_FIXED, 27, 2, 0.7, 0.98, 0.8, 0.98)
+#
 
 opcode plot_freq, 0,kkk
     kfirst, knote, kfreq xin
