@@ -1,12 +1,12 @@
 ;;----------------------------
 ;; Implication Organ v4.0
-;; Dave Seidel, December 2019
+;; Dave Seidel, January 2020
 ;;----------------------------
 
 ;----------------------------------------------------------
 ; - Expects MIDI notes on channels 1 and 2
 ; - Responds to OSC on port 7777 for parameter control
-; - Send OSC to
+; - Send OSC to port 8080
 ; - Defaults to dual mono output: 1 = main dyad, 2 = derived voices
 ; - Use --omacro:BINAURAL=1 for four-channel output, where 1 & 2 are
 ;     the main dyad in binaural stereo, and 3 & 4 are the derived

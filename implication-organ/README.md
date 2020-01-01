@@ -14,9 +14,9 @@ I designed the IO as a vehicle for exploring intervals in rational tunings, and 
 
 - Csound 6.12 beta or later (for the updated OSClisten opcode and the new OSCcount opcode)
 - MIDI keyboard or other device that produces MIDI note messages; the IO expects to receive up to two simultaneous notes on different channels (specifically channels 1 and 2), so if it's a keyboard, it needs to support channel rotation (e.g., the QuNexus, which is what I use)
-- OSC controller; I am using Lemur with the UI running on an tablet (Lemur project is included)
+- OSC controller using [Open Stage Control](https://openstagecontrol.ammd.net/)
 
-The IO was designed for a Raspberry Pi 3 with a Pisound sound card, but could easily be run on more powerful systems. The code makes no use of features specific to either the Raspberry Pi or the Pisound, but has been optimized to work well in that environment.
+The IO was originally designed for a Raspberry Pi 3 with a Pisound sound card, but could easily be run on more powerful systems. The code makes no use of features specific to either the Raspberry Pi or the Pisound, but has been optimized to work well in that environment. I now run this on a Raspberry Pi 4 using an external USB soundcard (ESI Maya44), not due to any dissatisfaction with Pisound but because I decided I needed four audio output channels, which Pisound does not support. With the RPi 4, I run the Open Stage Control server concurrently with Csound.
 
 Likewise, although I wrote this on Linux-based systems, and provide Linux-specific scripts for running it, nothing in the code should prevent it from running on a MacOS or Windows platform.
 
@@ -45,21 +45,35 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
    - Heinz Bohlen's A12 and JI Harmonic tunings (from the [Scala](http://www.huygens-fokker.org/scala/) archives).
    - Michael Harrison's Revelation tuning.
 - OSC interface providing control over a number of parameters:
-  - master level for main voices
-  - master level for all generated voices
+  - master level for main voice
+  - master level for all generated tones
   - submaster level for all combination tones
   - submaster level for all mean tones
   - individual level for each combination tone
   - individual level for each mean tone
-  - detuning amount for main voices
+  - detuning amount for main voices (now binaural)
   - waveform selection for generated voices (and main voice, if blend is enabled)
   - reduction (i.e. range/transposition) selection for generated tones
   - blend switch (if on, main voice uses same oscillators as generated tone)
   - tuning selection
   - preset selection for main voice
-- Audio output (dual mono):
-    - Main voices on channel 1
-    - Generated voices on channel 2
+  - LPF control for main voice
+  - reverb controls for bother stereo outputs
+  - read-only controls set by the app to show current running state
+- Audio output (stereo x2):
+    - Main voices on channels 1 & 2
+    - Generated voices on channels 3 & 4
+
+## Changes between v3.0 and v4.0
+
+- switched from Lemur to Open Stage Control for the graphical OSC interface
+- as part of the Open Stage Control conversion, added support for controls set by OSC from the IO, to display info about the state of the running app
+- implemented four-channel audio output: one pairs for the main dyad, and another pair for the derived tones; also added separate reverb controls for each pair
+- for the main dyad, implemented a binaural chorusing schema
+- added a low-pass filter for the main dyad
+- changed the derived tones instrument to be an tied instrument that keeps playing even if only one dyad tone is present (this behavior is settable on the commandline)
+- improved the global preset system a bit, can set from commandline using `--omacro`
+- focus was on getting this working optimally for my piece Involution, but can still be used in other contexts
 
 ## Changes between v2.0 and v3.0
 
@@ -82,13 +96,13 @@ Likewise, although I wrote this on Linux-based systems, and provide Linux-specif
 
 - v1.0, July 2018: initial release using Launch Control XL MIDI controller
 - v2.0, August 2018: substantial rewrite to replace MIDI controller interface with OSC interface (but still with MIDI keyboard)
-- v3.0, November 2019: rewrite of MIDI input handling, now using channels 1 and 2 to distinguish the two main pitches
+- v3.0, November 2019: rewrite of MIDI input handling; now using channels 1 and 2 to distinguish the two main pitches
+- v4.0: January 2020: Switch from Lemur to Open Stage Control; four-channel audio output; added LPF and reverb; optimizations/tweaks for Involution
 
 ## TODO
 
 Things that I may or may not do someday:
 - Add file list to README
-- Add filter controls for main voice
 - Add alternate instrument definitions for the main voice
 
 ## Acknowledgements and Thanks
@@ -107,4 +121,4 @@ The IO incorporates work from several people. Thanks to:
 
 ### Licensing
 
-Copyright (c) Dave Seidel, 2018-2019, some rights reserved. The contents of this repository are available under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported license (http://creativecommons.org/licenses/by-nc-sa/3.0/). You are welcome to fork this project as long as you abide by the licensing terms.
+Copyright (c) Dave Seidel, 2018-2020, some rights reserved. The contents of this repository are available under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Unported license (http://creativecommons.org/licenses/by-nc-sa/4.0/). You are welcome to fork this project as long as you abide by the licensing terms.
