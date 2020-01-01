@@ -1,22 +1,26 @@
 ;;----------------------------
-;; Implication Organ v3.0
-;; Dave Seidel, November 2019
+;; Implication Organ v4.0
+;; Dave Seidel, January 2020
 ;;----------------------------
 
 ;----------------------------------------------------------
 ; - Expects MIDI notes on channels 1 and 2
 ; - Responds to OSC on port 7777 for parameter control
-; - Dual mono output: 1 = main voices, 2 = derived voices
+; - Send OSC to port 8080
+; - Defaults to dual mono output: 1 = main dyad, 2 = derived voices
+; - Use --omacro:BINAURAL=1 for four-channel output, where 1 & 2 are
+;     the main dyad in binaural stereo, and 3 & 4 are the derived
+;     voices (duplicated)
 ;----------------------------------------------------------
 
 <CsoundSynthesizer>
 <CsOptions>
- -d -m0 -Ma --realtime
+ -d -m0 -Ma --realtime --sample-accurate
 </CsOptions>
 <CsInstruments>
 
 sr = 48000
-ksmps = 10
+ksmps = 20
 nchnls = 2
 0dbfs = 1
 
@@ -28,11 +32,11 @@ nchnls = 2
 ; default preset
 #define SCANX_DEFAULT_PRESET  #9#
 
-#include "inc/global_presets.orc"
+; low-pass filter for main voice
+#define FILTER_MIN_CUTOFF       #20#
+#define FILTER_MAX_CUTOFF       #sr/4#
+#define CALC_FILTER_CUTOFF(VAL) #scale($VAL, $FILTER_MIN_CUTOFF, $FILTER_MAX_CUTOFF)#
 
-
-; Steven Yi's implementation of Julian Parker's ring modulator
-; #include "inc/ringmod.udo"
 
 ;;-----------------------
 ;; controller definitions
@@ -59,6 +63,14 @@ nchnls = 2
 
 #define CTL_DETUNE            #gk_ctl_15#
 
+#define CTL_LPF_CUTOFF        #gk_ctl_16#
+#define CTL_LPF_Q             #gk_ctl_17#
+
+#define CTL_REV1_FB           #gk_ctl_18#
+#define CTL_REV1_WET          #gk_ctl_19#
+#define CTL_REV2_FB           #gk_ctl_20#
+#define CTL_REV2_WET          #gk_ctl_21#
+
 ;;-----------------
 ;; waveform tables
 ;;-----------------
@@ -75,10 +87,6 @@ gi_fib = ftgen(2, 0, $TBLSIZ, 9, 1,1,0,
                               8,0.125,0,
                               13,0.0769,0,
                               21,0.0476,0)
-                              ;34,0.0294,0)
-                              ;55,0.0182,0,
-                              ;89,0.0112,0,
-                              ;144,0.0069,0)
 
 ; prime wave
 gi_prime = ftgen(3, 0, $TBLSIZ, 9, 1,1,0,
@@ -160,15 +168,14 @@ giRev = ftgen(206, 0, 128, -51,
               12, 2, $BASE_FREQ, 60,
               1.0, 63/64, 9/8, 567/512, 81/64, 21/16, 729/512, 3/2, 189/128, 27/16, 7/4, 243/128, 2.0)
 
-; associate tuning table numbers with OSC button indices
-gi_tuning_map[] = fillarray(giCent, -1,
-                            giHex,  -1,
-                            giA12,  -1,
-                            giBph,  -1,
-                            giMeta, -1,
-                            giWTP,  -1,
-                            giRev,  -1,
-                            -1,     -1)
+; associate tuning table numbers with 0-based indices
+gi_tuning_map[] = fillarray(giCent,
+                            giHex,
+                            giA12,
+                            giBph,
+                            giMeta,
+                            giWTP,
+                            giRev)
 
 ;;---------------
 ;; other globals
@@ -182,7 +189,8 @@ gi_tuning_map[] = fillarray(giCent, -1,
 gk_tuning init $TUNING
 
 ; global audio output busses
-ga_main_out init 0
+ga_main_out_1 init 0
+ga_main_out_2 init 0
 ga_combos_out init 0
 ga_means_out init 0
 
@@ -193,10 +201,10 @@ gk_generated_wave init gi_sine
 #define LOW_NOTE_LIMIT  #36#
 #define HIGH_NOTE_LIMIT #84#
 
-#define REDUCE_NONE   #0#
-#define REDUCE_FIXED  #1#
-#define REDUCE_LOWER  #2#
-#define REDUCE_UPPER  #3#
+#define REDUCE_NONE   #1#
+#define REDUCE_FIXED  #2#
+#define REDUCE_LOWER  #3#
+#define REDUCE_UPPER  #4#
 
 gk_reduction init $REDUCE_NONE
 
@@ -204,8 +212,8 @@ gk_reduction init $REDUCE_NONE
 gk_blend init 0
 
 ; global envelope values
-#define RISE  #1#
-#define FALL  #1#
+#define RISE  #2#
+#define FALL  #2#
 
 gi_osc_handle = OSCinit(7777)
 
@@ -220,6 +228,21 @@ gi_global_reset init 0
 gk_freq_mult init $FREQ_MULT
 #else
 gk_freq_mult init 1
+#endif
+
+#ifndef BINAURAL
+#define BINAURAL #1#
+#endif
+gi_binaural init $BINAURAL
+
+#ifndef MIDI_NOTE_OFFSET
+#define MIDI_NOTE_OFFSET #36#
+#endif
+
+#ifdef STRICT_DERIVED_TONES
+  #define TIED_TONES_OP #||#
+#else
+  #define TIED_TONES_OP #&&#
 #endif
 
 
@@ -315,10 +338,10 @@ opcode get_minmax, ii,iii
   xout imin_note, imax_note
 endop
 
-opcode combination_engine, a, kiiiiii
-  ktab, iamp, ifreq1, ifreq2, imin, imax, imult xin
+opcode combination_engine, a, kiiiiiii
+  ktab, iamp, ifreq1, ifreq2, imin, imax, imult, iskip xin
 
-  iamp /= 5
+  iamp /= 3
 
   idiff  = ifreq2 - ifreq1              ; difference tone
   idiff2 = (2 * ifreq2) - ifreq1        ; 2nd order difference tone
@@ -340,12 +363,12 @@ opcode combination_engine, a, kiiiiii
   ; prints("combos (reduced): idiff=%f idiff2=%f idiff3=%f isum=%f isum2=%f iprod=%f\n",
   ;        idiff, idiff2, idiff3, isum, isum2, iprod)
 
-  adiff  = oscilikt(iamp, idiff,  ktab)
-  adiff2 = oscilikt(iamp, idiff2, ktab)
-  adiff3 = oscilikt(iamp, idiff3, ktab)
-  asum   = oscilikt(iamp, isum,   ktab)
-  asum2  = oscilikt(iamp, isum2,  ktab)
-  aprod  = oscilikt(iamp, iprod,  ktab)
+  adiff  = oscilikt(iamp, idiff,  ktab, 0, iskip)
+  adiff2 = oscilikt(iamp, idiff2, ktab, 0, iskip)
+  adiff3 = oscilikt(iamp, idiff3, ktab, 0, iskip)
+  asum   = oscilikt(iamp, isum,   ktab, 0, iskip)
+  asum2  = oscilikt(iamp, isum2,  ktab, 0, iskip)
+  aprod  = oscilikt(iamp, iprod,  ktab, 0, iskip)
 
   aout = (adiff  * $CTL_COMBOS_DIFF1) +
          (adiff2 * $CTL_COMBOS_DIFF2) +
@@ -356,8 +379,8 @@ opcode combination_engine, a, kiiiiii
   xout aout
 endop
 
-opcode means_engine, a, kiiii
-  ktab, iamp, ifreq1, ifreq2, imult xin
+opcode means_engine, a, kiiiii
+  ktab, iamp, ifreq1, ifreq2, imult, iskip xin
 
   iamp /= 4
 
@@ -369,45 +392,16 @@ opcode means_engine, a, kiiii
   ; prints("Means: ifreq1=%f ifreq2=%f iari=%f igeo=%f ihar=%f iphi=%f\n",
   ;        ifreq1, ifreq2, iari, igeo, ihar, iphi)
 
-  aari = oscilikt(iamp, iari * imult, ktab)
-  ageo = oscilikt(iamp, igeo * imult, ktab)
-  ahar = oscilikt(iamp, ihar * imult, ktab)
-  aphi = oscilikt(iamp, iphi * imult, ktab)
+  aari = oscilikt(iamp, iari * imult, ktab, 0, iskip)
+  ageo = oscilikt(iamp, igeo * imult, ktab, 0, iskip)
+  ahar = oscilikt(iamp, ihar * imult, ktab, 0, iskip)
+  aphi = oscilikt(iamp, iphi * imult, ktab, 0, iskip)
 
   aout = (aari * $CTL_MEANS_ARI) +
          (ageo * $CTL_MEANS_GEO) +
          (ahar * $CTL_MEANS_HAR) +
          (aphi * $CTL_MEANS_PHI)
   xout aout
-endop
-
-; start a named instrument if not already started
-opcode start_if_off, 0, Sikkkk
-  Sinst, iamp, kfreq1, kfreq2, knote1, knote2 xin
-
-  iinst = nstrnum(Sinst)
-  kcount = active(Sinst)
-  if (kcount == 0) then
-    kstarted = 1
-    event("i", Sinst, 0, -1, iamp, kfreq1, kfreq2, knote1, knote2)
-  endif
-endop
-
-; stop a named instrument if it's running
-opcode stop_if_on, 0,S
-  Sinst xin
-
-  icount = active(Sinst)
-  inum = nstrnum(Sinst)
-
-  ; ensure negative inst number so it will stop
-  if (inum > 0) then
-    inum = 0 - inum
-  endif
-
-  if (icount > 0) then
-    event_i("i", inum, 0, 1)
-  endif
 endop
 
 ; set wave table to be used for generated tones
@@ -449,169 +443,193 @@ opcode read_osc, 0,0
   karg init 0
 
   kosc_count OSCcount
-  if (kosc_count == 0) kgoto end
+  if (kosc_count == 0) kgoto END
   printks("kosc_count=%d\n", 1, kosc_count)
 
-  next:
+  NEXT:
 
-  karg = _read_osc_control("/implication_organ/master/main", "f")
+  karg = _read_osc_control("/io/master/main", "f")
   if (karg != -1) then
     $CTL_MAIN_LEVEL = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/master/generated", "f")
+  karg = _read_osc_control("/io/master/generated", "f")
   if (karg != -1) then
     $CTL_GENERATED_LEVEL = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/sub", "f")
+  karg = _read_osc_control("/io/combos/sub", "f")
   if (karg != -1) then
     $CTL_COMBOS_LEVEL = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/diff1", "f")
+  karg = _read_osc_control("/io/combos/diff1", "f")
   if (karg != -1) then
     $CTL_COMBOS_DIFF1 = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/diff2", "f")
+  karg = _read_osc_control("/io/combos/diff2", "f")
   if (karg != -1) then
     $CTL_COMBOS_DIFF2 = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/diff3", "f")
+  karg = _read_osc_control("/io/combos/diff3", "f")
   if (karg != -1) then
     $CTL_COMBOS_DIFF3 = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/sum1", "f")
+  karg = _read_osc_control("/io/combos/sum1", "f")
   if (karg != -1) then
     $CTL_COMBOS_SUM1 = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/sum2", "f")
+  karg = _read_osc_control("/io/combos/sum2", "f")
   if (karg != -1) then
     $CTL_COMBOS_SUM2 = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/combos/prod", "f")
+  karg = _read_osc_control("/io/combos/prod", "f")
   if (karg != -1) then
     $CTL_COMBOS_PROD = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/sub", "f")
+  karg = _read_osc_control("/io/means/sub", "f")
   if (karg != -1) then
     $CTL_MEANS_LEVEL = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/ari", "f")
+  karg = _read_osc_control("/io/means/ari", "f")
   if (karg != -1) then
     $CTL_MEANS_ARI = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/geo", "f")
+  karg = _read_osc_control("/io/means/geo", "f")
   if (karg != -1) then
     $CTL_MEANS_GEO = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/har", "f")
+  karg = _read_osc_control("/io/means/har", "f")
   if (karg != -1) then
     $CTL_MEANS_HAR = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/means/phi", "f")
+  karg = _read_osc_control("/io/means/phi", "f")
   if (karg != -1) then
     $CTL_MEANS_PHI = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/detune", "f")
+  karg = _read_osc_control("/io/detune", "f")
   if (karg != -1) then
     $CTL_DETUNE = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  karg = _read_osc_control("/implication_organ/blend", "f")
+  karg = _read_osc_control("/io/blend", "f")
   if (karg != -1) then
     gk_blend = karg
-    kgoto next
+    kgoto NEXT
   endif
 
-  kwaveform_data[] init 4
-  kwaveform_msg, kwaveform_data OSClisten gi_osc_handle, "/implication_organ/generated_waveform", "ffff"
-  if (kwaveform_msg == 1) then
-    k_, kwaveform maxarray kwaveform_data
-    kwaveform += 1
-    printks("new waveform: %d\n", 0, kwaveform)
-    gk_generated_wave = kwaveform
-    kgoto next
+  karg = _read_osc_control("/io/generated_waveform", "f")
+  if (karg != -1) then
+    gk_generated_wave = karg
+    kgoto NEXT
   endif
 
-  kreduction_data[] init 4
-  kreduction_msg, kreduction_data OSClisten gi_osc_handle, "/implication_organ/reduction_type", "ffff"
-  if (kreduction_msg == 1) then
-    k_, kreduction maxarray kreduction_data
-    printks("new reduction: %d\n", 0, kreduction)
-    gk_reduction = kreduction
-    kgoto next
+  karg = _read_osc_control("/io/reduction_type", "f")
+  if (karg != -1) then
+    gk_reduction = karg
+    kgoto NEXT
   endif
 
-  kpreset_data[] init 30
-  kpreset_msg, kpreset_data OSClisten gi_osc_handle, "/implication_organ/preset", "ffffffffffffffffffffffffffffff"
-  if (kpreset_msg == 1) then
-    k_, kpreset maxarray kpreset_data
-    printks("new preset: %d\n", 0, kpreset)
-    event("i", "scanx_init", 0, 0, kpreset, $SCANX_ID)
-    kgoto next
+  karg = _read_osc_control("/io/preset", "f")
+  if (karg != -1) then
+    ; 0-based
+    event("i", "scanx_init", 0, 0, karg-1, $SCANX_ID)
+    kgoto NEXT
   endif
 
-  ktuning_data[] init 16
-  ktuning_msg, ktuning_data OSClisten gi_osc_handle, "/implication_organ/tuning", "ffffffffffffffff"
-  if (ktuning_msg == 1) then
-    k_, ktuning maxarray ktuning_data
-    ktuning = gi_tuning_map[ktuning]
+  karg = _read_osc_control("/io/tuning", "f")
+  if (karg != -1) then
+    ; 0-based
+    ktuning = gi_tuning_map[karg-1]
     if (ktuning != -1) then
-      printks("new tuning: %d\n", 0, ktuning)
       set_tuning(ktuning)
     else
       printks("invalid tuning: %d\n", 0, ktuning)
     endif
-    kgoto next
   endif
 
-  end:
+  karg = _read_osc_control("/io/filter/cutoff", "f")
+  if (karg != -1) then
+    $CTL_LPF_CUTOFF = $CALC_FILTER_CUTOFF(karg)
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/filter/q", "f")
+  if (karg != -1) then
+    $CTL_LPF_Q = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/1/fb", "f")
+  if (karg != -1) then
+    $CTL_REV1_FB = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/1/wet", "f")
+  if (karg != -1) then
+    $CTL_REV1_WET = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/2/fb", "f")
+  if (karg != -1) then
+    $CTL_REV2_FB = karg
+    kgoto NEXT
+  endif
+
+  karg = _read_osc_control("/io/reverb/2/wet", "f")
+  if (karg != -1) then
+    $CTL_REV2_WET = karg
+    kgoto NEXT
+  endif
+
+  END:
 endop
 
 opcode print_midi, 0, kkkk
   kstatus, kchan, kdata1, kdata2 xin
 
   if (kstatus == 144) then
-    printks("\n----- status=%d ch=%d note=%d velocity=%d\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d note=%d velocity=%d\tNote ON\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 128) then
-    printks("----- status=%d ch=%d\tnote=%d velocity=%d\tNote OFF\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\tnote=%d velocity=%d\tNote OFF\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 160) then
-    printks("----- status=%d ch=%d\tkdata1=%d kdata2=%d\tPolyphonic Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\tkdata1=%d kdata2=%d\tPolyphonic Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 176) then
-    printks("----- status=%d ch=%d\t CC=%d value=%d\tControl Change\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\t CC=%d value=%d\tControl Change\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 192) then
-    printks("----- status=%d ch=%d\tkdata1=%d kdata2=%d\tProgram Change\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\tkdata1=%d kdata2=%d\tProgram Change\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 208) then
-    printks( "----- status=%d ch=%d\tkdata1=%d kdata2=%d\tChannel Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks( "\n----- status=%d ch=%d\tkdata1=%d kdata2=%d\tChannel Aftertouch\n", 0, kstatus, kchan, kdata1, kdata2)
   elseif (kstatus == 224) then
-    printks("----- status=%d ch=%d\t (data1, kdata2)=(%d, %d)\tPitch Bend\n", 0, kstatus, kchan, kdata1, kdata2)
+    printks("\n----- status=%d ch=%d\t (data1, kdata2)=(%d, %d)\tPitch Bend\n", 0, kstatus, kchan, kdata1, kdata2)
   endif
 endop
 
@@ -620,21 +638,32 @@ endop
 ;; instruments
 ;;-------------
 
+#include "inc/global_presets.orc"
+
 ; MIDI setup: all channels, no instrument bindings
 massign 0, 0
 
 ; set stuff up
 instr Init
-  prints("Using BASE_FREQ=%f\n", $BASE_FREQ)
-  prints("Using FREQ_MULT=%f\n", i(gk_freq_mult))
-
+  prints("\n-----------\n")
+  prints("BASE_FREQ=%f\n", $BASE_FREQ)
+  prints("FREQ_MULT=%f\n", i(gk_freq_mult))
+  prints("BINAURAL = $BINAURAL\n")
+  prints("TIED_TONES_OP = $TIED_TONES_OP\n")
+  prints("Global preset: ")
   if ($GLOBAL_PRESET > 0) then
-    if ($GLOBAL_PRESET == 1) then
-      prints("Using global presets for Moon Metal (%d)\n", $GLOBAL_PRESET)
+    if ($GLOBAL_PRESET == 666) then
+      prints("Moon Metal (%d)\n", $GLOBAL_PRESET)
       $GLOBAL_PRESET_MOON_METAL
+    elseif ($GLOBAL_PRESET == 1) then
+      prints("Involution 1 (%d)\n", $GLOBAL_PRESET)
+      $GLOBAL_PRESET_INVOLUTION_1
     elseif ($GLOBAL_PRESET == 2) then
-      prints("Using global presets for Involution (%d)\n", $GLOBAL_PRESET)
-      $GLOBAL_PRESET_INVOLUTION
+      prints("Involution 2 (%d)\n", $GLOBAL_PRESET)
+      $GLOBAL_PRESET_INVOLUTION_2
+    elseif ($GLOBAL_PRESET == 3) then
+      prints("Involution 3 (%d)\n", $GLOBAL_PRESET)
+      $GLOBAL_PRESET_INVOLUTION_3
     else
       prints("Unknown global preset $GLOBAL_PRESET\n")
     endif
@@ -644,6 +673,11 @@ instr Init
     set_reduction_type($REDUCE_NONE)
     set_tuning($TUNING)
   endif
+  prints("-----------\n\n")
+
+  plot_freq(0, 0, 0)
+  plot_freq(1, 0, 0)
+  set_derived_state(0)
 
   ; scanning synthesis initialization
   event_i("i", "scanx_init", 0, 1, gi_scanx_preset, $SCANX_ID)
@@ -660,30 +694,54 @@ endin
 ; these macros work only inside the MIDIHandler instrument
 ;
 
+#define STOP_MAIN_VOICE(INST) #
+  printks("<-- Stopping %f\n", 0, $INST)
+  if ($INST == 0) kgoto _STOP_MAIN_VOICE_DONE
+  turnoff2($INST, 4, 1)
+  _STOP_MAIN_VOICE_DONE:
+#
+
+#define STOP_DERIVED_VOICES #
+  if (kfreqs[0] == 0 $TIED_TONES_OP kfreqs[1] == 0) then
+    printks("<-- Stopping Deriver\n", 0)
+    turnoff2(ideriver, 1, 1)
+    set_derived_state(0)
+  endif
+#
+
+#define START_DERIVED_VOICES #
+  if (kfreqs[0] != 0 && kfreqs[1] != 0) then
+    event("i", ideriver, 0, -1, kamp*0.75, kfreqs[0], kfreqs[1], knotes[0], knotes[1], gk_tuning, gk_freq_mult, gk_reduction, gk_generated_wave)
+    set_derived_state(1)
+  endif
+#
+
 #define PRINT_STATE(AARY'NARY'FARY'INST1'INST2)  #
-        printks("*** assignments:[%f, %f] notes:[%d, %d] freqs:(%f, %f) instrs:(%d, %d) ***\n", 0,
-        $AARY[0], $AARY[1], $NARY[0], $NARY[1], $FARY[0], $FARY[1], active:k($INST1), active:k($INST2))
+    printks("*** assignments:[%f, %f] notes:[%d, %d] freqs:(%f, %f) instrs:(%d, %d) ***\n", 0,
+    $AARY[0], $AARY[1], $NARY[0], $NARY[1], $FARY[0], $FARY[1], active:k($INST1), active:k($INST2))
 #
 
 #define STORE_NOTE(IDX'CHAN'INST'NOTE'FREQ'AMP) #
     printks("-> MIDI init -- channel:%d note:%d instr:%f\n", 0, $CHAN, $NOTE, $INST)
-    ; printks("--> Starting %d:%f @ %fHz\n", 0, $NOTE, $INST, $FREQ)
     event("i", $INST, 0, -1, $FREQ, $AMP, gk_generated_wave, gk_blend)
     kassign[$IDX] = $INST
     kfreqs[$IDX] = $FREQ
     knotes[$IDX] = $NOTE
     $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
+    plot_freq($IDX, $NOTE, $FREQ)
 #
 
 #define CLEAR_NOTE(IDX'INST'KILL) #
     printks("<- MIDI release%s -- instr:%f\n", 0, $KILL == 1 ? " (KILL)" : "", $INST)
-    event("i", "Stopper", 0, 0.1, $INST, kfirst, $KILL == 1 ? 1 : 0)
+    $STOP_MAIN_VOICE($INST)
+    $STOP_DERIVED_VOICES
     if (kassign[$IDX] == $INST) then
       kassign[$IDX] = 0
     endif
     kfreqs[$IDX] = 0
     knotes[$IDX] = 0
     $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
+    plot_freq($IDX, 0, 0)
 #
 
 ; process MIDI notes, by channel
@@ -707,28 +765,27 @@ instr MIDIHandler
   ; only channels 1 & 2
   if kchan > 2 kgoto READ_LOOP
 
-  ; we care only about 144 (Note On)
-  if kstatus != 144 kgoto READ_LOOP
+  ; only care about NOTE-ON and NOTE-OFF
+  if kstatus != 144 && kstatus != 128 kgoto READ_LOOP
 
   $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
 
   ; note numder and velocity
-  knote = kdata1
+  knote = kdata1 + $MIDI_NOTE_OFFSET
   kveloc = kdata2
 
   ; fractional instrument number embeds the channel and note numbers (e.g., "23.10056")
   kinstnum = ivoice + (kchan * 0.1) + (knote * 0.0001)
 
   ; convert note number to frequency based on the current tuning
-  ; kfreq = tab(knote, i(gk_tuning))
   kfreq = tablekt(knote, gk_tuning)
 
   kfirst = (kchan == 1) ? 1 : 0
   kchanidx = kchan - 1
-  kamp = ampdb(-8)
+  kamp = ampdb(-3)
 
   ; 0 velocity indicates Note Off, regardless of what kstatus says
-  if kveloc == 0 kgoto RELEASE
+  if kstatus == 128 || kveloc == 0 kgoto RELEASE
 
   ; clear out zombie notes first
   kprevious = kassign[kchanidx]
@@ -742,9 +799,7 @@ instr MIDIHandler
   endif
 
   ; if we have two frequencies to work with, build the derived tones/chords
-  if (kfreqs[0] != 0 && kfreqs[1] != 0) then
-    event("i", ideriver, 0, -1, kamp * 0.75, kfreqs[0], kfreqs[1], knotes[0], knotes[1], gk_tuning, gk_freq_mult, gk_reduction, gk_generated_wave)
-  endif
+  $START_DERIVED_VOICES
 
   kgoto READ_LOOP
 
@@ -755,25 +810,6 @@ instr MIDIHandler
   DONE:
 endin
 
-; turn off a note and all derived tones
-instr Stopper
-  instnum = p4
-  ifirst = p5
-  ilimit = p6
-
-  prints("<-- Stopping %f (%d)\n", instnum, ifirst)
-  turnoff2(instnum, 4, 1)
-
-  iinst = nstrnum("Deriver")
-  iact = active(iinst)
-  if (iact > ilimit) then
-    prints("<-- Stopping Deriver (%d)\n", iact)
-    turnoff2(iinst, 1, 1)
-  endif
-
-  turnoff
-endin
-
 ; main voice (scanned synth)
 instr +Voice
   kcps = p4
@@ -781,26 +817,39 @@ instr +Voice
   kwave = p6
   kblend = p7
 
-  xtratim 2
+  ; xtratim 2
   aenv = linsegr(0,
                  $RISE, 1,
                  $FALL, 0)
 
+  ; determine amount of detuning based on binaural beating or percentage of frequency
+  kdiff = (gi_binaural == 0) ? kcps*(scale($CTL_DETUNE, 0.001, 0.0001) / 2) : $CTL_DETUNE
   if (kblend == 1) then
-    a1 = oscilikt(kamp * 0.5, kcps, kwave)
-    aout = a1 * aenv
+    a1 = oscilikt(kamp * 0.5, kcps - kdiff, kwave)
+    a2 = oscilikt(kamp * 0.5, kcps + kdiff, kwave)
   else
-    ; determine amount of detuning based on percentage of frequency
-    kdiff = kcps * (scale($CTL_DETUNE, 0.001, 0.0001) / 2)
-    a1 = scanx(kamp, kcps + kdiff, $SCANX_ID)
-    a2 = scanx(kamp, kcps - kdiff, $SCANX_ID+1)
-    aout = ntrpol(a1*0.6, a2*0.6, 0.5) * aenv
+    a1 = scanx(kamp, kcps - kdiff, $SCANX_ID)
+    a2 = scanx(kamp, kcps + kdiff, $SCANX_ID+1)
   endif
 
-  ga_main_out = ga_main_out + aout
+  if (gi_binaural == 1) then
+      aout = 0
+      afilt1 = moogladder2(a1*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
+      afilt2 = moogladder2(a2*0.5*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
+      aout1, aout2 reverbsc afilt1, afilt2, $CTL_REV1_FB, sr/4, sr, 0.1, 0
+      ga_main_out_1 = ga_main_out_1 + ((afilt1 * (1 - $CTL_REV1_WET)) + (aout1 * $CTL_REV1_WET))
+      ga_main_out_2 = ga_main_out_2 + ((afilt2 * (1 - $CTL_REV1_WET)) + (aout2 * $CTL_REV1_WET))
+  else
+      aout = ntrpol(a1*0.6, a2*0.6, 0.5)*aenv
+      afilt1 = moogladder2(aout*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
+      afilt2 = afilt1
+      ga_main_out_1 = ga_main_out_1 + afilt1
+      ga_main_out_2 = ga_main_out_2 + afilt2
+  endif
 endin
 
 ; derived tones: Combination Engine / Pythagorean & Golden Means
+maxalloc "Deriver", 2
 instr +Deriver
   iamp = p4
   ifreq1 = p5
@@ -812,41 +861,56 @@ instr +Deriver
   ireduce = p11
   kwave = p12
 
-  prints("Deriver: 1:(%d, %f) 2:(%d, %f) tuning:%d mult:%f\n",
-         inote1, ifreq1, inote2, ifreq2, ituning, ifreq_mult)
+  iskip tival
+  prints("Deriver: 1:(%d, %f) 2:(%d, %f) tuning:%d mult:%f tied:%s\n",
+         inote1, ifreq1, inote2, ifreq2, ituning, ifreq_mult, iskip == 1 ? "YES" : "NO")
 
-  xtratim 3
+  ; xtratim 2
+  tigoto SKIP_INIT
   aenv = linsegr(0,
                  $RISE, 1,
-                 $FALL, 0)
+                 1, 0)
+  SKIP_INIT:
 
   imin_note, imax_note get_minmax inote1, inote2, ireduce
-
   imin = imin_note > 0 ? tab_i(imin_note, ituning) : 0
   imax = imax_note > 0 ? tab_i(imax_note, ituning) : 0
 
   ; prints("Deriver: imin_note=%d imax_note=%d imin=%f imax=%f\n",
   ;        imin_note,imax_note, imin, imax)
 
-  a1 = combination_engine(kwave, iamp, ifreq1, ifreq2, imin, imax, ifreq_mult)
+  a1 = combination_engine(kwave, iamp, ifreq1, ifreq2, imin, imax, ifreq_mult, iskip)
   aout1 = a1 * aenv * $CTL_COMBOS_LEVEL
   ga_combos_out = ga_combos_out + aout1
 
-  a2 = means_engine(kwave, iamp, ifreq1, ifreq2, ifreq_mult)
+  a2 = means_engine(kwave, iamp, ifreq1, ifreq2, ifreq_mult, iskip)
   aout2 = a2 * aenv * $CTL_MEANS_LEVEL
   ga_means_out = ga_means_out + aout2
 endin
 
 ; audio output
 instr Output
+  a1 = ga_main_out_1 * $CTL_MAIN_LEVEL
+  a2 = ga_main_out_2 * $CTL_MAIN_LEVEL
+
   asub1 = ga_combos_out + ga_means_out
+  if (gi_binaural = 1) then
+    a3, a4 reverbsc asub1, asub1, $CTL_REV2_FB, sr/4, sr, 0.1, 0
+    a3 = ((asub1 * (1 - $CTL_REV2_WET)) + (a3 * $CTL_REV2_WET)) * $CTL_GENERATED_LEVEL
+    a4 = ((asub1 * (1 - $CTL_REV2_WET)) + (a4 * $CTL_REV2_WET)) * $CTL_GENERATED_LEVEL
+  else
+    a3 = asub1 * $CTL_GENERATED_LEVEL
+    a4 = a3
+  endif
 
-  a1 = ga_main_out * $CTL_MAIN_LEVEL
-  a2 = asub1 * $CTL_GENERATED_LEVEL
+  if (gi_binaural == 1) then
+    out(a1, a2, a3, a4)
+  else
+    out(a1, a3)
+  endif
 
-  out(a1, a2)
-
-  ga_main_out = 0
+  ga_main_out_1 = 0
+  ga_main_out_2 = 0
   ga_combos_out = 0
   ga_means_out = 0
 endin
