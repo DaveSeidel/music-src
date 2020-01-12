@@ -1,0 +1,406 @@
+-------
+Showing information for module: UTUNE
+
+Inputs:
+Adsr 2 (Out) > Gate 2 - Cv
+Adsr 1 (Out) > Gate 1 - Cv
+Rene (X Cv) > Cv 1 - Pitch
+Rene (Y Cv) > Cv 2 - Pitch
+
+Outputs:
+Cv Out 2 > Cv Bus (I 4)  - Pitch - INVOLUTION
+Cv Out 1 > Cv Bus (I 3)  - Pitch - INVOLUTION
+
+Parameters:
+Scale = Meta-Slendro
+
+-------
+Showing information for module: LOL
+
+Inputs:
+Maths (Out 2) > O In - Gate
+
+Outputs:
+O Out > Tempi (Mod)  - Gate - INVOLUTION
+G Out > Rene (Y Mod)  - Gate - INVOLUTION
+M Out > Rene (X Mod)  - Gate - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: CLK
+
+Inputs:
+
+Outputs:
+Out > Tempi (Tempo)  - Gate - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: MIMEOPHON
+
+Inputs:
+Optomix (Out 1) > In L - Audio
+Wogglebug (Stepped) > Rate - Cv
+Optomix (Out 2) > In R - Audio
+Pons Asinorum (Out 3) > Halo - Cv
+Tempi (Ch1) > Tempo - Clock
+Pons Asinorum (Out 4) > Color - Cv
+Switch (Out) > Urate - Pitch
+
+Outputs:
+Out R > Audio Output Bus (R)  - Audio - INVOLUTION
+Out L > Audio Output Bus (L)  - Audio - INVOLUTION
+
+Parameters:
+Skew = On
+Mix = 30%
+Zone = 1
+Rate = 12:00
+Repeats = 65%
+
+-------
+Showing information for module: ADSR 2
+
+Inputs:
+Rene (Y Gate) > Gate - Gate
+
+Outputs:
+Out > Utune (Gate 2)  - Cv - INVOLUTION
+
+Parameters:
+S = 100%
+D = 0%
+A = 0%
+R = 75%
+
+-------
+Showing information for module: PONS ASINORUM
+
+Inputs:
+Maths (Out 3) > Cv 4 - Cv
+Maths (Out 3) > Cv 3 - Cv
+Maths (Out 3) > Cv 1 - Cv
+Maths (Out 3) > Cv 2 - Cv
+
+Outputs:
+Out 3 > Mimeophon (Halo)  - Cv - INVOLUTION
+Out 4 > Mimeophon (Color)  - Cv - INVOLUTION
+Out 1 > Cv Bus (I 1)  - Cv - INVOLUTION
+Out 2 > Cv Bus (I 2)  - Cv - INVOLUTION
+
+Parameters:
+Mode = LFO
+Lfo 3 = Max
+Lfo 2 = Max
+Response = Long
+Lfo 1 = Max
+Lfo 4 = Max
+
+-------
+Showing information for module: DISTING
+
+Inputs:
+Cv Bus (O 3) > X - Pitch
+Cv Bus (O 4) > Y - Pitch
+Wogglebug (Woggle) > Z - Cv
+
+Outputs:
+B > Loquelic Iteritas (Pitch A)  - Pitch - INVOLUTION
+A > Loquelic Iteritas (Pitch B)  - Pitch - INVOLUTION
+
+Parameters:
+Algo = A-1 or A-2
+
+-------
+Showing information for module: RENE
+
+Inputs:
+Tempi (Ch4) > Y Clk - Clock
+Lol (M Out) > X Mod - Gate
+Lol (G Out) > Y Mod - Gate
+Tempi (Ch3) > X Clk - Clock
+Tempi (Ch6) > Z Mod - Clock
+
+Outputs:
+X Gate > Adsr 1 (Gate)  - Gate - INVOLUTION
+Y Gate > Adsr 2 (Gate)  - Gate - INVOLUTION
+X Cv > Utune (Cv 1)  - Pitch - INVOLUTION
+Y Cv > Utune (Cv 2)  - Pitch - INVOLUTION
+
+Parameters:
+X Quant = MOS-5 or MOS-7 per state
+Y Fun.Mod.Reset = On
+State 1 = X:MOS-7 + Y:MOS-7
+Y Quant = MOS-5 or MOS-7 per state
+X Quant Range = 4 8ves
+State 3 = X:MOS-5 + Y:MOS-5
+X Fun.Mod.Reset = On
+State 2 = X:MOS-7 + Y:MOS-5
+Y Quant Range = 3 8ves
+
+-------
+Showing information for module: CV BUS
+
+Inputs:
+Pons Asinorum (Out 1) > I 1 - Cv
+Utune (Cv Out 2) > I 4 - Pitch
+Utune (Cv Out 1) > I 3 - Pitch
+Pons Asinorum (Out 2) > I 2 - Cv
+
+Outputs:
+O 3 > Switch (In 3)  - Pitch - INVOLUTION
+O 3 > Dpo A (1V/Oct)  - Pitch - INVOLUTION
+O 3 > Disting (X)  - Pitch - INVOLUTION
+O 4 > Switch (In 4)  - Pitch - INVOLUTION
+O 4 > Dpo B (1V/Oct)  - Pitch - INVOLUTION
+O 4 > Disting (Y)  - Pitch - INVOLUTION
+O 1 > Loquelic Iteritas (Morph)  - Cv - INVOLUTION
+O 1 > Dpo B (Shape)  - Cv - INVOLUTION
+O 1 > Xpan (1 X-Fade)  - Cv - INVOLUTION
+O 1 > Qpas (Radiate-L)  - Cv - INVOLUTION
+O 2 > Loquelic Iteritas (Modulate)  - Cv - INVOLUTION
+O 2 > Dpo B (Fold)  - Cv - INVOLUTION
+O 2 > Xpan (2 X-Fade)  - Cv - INVOLUTION
+O 2 > Qpas (Radiate-R)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: DPO A
+
+Inputs:
+Cv Bus (O 3) > 1V/Oct - Pitch
+
+Outputs:
+Sine > Xpan (1A)  - Audio - INVOLUTION
+Saw > Xpan (2 Pan)  - Audio - INVOLUTION
+Triangle > Xpan (1B)  - Audio - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: LOQUELIC ITERITAS
+
+Inputs:
+Disting (A) > Pitch B - Pitch
+Wogglebug (Smooth) > Damp - Cv
+Disting (B) > Pitch A - Pitch
+Cv Bus (O 1) > Morph - Cv
+Cv Bus (O 2) > Modulate - Cv
+
+Outputs:
+Out > Moddemix (In 1)  - Audio - INVOLUTION
+
+Parameters:
+Algo = VO
+
+-------
+Showing information for module: MODDEMIX
+
+Inputs:
+Loquelic Iteritas (Out) > In 1 - Audio
+Maths (Unity Out 1) > Carrier 1 - Cv
+Maths (Unity Out 4) > Carrier 2 - Cv
+
+Outputs:
+Out 1 > Xpan (Aux-L)  - Audio - INVOLUTION
+Out 2 > Xpan (Aux-R)  - Audio - INVOLUTION
+
+Parameters:
+Strength 1 = 100%
+Strength 2 = 100%
+
+-------
+Showing information for module: ADSR 1
+
+Inputs:
+Rene (X Gate) > Gate - Gate
+
+Outputs:
+Out > Utune (Gate 1)  - Cv - INVOLUTION
+
+Parameters:
+S = 100%
+D = 0%
+A = 0%
+R = 75%
+
+-------
+Showing information for module: TEMPI
+
+Inputs:
+Clk (Out) > Tempo - Gate
+Lol (O Out) > Mod - Gate
+
+Outputs:
+Ch3 > Rene (X Clk)  - Clock - INVOLUTION
+Ch3 > Maths (In 1)  - Gate - INVOLUTION
+Ch1 > Mimeophon (Tempo)  - Clock - INVOLUTION
+Ch6 > Rene (Z Mod)  - Clock - INVOLUTION
+Ch4 > Rene (Y Clk)  - Clock - INVOLUTION
+Ch4 > Maths (In 4)  - Gate - INVOLUTION
+
+Parameters:
+Ch 2 = ÷5
+Ch 3 = ÷7
+Ch 4 = ÷11
+Run/Stop Toggle = Enabled
+Ch 6 = ÷31
+State = 1
+Ch 5 = ÷29
+Ch 1 = ×5
+Run/Stop All = Enabled
+
+-------
+Showing information for module: SWITCH
+
+Inputs:
+Wogglebug (Burst) > Sel - Gate
+Cv Bus (O 3) > In 3 - Pitch
+Cv Bus (O 4) > In 4 - Pitch
+
+Outputs:
+Out > Mimeophon (Urate)  - Pitch - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: OPTOMIX
+
+Inputs:
+Qpas (Lp L) > In 1 - Audio
+Qpas (Lp R) > In 2 - Audio
+Maths (Unity Out 1) > Ctrl 1 - Cv
+Maths (Unity Out 4) > Ctrl 2 - Cv
+
+Outputs:
+Out 1 > Mimeophon (In L)  - Audio - INVOLUTION
+Out 2 > Mimeophon (In R)  - Audio - INVOLUTION
+
+Parameters:
+Ctrl 2 = 100%
+Damp 2 = 50%
+Ctrl 1 = 100%
+Damp 1 = 50%
+
+-------
+Showing information for module: DPO B
+
+Inputs:
+Cv Bus (O 2) > Fold - Cv
+Cv Bus (O 4) > 1V/Oct - Pitch
+Cv Bus (O 1) > Shape - Cv
+
+Outputs:
+Final > Xpan (1 Pan)  - Audio - INVOLUTION
+Sine > Xpan (2A)  - Audio - INVOLUTION
+Square > Xpan (2B)  - Audio - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: AUDIO OUTPUT BUS
+
+Inputs:
+Mimeophon (Out L) > L - Audio
+Mimeophon (Out R) > R - Audio
+
+Outputs:
+
+Parameters:
+
+-------
+Showing information for module: XPAN
+
+Inputs:
+Moddemix (Out 2) > Aux-R - Audio
+Moddemix (Out 1) > Aux-L - Audio
+Dpo A (Saw) > 2 Pan - Audio
+Cv Bus (O 2) > 2 X-Fade - Cv
+Dpo B (Sine) > 2A - Audio
+Dpo A (Sine) > 1A - Audio
+Dpo A (Triangle) > 1B - Audio
+Cv Bus (O 1) > 1 X-Fade - Cv
+Dpo B (Final) > 1 Pan - Audio
+Dpo B (Square) > 2B - Audio
+
+Outputs:
+L Out > Qpas (In L)  - Audio - INVOLUTION
+R Out > Qpas (In R)  - Audio - INVOLUTION
+
+Parameters:
+2 Pan = 10:00
+2 X-Fade = 10:30
+1 X-Fade = 10:30
+Aux Level = 30%
+1 Pan = 10:00
+
+-------
+Showing information for module: WOGGLEBUG
+
+Inputs:
+Wogglebug (Stepped) > Speed - Cv
+
+Outputs:
+Burst > Switch (Sel)  - Gate - INVOLUTION
+Stepped > Wogglebug (Speed)  - Cv - INVOLUTION
+Stepped > Mimeophon (Rate)  - Cv - INVOLUTION
+Smooth > Loquelic Iteritas (Damp)  - Cv - INVOLUTION
+Woggle > Disting (Z)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: MATHS
+
+Inputs:
+Tempi (Ch3) > In 1 - Gate
+Tempi (Ch4) > In 4 - Gate
+
+Outputs:
+Unity Out 4 > Optomix (Ctrl 2)  - Cv - INVOLUTION
+Unity Out 4 > Moddemix (Carrier 2)  - Cv - INVOLUTION
+Out 3 > Pons Asinorum (Cv 1)  - Cv - INVOLUTION
+Out 3 > Pons Asinorum (Cv 2)  - Cv - INVOLUTION
+Out 3 > Pons Asinorum (Cv 3)  - Cv - INVOLUTION
+Out 3 > Pons Asinorum (Cv 4)  - Cv - INVOLUTION
+Unity Out 1 > Optomix (Ctrl 1)  - Cv - INVOLUTION
+Unity Out 1 > Moddemix (Carrier 1)  - Cv - INVOLUTION
+Out 2 > Lol (O In)  - Gate - INVOLUTION
+
+Parameters:
+Rise 2 = 70%
+Fall 2 = 70%
+Fall 1 = 60%
+Ch 3 Attenuverter = 55%
+Ch 2 Attenuverter = 60%
+Cycling = Off
+Rise 1 = 60%
+Ch 1 Attenuverter = 100%
+Ch 4 Attenuverter = 100%
+Vari-Response 2 = Lin/Log
+Vari-Response 1 = Lin/Log
+
+-------
+Showing information for module: QPAS
+
+Inputs:
+Xpan (L Out) > In L - Audio
+Cv Bus (O 2) > Radiate-R - Cv
+Cv Bus (O 1) > Radiate-L - Cv
+Xpan (R Out) > In R - Audio
+
+Outputs:
+Lp L > Optomix (In 1)  - Audio - INVOLUTION
+Lp R > Optomix (In 2)  - Audio - INVOLUTION
+
+Parameters:
+Q = 30-40%
+Radiate-R = 15%
+Freq = 40-60%
+Radiate-L = 15%
+Radiate-L Attenuverter = +10%
+Radiate-R Attenuverter = +10%
+
