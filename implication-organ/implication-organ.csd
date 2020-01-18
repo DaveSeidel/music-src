@@ -9,18 +9,18 @@
 ; - Send OSC to port 8080
 ; - Defaults to dual mono output: 1 = main dyad, 2 = derived voices
 ; - Use --omacro:BINAURAL=1 for four-channel output, where 1 & 2 are
-;     the main dyad in binaural stereo, and 3 & 4 are the derived
-;     voices (duplicated)
+;     the main dyad in binaural stereo through stereo reverb, and
+;     3 & 4 are the derived voices (dual mono) through stereo reverb
 ;----------------------------------------------------------
 
 <CsoundSynthesizer>
 <CsOptions>
- -d -m0 -Ma --realtime --sample-accurate
+-d -m0 -Ma --sched --sample-accurate -b64 -B256
 </CsOptions>
 <CsInstruments>
 
 sr = 48000
-ksmps = 20
+ksmps = 96
 nchnls = 2
 0dbfs = 1
 
@@ -341,7 +341,7 @@ endop
 opcode combination_engine, a, kiiiiiii
   ktab, iamp, ifreq1, ifreq2, imin, imax, imult, iskip xin
 
-  iamp /= 3
+  iamp /= 6
 
   idiff  = ifreq2 - ifreq1              ; difference tone
   idiff2 = (2 * ifreq2) - ifreq1        ; 2nd order difference tone
@@ -705,14 +705,14 @@ endin
   if (kfreqs[0] == 0 $TIED_TONES_OP kfreqs[1] == 0) then
     printks("<-- Stopping Deriver\n", 0)
     turnoff2(ideriver, 1, 1)
-    set_derived_state(0)
+    ;set_derived_state(0)
   endif
 #
 
 #define START_DERIVED_VOICES #
   if (kfreqs[0] != 0 && kfreqs[1] != 0) then
-    event("i", ideriver, 0, -1, kamp*0.75, kfreqs[0], kfreqs[1], knotes[0], knotes[1], gk_tuning, gk_freq_mult, gk_reduction, gk_generated_wave)
-    set_derived_state(1)
+    event("i", ideriver, 0, -1, kamp*0.5, kfreqs[0], kfreqs[1], knotes[0], knotes[1], gk_tuning, gk_freq_mult, gk_reduction, gk_generated_wave)
+    ; set_derived_state(1)
   endif
 #
 
@@ -722,13 +722,13 @@ endin
 #
 
 #define STORE_NOTE(IDX'CHAN'INST'NOTE'FREQ'AMP) #
-    printks("-> MIDI init -- channel:%d note:%d instr:%f\n", 0, $CHAN, $NOTE, $INST)
+    printks("-> MIDI init -- channel:%d note:%d\n--> Starting %f\n", 0, $CHAN, $NOTE, $INST)
     event("i", $INST, 0, -1, $FREQ, $AMP, gk_generated_wave, gk_blend)
     kassign[$IDX] = $INST
     kfreqs[$IDX] = $FREQ
     knotes[$IDX] = $NOTE
-    $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
-    plot_freq($IDX, $NOTE, $FREQ)
+    ;$PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
+    ;plot_freq($IDX, $NOTE, $FREQ)
 #
 
 #define CLEAR_NOTE(IDX'INST'KILL) #
@@ -740,8 +740,8 @@ endin
     endif
     kfreqs[$IDX] = 0
     knotes[$IDX] = 0
-    $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
-    plot_freq($IDX, 0, 0)
+    ;$PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
+    ;plot_freq($IDX, 0, 0)
 #
 
 ; process MIDI notes, by channel
@@ -757,7 +757,7 @@ instr MIDIHandler
 
   READ_LOOP:
   kstatus, kchan, kdata1, kdata2 midiin
-  print_midi(kstatus, kchan, kdata1, kdata2)
+  ;print_midi(kstatus, kchan, kdata1, kdata2)
 
   ; check for end of MIDI queue
   if kstatus == 0 kgoto DONE
@@ -768,7 +768,7 @@ instr MIDIHandler
   ; only care about NOTE-ON and NOTE-OFF
   if kstatus != 144 && kstatus != 128 kgoto READ_LOOP
 
-  $PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
+  ;$PRINT_STATE(kassign'knotes'kfreqs'ivoice'ideriver)
 
   ; note numder and velocity
   knote = kdata1 + $MIDI_NOTE_OFFSET
@@ -840,7 +840,7 @@ instr +Voice
       ga_main_out_1 = ga_main_out_1 + ((afilt1 * (1 - $CTL_REV1_WET)) + (aout1 * $CTL_REV1_WET))
       ga_main_out_2 = ga_main_out_2 + ((afilt2 * (1 - $CTL_REV1_WET)) + (aout2 * $CTL_REV1_WET))
   else
-      aout = ntrpol(a1*0.6, a2*0.6, 0.5)*aenv
+      aout = ntrpol(a1*0.6, a2*0.6, 0.5) ;*aenv
       afilt1 = moogladder2(aout*aenv, $CTL_LPF_CUTOFF, $CTL_LPF_Q)
       afilt2 = afilt1
       ga_main_out_1 = ga_main_out_1 + afilt1
@@ -862,8 +862,8 @@ instr +Deriver
   kwave = p12
 
   iskip tival
-  prints("Deriver: 1:(%d, %f) 2:(%d, %f) tuning:%d mult:%f tied:%s\n",
-         inote1, ifreq1, inote2, ifreq2, ituning, ifreq_mult, iskip == 1 ? "YES" : "NO")
+  prints("--> Deriver: 1:(%d, %f) 2:(%d, %f) tied:%s\n",
+         inote1, ifreq1, inote2, ifreq2, iskip == 1 ? "YES" : "NO")
 
   ; xtratim 2
   tigoto SKIP_INIT
@@ -928,7 +928,7 @@ endin
 i "Init"        $PLAY_FOR $A_SHORT_TIME
 i "OSCHandler"  $PLAY_FOR $A_LONG_TIME
 i "Output"      $PLAY_FOR $A_LONG_TIME
-i "MIDIHandler" [$PLAY_FOR+0.5] $A_LONG_TIME
+i "MIDIHandler" [$PLAY_FOR+0.25] $A_LONG_TIME
 e
 
 </CsScore>
