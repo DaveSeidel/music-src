@@ -31,6 +31,7 @@ There is an optional cross-panning effect (only in stereo mode) that pans the tw
 
  * Jean-Claude Risset (RIP) for all of his contributions
  * The Csound user community (especially Jeanette C., who suggested wavetable morphing).
+ * The Technobear, whose firmware was very helpful udring the development process.
  * Reginald Bain for his article. I've been playing with this technique since 2004, but I learned a lot from the article.
 
 ---
