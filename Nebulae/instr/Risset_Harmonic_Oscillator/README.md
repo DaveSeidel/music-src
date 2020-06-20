@@ -36,5 +36,4 @@ There is an optional cross-panning effect (only in stereo mode) that pans the tw
 
 ---
 
-Dave Seidel, June 2020
-
+Dave Seidel, June 2020, v1.0
