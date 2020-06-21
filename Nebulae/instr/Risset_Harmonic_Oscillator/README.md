@@ -34,6 +34,10 @@ There is an optional cross-panning effect (only in stereo mode) that pans the tw
  * The Technobear, whose firmware was very helpful udring the development process.
  * Reginald Bain for his article. I've been playing with this technique since 2004, but I learned a lot from the article.
 
+## Changelog
+ * v1.0 - initial release
+ * v1.1 - bugfix
+
 ---
 
-Dave Seidel, June 2020, v1.0
+Dave Seidel, June 2020, v1.1

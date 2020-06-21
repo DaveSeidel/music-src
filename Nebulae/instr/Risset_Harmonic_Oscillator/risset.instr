@@ -108,9 +108,9 @@ instr 1
 
     ; panners
     aoutL1, aoutR1 pan2 aoutL, klfoL+0.5
-    aoutL = aoutL1+aoutL2
-
     aoutL2, aoutR2 pan2 aoutR, klfoR+0.5
+
+    aoutL = aoutL1+aoutL2
     aoutR = aoutR1+aoutR2
   endif
 
