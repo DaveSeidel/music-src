@@ -23,7 +23,7 @@ You can control the arpeggio effect using the Size knob (or CV input) which sets
 
 You can control the pitch using the Pitch knob, but you can also use the v/oct CV input. You can control amplitude using the Start knob, or you can use the associated CV input with any CV source that produces an envelope.
 
-Waveform is controlled by the Density knob (or CV input). This control morphs smoothly through six waveforms. The first three are the familiar triangle, sawtooth, and square. The other three are non-standard: David First's asymptotic sawtooth, prime (prime-numbered partials up to the 31st harmonic), and fibonnaci (partials in the Fibonnaci sequence up to the 34th harmonic).
+Waveform is controlled by the Density knob (or CV input). This control morphs smoothly through six waveforms. The first three are the familiar triangle (at full CCW), sawtooth, and square. The other three are non-standard: David First's asymptotic sawtooth, prime (prime-numbered partials up to the 31st harmonic), and fibonnaci (partials in the Fibonnaci sequence up to the 34th harmonic, at full CW).
 
 There is an optional cross-panning effect (only in stereo mode) that pans the two channels back and forth, each channel with its own LFO. The LFOs begin with opposite phase, operate at very slightly different speeds and move in opposite directions. The panning speed is controlled by the Overlap knob. This provides a kind of tremolo, most apparent at higher speeds. At slower speeds, it animates the output.
 
