@@ -1,0 +1,153 @@
+;
+; Binaural Reanimator
+; An effect/instrument for the Qu-Bit Nebulae v2
+; Dave Seidel, July 2020
+;
+
+; tables for LFOs and internal oscillators
+gitabsz init 2^17
+giSin ftgen 1, 0, gitabsz, 10, 1
+giTri ftgen 0, 0, gitabsz, 7, 0, gitabsz/4, 1, gitabsz/2, -1, gitabsz/4, 0
+
+giNumTables = 2
+
+; list of tables for ftmorf
+giList ftgen 1000, 0, giNumTables, -2, giSin, giTri
+
+; work table for ftmorf
+giMorf ftgen 1001, 0, gitabsz, 10, 1
+
+; map the Nebulae globals to our own globals with application-specific names
+opcode map_controls, 0, 0
+  ; knobs
+  gk_amp1   = gkloopstart
+  gk_amp2   = gkloopsize
+
+  gk_pitch1   = gkpitch
+  gk_pitch1_f = gkpitch_alt
+
+  gk_rate1  = gkdensity
+  gk_rate2  = gkoverlap
+  gk_pan    = gkwindow
+  gk_wave   = gkblend
+
+  ; buttons
+  gk_mode   = gkrecord
+endop
+
+#define FX_MODE    #0#
+#define INSTR_MODE #1#
+
+opcode binauralize, aa, ak
+  ain,kdiff xin
+
+  ; take it apart
+  fsig pvsanal ain, 2048, 2048/4, 2048, 1
+
+  ; determine pitches
+  ; kcent, kamp pvspitch fsig, 0.1
+  kcent pvscent fsig 
+
+  if (kcent > 0) && (kdiff > 0) then
+    kdiff /= 2
+    krat1 = (kcent + kdiff) / kcent
+    krat2 = (kcent - kdiff) / kcent
+  else
+    krat1 = 1
+    krat2 = 1
+  endif
+
+  ; create derived streams with shifted pitches
+  fsig2 = fsig
+  fbinL pvscale fsig,  krat1, 0
+  fbinR pvscale fsig2, krat2, 0
+
+  ; put it back together
+  aoutL pvsynth fbinL 
+  aoutR pvsynth fbinR
+
+  xout aoutL, aoutR
+endop
+
+; - left/right channels each have their own panner driven by a dedicated LFO
+; - LFOs have different speeds: either slightly faster or slightly than the "kpan" setting
+opcode cross_panner, aa, aak
+  aoutL, aoutR, kpan xin
+
+  if kpan > 0.1 then
+    ; LFOs
+    klfoL oscili 0.495, kpan-0.1, giTri, 90 
+    klfoR oscili 0.495, kpan+0.1, giTri, 270 
+
+    ; panners
+    aoutL1, aoutR1 pan2 aoutL, klfoL+0.5
+    aoutL2, aoutR2 pan2 aoutR, klfoR+0.5
+
+    aoutL = aoutL1+aoutL2
+    aoutR = aoutR1+aoutR2
+  endif
+
+  xout aoutL, aoutR
+endop
+
+
+instr 1
+  map_controls
+
+  ; max amplititude, default for fx mode
+  kampmax init 0.9
+
+  ; amplitudes, controlled by Start & Size knobs/inputs
+  kamp1 scale gk_amp1, kampmax, 0
+  kamp2 scale gk_amp2, kampmax, 0
+
+  ; set up waveform morphing
+  itbl = giMorf
+  kndx init 0
+
+  aoutL1 init 0
+  aoutR1 init 0
+  aoutL2 init 0
+  aoutR2 init 0
+
+  ; beating speed, controlled by Density & Overlap knobs/inputs
+  krate1 scale gk_rate1, 30, 0
+  krate2 scale gk_rate2, 30, 0
+
+  ; by default, process audio input; if Record is set,
+  ; generate sine/triangle waveforms internally using pitch input
+  if gk_mode == $FX_MODE then
+    ain1, ain2 inch 1, 2
+    ; kampmax = 0.9
+  elseif gk_mode == $INSTR_MODE then
+    ; pitch 1: make pitch 1v/octave
+    kfreq1 scale gk_pitch1, 11, 6
+    kfreq1 pow 2, kfreq1
+
+    ; fine pitch control
+    kfreq1_f scale gk_pitch1_f, 0.5, -0.5
+    kfreq1 += kfreq1_f
+
+    ; morph through waveforms using Blend knob/input
+    kndx scale gk_wave, giNumTables-1, 0
+    ftmorf kndx, giList, giMorf
+
+    ; lower starting amplitude for internal oscillators
+    ain1 poscil3 0.35, kfreq1, itbl
+    ain2 poscil3 0.35, kfreq1, itbl
+
+    ; kampmax = 0.8
+  endif
+
+    aoutL1, aoutR1 binauralize ain1, krate1
+    aoutL2, aoutR2 binauralize ain2, krate2
+
+    aoutL = (kamp1*aoutL1)+(kamp2*aoutL2)
+    aoutR = (kamp1*aoutR1)+(kamp2*aoutR2)
+
+  ; cross-panning "tremolo", speed controlled by Window knob/input
+  kpan scale gk_pan, 11.0, 0.0
+  aoutL, aoutR cross_panner aoutL, aoutR, kpan
+
+  outs aoutL, aoutR
+endin
