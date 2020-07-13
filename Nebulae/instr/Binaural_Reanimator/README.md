@@ -2,7 +2,7 @@
 
 Record button OFF = Chorus mode: binaural chorusing effect.
 Input(s) split into binaural pair with slight pitch
-offsetsrelative to original pitch. Separate beating rate
+offsets relative to original pitch. Separate pitch offset
 and amplitude controls for each channel.
 
 Record button ON = OSC mode: binaural beating oscillator.
@@ -37,7 +37,7 @@ where the left inpout is normalized to the right input, this allows you to contr
 In this mode, it is a dual oscillator using simple waveforms (morphable between sine and triangle waves) that allows you to create
 classic binaural beating effects, suitable for use by itself or for combining with other sound sources.  
 
-There are two oscillators here, and they are set to the same pitch (using the Pitch knob or the v/oct CV input), but each channel has its own amplitude and beating rate controls, which provides two layers of binaural beating with a lot of control.
+There are two oscillators here, and they are set to the same pitch (using the Pitch knob or the v/oct CV input), but each channel has its own amplitude and beating rate controls, which provides two layers of binaural beating with a lot of control. Note also that if you hold down the File button, you can use the Pitch know for fine tuning.
 
 The beating rate controls (Density and Overlap) range from 0 to 30Hz, which encompasses the delta, theta, alpha, and beta brainwave ranges. See [this article](https://www.healthline.com/health/binaural-beats#instructions) for more information. However, please see the [Disclaimer](#Disclaimer) below.
 
