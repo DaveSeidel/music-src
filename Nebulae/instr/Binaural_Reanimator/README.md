@@ -26,8 +26,7 @@ Panning/tremolo applies to both modes.
 
 ### Chorus Mode (Record OFF)
 
-In this mode, it is an effect that takes audio input and processes each channel separately into a binaural pair where left and right sizes have very slight pitch offsets set by the Density and Overlap
-knobs respectively; large offsets increase the chorusing effect.
+In this mode, it is an effect that takes audio input and processes each channel separately into a binaural pair where left and right sizes have very slight pitch offsets set by the Density and Overlap knobs respectively; larger offsets increase the chorusing effect.
 
 Each channel has its own amplitude control. In the case of mono input,
 where the left inpout is normalized to the right input, this allows you to control the layering of the chorusing effect that is applied seperately to each channel. With stereo input, this is also the case, but you may prefer to set the pitch offset and amplitude controls to the same values.
@@ -37,7 +36,7 @@ where the left inpout is normalized to the right input, this allows you to contr
 In this mode, it is a dual oscillator using simple waveforms (morphable between sine and triangle waves) that allows you to create
 classic binaural beating effects, suitable for use by itself or for combining with other sound sources.  
 
-There are two oscillators here, and they are set to the same pitch (using the Pitch knob or the v/oct CV input), but each channel has its own amplitude and beating rate controls, which provides two layers of binaural beating with a lot of control. Note also that if you hold down the File button, you can use the Pitch know for fine tuning.
+There are two oscillators here, and they are set to the same pitch (using the Pitch knob or the v/oct CV input), but each channel has its own amplitude and beating rate controls, which provides two layers of binaural beating with a lot of control. Note also that if you hold down the File button, you can use the Pitch knob for fine tuning.
 
 The beating rate controls (Density and Overlap) range from 0 to 30Hz, which encompasses the delta, theta, alpha, and beta brainwave ranges. See [this article](https://www.healthline.com/health/binaural-beats#instructions) for more information. However, please see the [Disclaimer](#Disclaimer) below.
 
