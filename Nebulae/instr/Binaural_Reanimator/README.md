@@ -9,7 +9,7 @@ of input signal vs. effect.
 Record button ON = OSC mode: binaural beating oscillator.
 Dual sine/triangle oscillators at same pitch,
 set by v/oct or Pitch knob. Separate beating rate and
-amplitude controls for each channel. Mix controls balanc
+amplitude controls for each channel. Mix controls balance
 of plain oscillators vs. beating effect.
 
 Panning/tremolo applies to both modes.
