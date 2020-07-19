@@ -3,12 +3,14 @@
 Record button OFF = Chorus mode: binaural chorusing effect.
 Input(s) split into binaural pair with slight pitch
 offsets relative to original pitch. Separate pitch offset
-and amplitude controls for each channel.
+and amplitude controls for each channel. Mix controls balance
+of input signal vs. effect.
 
 Record button ON = OSC mode: binaural beating oscillator.
 Dual sine/triangle oscillators at same pitch,
 set by v/oct or Pitch knob. Separate beating rate and
-amplitude controls for each channel.
+amplitude controls for each channel. Mix controls balanc
+of plain oscillators vs. beating effect.
 
 Panning/tremolo applies to both modes.
 
@@ -21,16 +23,18 @@ Panning/tremolo applies to both modes.
  * Waveform (Blend knob/CV) - OSC MODE ONLY
  * Cross-Panning Speed (Window knob/CV)
  * Mode selection, FX vs OSC (Record button/CV)
+ * Mix (Speed knob/CV) controls balance between input vs effect
 
 ## Details
 
 ### Chorus Mode (Record OFF)
 
-In this mode, it is an effect that takes audio input and processes each channel separately into a binaural pair where left and right sizes have very slight pitch offsets set by the Density and Overlap
-knobs respectively; large offsets increase the chorusing effect.
+In this mode, it is an effect that takes audio input and processes each channel separately into a binaural pair where left and right sizes have very slight pitch offsets set by the Density and Overlap knobs respectively; large offsets increase the chorusing effect.
 
 Each channel has its own amplitude control. In the case of mono input,
 where the left inpout is normalized to the right input, this allows you to control the layering of the chorusing effect that is applied seperately to each channel. With stereo input, this is also the case, but you may prefer to set the pitch offset and amplitude controls to the same values.
+
+You can use the mix control to determine the blend in the output of clean signal vs. effect.
 
 ### Oscillator Mode (Record ON)
 
@@ -42,6 +46,8 @@ There are two oscillators here, and they are set to the same pitch (using the Pi
 The beating rate controls (Density and Overlap) range from 0 to 30Hz, which encompasses the delta, theta, alpha, and beta brainwave ranges. See [this article](https://www.healthline.com/health/binaural-beats#instructions) for more information. However, please see the [Disclaimer](#Disclaimer) below.
 
 Waveform is controlled by the blend knob (or CV input). This control morphs smoothly through two waveforms: sine and triangle. These waveforms are used because he binaural beating effect is more pronounced with simple timbres.
+
+You can use the mix control to determine the blend in the output of plain oscillators vs. beating oscillators.
 
 ### Cross-Panning
 

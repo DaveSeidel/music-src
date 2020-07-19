@@ -20,16 +20,18 @@ giMorf ftgen 1001, 0, gitabsz, 10, 1
 ; map the Nebulae globals to our own globals with application-specific names
 opcode map_controls, 0, 0
   ; knobs
-  gk_amp1   = gkloopstart
-  gk_amp2   = gkloopsize
+  gk_amp1     = gkloopstart
+  gk_amp2     = gkloopsize
 
-  gk_pitch1   = gkpitch
-  gk_pitch1_f = gkpitch_alt
+  gk_pitch   = gkpitch
+  gk_pitch_f = gkpitch_alt
 
-  gk_rate1  = gkdensity
-  gk_rate2  = gkoverlap
-  gk_pan    = gkwindow
-  gk_wave   = gkblend
+  gk_rate1    = gkdensity
+  gk_rate2    = gkoverlap
+  gk_pan      = gkwindow
+  gk_wave     = gkblend
+
+  gk_mix      = gkspeed
 
   ; buttons
   gk_mode   = gkrecord
@@ -95,7 +97,7 @@ instr 1
   map_controls
 
   ; max amplititude, default for fx mode
-  kampmax init 0.9
+  kampmax init 1.0
 
   ; amplitudes, controlled by Start & Size knobs/inputs
   kamp1 scale gk_amp1, kampmax, 0
@@ -114,27 +116,30 @@ instr 1
   krate1 scale gk_rate1, 30, 0
   krate2 scale gk_rate2, 30, 0
 
+  kmix init 0.5
+  kmix scale gk_mix, 1, 0
+
   ; by default, process audio input; if Record is set,
   ; generate sine/triangle waveforms internally using pitch input
   if gk_mode == $FX_MODE then
     ain1, ain2 inch 1, 2
     ; kampmax = 0.9
   elseif gk_mode == $INSTR_MODE then
-    ; pitch 1: make pitch 1v/octave
-    kfreq1 scale gk_pitch1, 11, 6
-    kfreq1 pow 2, kfreq1
+    ; make pitch 1v/octave
+    kfreq scale gk_pitch, 11, 6
+    kfreq pow 2, kfreq
 
     ; fine pitch control
-    kfreq1_f scale gk_pitch1_f, 0.5, -0.5
-    kfreq1 += kfreq1_f
+    kfreq_f scale gk_pitch_f, 0.5, -0.5
+    kfreq += kfreq_f
 
     ; morph through waveforms using Blend knob/input
     kndx scale gk_wave, giNumTables-1, 0
     ftmorf kndx, giList, giMorf
 
     ; lower starting amplitude for internal oscillators
-    ain1 poscil3 0.35, kfreq1, itbl
-    ain2 poscil3 0.35, kfreq1, itbl
+    ain1 poscil3 0.35, kfreq, itbl
+    ain2 poscil3 0.35, kfreq, itbl
 
     ; kampmax = 0.8
   endif
@@ -149,5 +154,6 @@ instr 1
   kpan scale gk_pan, 11.0, 0.0
   aoutL, aoutR cross_panner aoutL, aoutR, kpan
 
-  outs aoutL, aoutR
+  outs (aoutL * kmix) + (ain1 * (1 - kmix)),
+       (aoutR * kmix) + (ain2 * (1 - kmix))
 endin
