@@ -32,7 +32,7 @@ Panning/tremolo applies to both modes.
 In this mode, it is an effect that takes audio input and processes each channel separately into a binaural pair where left and right sizes have very slight pitch offsets set by the Density and Overlap knobs respectively; larger offsets increase the chorusing effect.
 
 Each channel has its own amplitude control. In the case of mono input,
-where the left inpout is normalized to the right input, this allows you to control the layering of the chorusing effect that is applied seperately to each channel. With stereo input, this is also the case, but you may prefer to set the pitch offset and amplitude controls to the same values.
+where the left input is normalized to the right input, this allows you to control the layering of the chorusing effect that is applied separately to each channel. With stereo input, this is also the case, but you may prefer to set the pitch offset and amplitude controls to the same values.
 
 You can use the mix control to determine the blend in the output of clean signal vs. effect.
 
