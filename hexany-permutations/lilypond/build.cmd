@@ -1,3 +1,7 @@
+cd ..
+python build_ly.py 0 part1.sco
+cd lilypond
+
 @set LY="C:\Program Files (x86)\LilyPond\usr\bin\lilypond.exe"
 %LY%                         hexany_permutations.ly
 %LY% -e "(define partNum 1)" hexany_permutations.ly
