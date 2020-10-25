@@ -2,23 +2,25 @@
 
 set -e
 
+_outdir=xi_output
 
 function _write_meta() {
     prefix=$1
     track=$2
     soundfile=$3
+    outdir=$4
 
-    cat >output/${prefix}_meta.txt <<EOF
+    cat >${outdir}/${prefix}_meta.txt <<EOF
 [__track__]
 album=Hexany Permutations
 title=Part ${track}
 track=${track}
-year=2016
+year=2016/2019
 artist=Dave Seidel
 composer=Dave Seidel
 genre=Electroacoustic
 publisher=Mysterybear Music, ASCAP
-copyright=Copyright (c) 2016 by Dave Seidel, some rights reserved. Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
+copyright=Copyright (c) 2016,2019 by Dave Seidel, some rights reserved. Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 EOF
 }
 
@@ -26,22 +28,24 @@ EOF
 function _cs() {
     part=$1
     track=$2
+    outdir=$3
+
     prefix=hexany_catalog_part${part}
     soundfile_suffix=_master.wav
 
-    mkdir -p output
+    mkdir -p ${outdir}
 
     # compile sound file
-    csound ${prefix}.csd --sample-accurate -m6 -d -3 -W -R -o output/${prefix}.wav
-    
+    csound ${prefix}.csd --sample-accurate -m6 -d -3 -W -R -o ${outdir}/${prefix}.wav
+
     # boost bass and normalize
-    sox output/${prefix}.wav output/${prefix}${soundfile_suffix} bass +10 norm -3
+    sox ${outdir}/${prefix}.wav ${outdir}/${prefix}${soundfile_suffix} bass +10 norm -3
 
     # make a flac version
-    flac --silent --best --keep-foreign-metadata output/${prefix}_master.wav -f -o output/${prefix}.flac
-    
+    flac --silent --best --keep-foreign-metadata ${outdir}/${prefix}_master.wav -f -o ${outdir}/${prefix}.flac
+
     # metadata file for us with yt-render
-    _write_meta ${prefix} ${track} ${prefix}${soundfile_suffix}
+    _write_meta ${prefix} ${track} ${prefix}${soundfile_suffix} ${outdir}
 }
 
 
@@ -56,8 +60,7 @@ else
     t=1
     for i in {1,2,4,6,8,5}
     do
-       _cs $i $t
+       _cs $i $t $_outdir
        ((t++))
     done
 fi
-

@@ -5,6 +5,7 @@ from pprint import pformat
 
 from score_tools import Score
 from catalog_tools import *
+from lilypond_tools import print_lilypad_score
 
 
 # Wrap sys.stdout into a StreamWriter to allow writing unicode.
@@ -32,8 +33,7 @@ def print_chords(chords, note_char=BLOCK):
       row.append(out[j][i])
     print ''.join(row)
 
-
-def build_section(start, score, chords, chord_dur, amp, preset, scale_size):
+def build_section(start, score, chords, chord_dur, amp, preset, scale_size, lilypond=True):
     # take the same notes that appear in adjacent chords and tie them together
     voices = [
         collect_common_tones([chord[i] for chord in chords])
@@ -52,14 +52,17 @@ def build_section(start, score, chords, chord_dur, amp, preset, scale_size):
                 score.i('"Note"', p2, dur, amp, preset, idx)
             p2 += dur
 
+    return voices
 
-def build_score(text, sort=None, reverse=False, quiet=True):
+
+def build_score(text, sort=None, reverse=False, quiet=True, section_duration=13.0,
+                lilypond=False, gfx=True):
     scale_size = 7
     chords = build_chord_catalogue(scale_size)
 
     amp = -16
     preset = 11
-    total_dur = 60 * 11.0
+    total_dur = 60 * section_duration
     rest_dur = 3.0
     chord_dur = total_dur / len(chords)
 
@@ -68,7 +71,6 @@ def build_score(text, sort=None, reverse=False, quiet=True):
             (scale_size, len(chords), chord_dur, total_dur)
 
     score = Score()
-
     score.append([
         '#include "scanu_tables.sco"\n',
         'i "Output" 0 %f' % (total_dur + rest_dur)
@@ -87,14 +89,17 @@ def build_score(text, sort=None, reverse=False, quiet=True):
     elif sort == "desc_all":
         chords = sorted(chords, key=lambda x: sorted(x, reverse=True), reverse=reverse)
 
+    if gfx:
     #print pformat(chords)
     print_chords(chords)
 
     # print output
     if len(sys.argv) >= 3:
-        build_section(0, score, chords, chord_dur, amp, preset, scale_size)
+        voices = build_section(0, score, chords, chord_dur, amp, preset, scale_size)
+        if lilypond:
+            print_lilypad_score(text, voices, make_parts=False)
+            print_lilypad_score(text, voices, make_parts=True)
         score.append("e")
         output = score.render()
         with open(sys.argv[2], 'w') as f:
             f.write(output)
-
