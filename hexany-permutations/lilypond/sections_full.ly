@@ -1,0 +1,7 @@
+\bookOutputName "Hexany_Permutations_full"
+\include "../Section_1_score.ly"
+\include "../Section_2_score.ly"
+\include "../Section_3_score.ly"
+\include "../Section_4_score.ly"
+\include "../Section_5_score.ly"
+\include "../Section_6_score.ly"

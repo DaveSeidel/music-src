@@ -10,7 +10,7 @@ from lilypond_tools import print_lilypad_score
 
 # Wrap sys.stdout into a StreamWriter to allow writing unicode.
 # http://stackoverflow.com/questions/4545661/unicodedecodeerror-when-redirecting-to-file
-sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout) 
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
 
 BLOCK = u'\u2588'
@@ -39,10 +39,11 @@ def build_section(start, score, chords, chord_dur, amp, preset, scale_size, lily
         collect_common_tones([chord[i] for chord in chords])
         for i in range(scale_size)
     ]
-    
+
     # print "Starting section at %s" % start
 
     for v in voices:
+        # print pformat(v)
         p2 = start
         for segment in v:
             idx = segment[0]
@@ -90,8 +91,8 @@ def build_score(text, sort=None, reverse=False, quiet=True, section_duration=13.
         chords = sorted(chords, key=lambda x: sorted(x, reverse=True), reverse=reverse)
 
     if gfx:
-    #print pformat(chords)
-    print_chords(chords)
+      # print pformat(chords)
+      print_chords(chords)
 
     # print output
     if len(sys.argv) >= 3:
