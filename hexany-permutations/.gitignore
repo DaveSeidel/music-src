@@ -1,2 +1,3 @@
 *.ly
 *.pyc
+.vscode/
