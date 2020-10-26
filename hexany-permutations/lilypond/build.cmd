@@ -1,5 +1,5 @@
 cd ..
-python build_ly.py 0 part1.sco
+python build_ly.py 0 NUL
 cd lilypond
 
 @set LY="C:\Program Files (x86)\LilyPond\usr\bin\lilypond.exe"

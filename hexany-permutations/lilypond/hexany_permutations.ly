@@ -33,13 +33,12 @@ instrument = #(define-scheme-function (parser location part) (string?)
 )
 
 instrumentStaff = #(define-music-function (parser location part partName) (string? string?)
-#{
+  #{
     \new Staff \with { instrumentName = #part } {
       \global #(ly:parser-include-string (instrument partName))
     }
-#}
+  #}
 )
-
 
 scoreSection = #(define-scheme-function (parser location part) (string?)
   (if (string-null? partName)
@@ -73,10 +72,10 @@ scoreSection = #(define-scheme-function (parser location part) (string?)
   )
 )
 
-setup = #(define-scheme-function (parser location) ()
-  (if (string-null? partName)
-    #{ \header { subsubtitle = "Full score" } #}
-    #{ \header { subsubtitle = #(string-append "Part for " partName) } #}
+subsub = #(lambda (pname)
+  (if (string-null? pname)
+    "Full score"
+    (string-append "Part for " pname)
   )
 )
 
@@ -95,7 +94,7 @@ includeSections = #(define-void-function (parser location) ()
   title = "Hexany Permutations"
   composer = "Dave Seidel"
   subtitle = "For seven like strings"
-  subsubtitle = "Full score"
+  subsubtitle = #(subsub partName)
   copyright = "(c) Dave Seidel 2020 / Mysterybear Music, ASCAP / CC BY-NC 4.0"
 }
 
@@ -151,5 +150,4 @@ includeSections = #(define-void-function (parser location) ()
 
 %%% score/parts
 
-\setup
 \includeSections
