@@ -12,7 +12,7 @@ global = {
   \clef bass
 }
 
-show-tempo = #(define-music-function (partName) (string?)
+showTempo = #(define-music-function (partName) (string?)
   (if (not (string-null? partName))
     #{ \tempo "Even & sustained" 4 = 36 #}
     #{ #}

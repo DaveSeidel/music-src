@@ -32,7 +32,7 @@ FIRST_PITCH_SUFFIX2 = ' ^\markup { "(%s)" }'
 VOICE_START = '''
 string%s = \\new Voice \\relative c%s {
   \\compressFullBarRests
-  \\show-tempo "%s"
+  \\showTempo "%s"
 '''
 
 BOOKPART = '''
