@@ -31,7 +31,7 @@ FIRST_PITCH_SUFFIX2 = ' ^\markup { "(%s)" }'
 
 VOICE_START = '''
 string%s = \\new Voice \\relative c%s {
-  \\compressFullBarRests
+  \\compressEmptyMeasures
   \\showTempo "%s"
 '''
 
@@ -96,7 +96,7 @@ def print_lilypad_score(text, voices, make_parts=False):
                     end_rest = 0
             output.append("")
         if make_parts and end_rest:
-            output.append('  \\fermataMarkup \\bar "|."\n}\n')
+            output.append('  \\fermata \\bar "|."\n}\n')
         else:
             output.append('  \\fermata \\bar "|."\n}\n')
 
