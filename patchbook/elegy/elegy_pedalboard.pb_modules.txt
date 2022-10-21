@@ -1,0 +1,88 @@
+-------
+Showing information for module: DVINA
+
+Inputs:
+
+Outputs:
+Out > Tuner (In)  - Audio - PEDALBOARD
+
+Parameters:
+
+-------
+Showing information for module: TUNER
+
+Inputs:
+Dvina (Out) > In - Audio
+
+Outputs:
+Out > Plus (In)  - Audio - PEDALBOARD
+
+Parameters:
+
+-------
+Showing information for module: PLUS
+
+Inputs:
+Tuner (Out) > In - Audio
+
+Outputs:
+Dry Out > Microcosm (In)  - Audio - PEDALBOARD
+Wet Out > Particle (In)  - Audio - PEDALBOARD
+
+Parameters:
+
+-------
+Showing information for module: MICROCOSM
+
+Inputs:
+Plus (Dry Out) > In - Audio
+
+Outputs:
+Out L/R > Context (In L/R)  - Audio - PEDALBOARD
+
+Parameters:
+
+-------
+Showing information for module: PARTICLE
+
+Inputs:
+Plus (Wet Out) > In - Audio
+
+Outputs:
+Out > Deluxe Memory Man (In L)  - Audio - PEDALBOARD
+
+Parameters:
+
+-------
+Showing information for module: CONTEXT
+
+Inputs:
+Microcosm (Out L/R) > In L/R - Audio
+
+Outputs:
+Out L/R > Mixer (Drone Channel L/R)  - Audio - PEDALBOARD
+
+Parameters:
+
+-------
+Showing information for module: MIXER
+
+Inputs:
+Context (Out L/R) > Drone Channel L/R - Audio
+Deluxe Memory Man (Out L/R) > Melody Channel L/R - Audio
+
+Outputs:
+
+Parameters:
+
+-------
+Showing information for module: DELUXE MEMORY MAN
+
+Inputs:
+Particle (Out) > In L - Audio
+
+Outputs:
+Out L/R > Mixer (Melody Channel L/R)  - Audio - PEDALBOARD
+
+Parameters:
+

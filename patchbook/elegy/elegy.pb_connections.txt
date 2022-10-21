@@ -1,0 +1,64 @@
+
+Printing all connections by type...
+
+Connection type: audio
+Swn > Prism (In L/R) 
+Prism > Mixer (Ch 1) 
+Prism > Mixer (Ch 2) 
+Scanned > Lpg (Audio In) 
+Lpg > Electus Versio (In L) 
+Electus Versio > Mixer (Ch 7) 
+Dpo > Optomix (1:In) 
+Dpo > Optomix (2:In) 
+Optomix > Qpas (In L) 
+Optomix > Qpas (In R) 
+Mimeophon > Mixer (Ch 8) 
+Qpas > Mimeophon (In L) 
+Qpas > Mimeophon (In R) 
+
+Connection type: cv
+Sloths > Swn (Browse) 
+Sloths > Swn (Dispersion) 
+Sloths > Swn (Longitude) 
+Sloths > Scanned (Strength) 
+Sloths > Vc Octave Switch (Qua 1) 
+Skew Fade Lfo > Prism (Comb) 
+Skew Fade Lfo 666 > Prism (Cutoff) 
+Adsr > Lpg (Cv In) 
+Diode Chaos > Scanned (Shape) 
+Diode Chaos > Electus Versio (Tone) 
+Diode Chaos > Scanned (Center) 
+Wogglebug > Wogglebug (Speed) 
+Wogglebug > Rene (Y:Cv In) 
+Ochd > Dpo (Angle) 
+Ochd > Qpas (Radiate L) 
+Ochd > Qpas (Radiate R) 
+Ochd > Dpo (Shape) 
+Ochd > Dpo (Fold) 
+Maths > Optomix (1:Ctrl) 
+Maths > Optomix (2:Ctrl) 
+Morphing Lfo > Mixer (Ch 1:Pan) 
+Morphing Lfo > Mixer (Ch 2:Pan) 
+
+Connection type: pitch
+Vc Octave Switch > Scanned (1V/Oct) 
+Rene > Utune (1:Cv In) 
+Rene > Utune (2:Cv In) 
+Utune > Vc Octave Switch (Cv 1) 
+Utune > Dpo (1:1V/Oct) 
+Utune > Dpo (2:1V/Oct) 
+Utune > Mimeophon (U) 
+Utune > Mult (3) 
+Maths > Utune (A:Cv In) 
+
+Connection type: gate
+Rene > Scanned (Excite) 
+Rene > Maths (4:Trigger) 
+
+Connection type: trigger
+Tempi > Rene (X:Clk) 
+Tempi > Rene (Y:Clk) 
+Tempi > Rene (Y-Mod) 
+
+Connection type: clock
+

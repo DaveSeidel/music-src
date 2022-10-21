@@ -1,0 +1,314 @@
+-------
+Showing information for module: SWN
+
+Inputs:
+Sloths (Apathy:Z) > Browse - Cv
+Sloths (Apathy:+) > Dispersion - Cv
+Sloths (Apathy:Y) > Longitude - Cv
+
+Outputs:
+Out L/R > Prism (In L/R)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: PRISM
+
+Inputs:
+Swn (Out L/R) > In L/R - Audio
+Skew Fade Lfo (Out) > Comb - Cv
+Skew Fade Lfo 666 (Out) > Cutoff - Cv
+
+Outputs:
+Out L > Mixer (Ch 1)  - Audio - ELEGY
+Out R > Mixer (Ch 2)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: MIXER
+
+Inputs:
+Prism (Out L) > Ch 1 - Audio
+Prism (Out R) > Ch 2 - Audio
+Electus Versio (Out L/R) > Ch 7 - Audio
+Mimeophon (Out L/R) > Ch 8 - Audio
+Morphing Lfo (1:Out) > Ch 1:Pan - Cv
+Morphing Lfo (2:Out) > Ch 2:Pan - Cv
+
+Outputs:
+
+Parameters:
+
+-------
+Showing information for module: SLOTHS
+
+Inputs:
+
+Outputs:
+Apathy:Z > Swn (Browse)  - Cv - ELEGY
+Apathy:+ > Swn (Dispersion)  - Cv - ELEGY
+Apathy:Y > Swn (Longitude)  - Cv - ELEGY
+Topor:X > Scanned (Strength)  - Cv - ELEGY
+Apathy:X > Vc Octave Switch (Qua 1)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: SKEW FADE LFO
+
+Inputs:
+
+Outputs:
+Out > Prism (Comb)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: SKEW FADE LFO 666
+
+Inputs:
+
+Outputs:
+Out > Prism (Cutoff)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: SCANNED
+
+Inputs:
+Vc Octave Switch (Out 1) > 1V/Oct - Pitch
+Rene (Y:G) > Excite - Gate
+Sloths (Topor:X) > Strength - Cv
+Diode Chaos (X) > Shape - Cv
+Diode Chaos (Z) > Center - Cv
+
+Outputs:
+Out > Lpg (Audio In)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: LPG
+
+Inputs:
+Scanned (Out) > Audio In - Audio
+Adsr (Out) > Cv In - Cv
+
+Outputs:
+Out > Electus Versio (In L)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: ELECTUS VERSIO
+
+Inputs:
+Lpg (Out) > In L - Audio
+Diode Chaos (Y) > Tone - Cv
+
+Outputs:
+Out L/R > Mixer (Ch 7)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: ADSR
+
+Inputs:
+
+Outputs:
+Out > Lpg (Cv In)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: VC OCTAVE SWITCH
+
+Inputs:
+Sloths (Apathy:X) > Qua 1 - Cv
+Utune (2:Cv Out) > Cv 1 - Pitch
+
+Outputs:
+Out 1 > Scanned (1V/Oct)  - Pitch - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: RENE
+
+Inputs:
+Tempi (2) > X:Clk - Trigger
+Tempi (1) > Y:Clk - Trigger
+Tempi (4) > Y-Mod - Trigger
+Wogglebug (Stepped) > Y:Cv In - Cv
+
+Outputs:
+Y:G > Scanned (Excite)  - Gate - ELEGY
+X:G > Maths (4:Trigger)  - Gate - ELEGY
+X:Cv Out > Utune (1:Cv In)  - Pitch - ELEGY
+Y:Cv Out > Utune (2:Cv In)  - Pitch - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: DIODE CHAOS
+
+Inputs:
+
+Outputs:
+X > Scanned (Shape)  - Cv - ELEGY
+Y > Electus Versio (Tone)  - Cv - ELEGY
+Z > Scanned (Center)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: UTUNE
+
+Inputs:
+Rene (X:Cv Out) > 1:Cv In - Pitch
+Rene (Y:Cv Out) > 2:Cv In - Pitch
+Maths (3:Out) > A:Cv In - Pitch
+
+Outputs:
+2:Cv Out > Vc Octave Switch (Cv 1)  - Pitch - ELEGY
+1:Cv Out > Dpo (1:1V/Oct)  - Pitch - ELEGY
+1:Cv Out > Dpo (2:1V/Oct)  - Pitch - ELEGY
+1:Cv Out > Mimeophon (U)  - Pitch - ELEGY
+A:Cv Out > Mult (3)  - Pitch - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: WOGGLEBUG
+
+Inputs:
+Wogglebug (Smooth) > Speed - Cv
+
+Outputs:
+Smooth > Wogglebug (Speed)  - Cv - ELEGY
+Stepped > Rene (Y:Cv In)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: DPO
+
+Inputs:
+Utune (1:Cv Out) > 1:1V/Oct - Pitch
+Utune (1:Cv Out) > 2:1V/Oct - Pitch
+Ochd (3) > Angle - Cv
+Ochd (6) > Shape - Cv
+Ochd (7) > Fold - Cv
+
+Outputs:
+2:Final > Optomix (1:In)  - Audio - ELEGY
+1:Saw > Optomix (2:In)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: OPTOMIX
+
+Inputs:
+Dpo (2:Final) > 1:In - Audio
+Dpo (1:Saw) > 2:In - Audio
+Maths (2:Unity) > 1:Ctrl - Cv
+Maths (2:Unity) > 2:Ctrl - Cv
+
+Outputs:
+Out 1 > Qpas (In L)  - Audio - ELEGY
+Out 2 > Qpas (In R)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: MIMEOPHON
+
+Inputs:
+Utune (1:Cv Out) > U - Pitch
+Qpas (Out L) > In L - Audio
+Qpas (Out R) > In R - Audio
+
+Outputs:
+Out L/R > Mixer (Ch 8)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: QPAS
+
+Inputs:
+Optomix (Out 1) > In L - Audio
+Optomix (Out 2) > In R - Audio
+Ochd (4) > Radiate L - Cv
+Ochd (5) > Radiate R - Cv
+
+Outputs:
+Out L > Mimeophon (In L)  - Audio - ELEGY
+Out R > Mimeophon (In R)  - Audio - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: OCHD
+
+Inputs:
+
+Outputs:
+3 > Dpo (Angle)  - Cv - ELEGY
+4 > Qpas (Radiate L)  - Cv - ELEGY
+5 > Qpas (Radiate R)  - Cv - ELEGY
+6 > Dpo (Shape)  - Cv - ELEGY
+7 > Dpo (Fold)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: MATHS
+
+Inputs:
+Rene (X:G) > 4:Trigger - Gate
+
+Outputs:
+2:Unity > Optomix (1:Ctrl)  - Cv - ELEGY
+2:Unity > Optomix (2:Ctrl)  - Cv - ELEGY
+3:Out > Utune (A:Cv In)  - Pitch - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: TEMPI
+
+Inputs:
+
+Outputs:
+2 > Rene (X:Clk)  - Trigger - ELEGY
+1 > Rene (Y:Clk)  - Trigger - ELEGY
+4 > Rene (Y-Mod)  - Trigger - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: MORPHING LFO
+
+Inputs:
+
+Outputs:
+1:Out > Mixer (Ch 1:Pan)  - Cv - ELEGY
+2:Out > Mixer (Ch 2:Pan)  - Cv - ELEGY
+
+Parameters:
+
+-------
+Showing information for module: MULT
+
+Inputs:
+Utune (A:Cv Out) > 3 - Pitch
+
+Outputs:
+
+Parameters:
+

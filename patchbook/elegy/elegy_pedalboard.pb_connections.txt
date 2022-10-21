@@ -1,0 +1,23 @@
+
+Printing all connections by type...
+
+Connection type: audio
+Dvina > Tuner (In) 
+Tuner > Plus (In) 
+Plus > Microcosm (In) 
+Plus > Particle (In) 
+Microcosm > Context (In L/R) 
+Particle > Deluxe Memory Man (In L) 
+Context > Mixer (Drone Channel L/R) 
+Deluxe Memory Man > Mixer (Melody Channel L/R) 
+
+Connection type: cv
+
+Connection type: pitch
+
+Connection type: gate
+
+Connection type: trigger
+
+Connection type: clock
+

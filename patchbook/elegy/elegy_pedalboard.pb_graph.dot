@@ -1,0 +1,21 @@
+digraph G{
+rankdir = LR;
+splines = polyline;
+ordering=out;
+context[label="{ {<_inlr> IN L/R}|CONTEXT| {<_outlr> OUT L/R}}"  shape=Mrecord]
+deluxememoryman[label="{ {<_inl> IN L}|DELUXE MEMORY MAN| {<_outlr> OUT L/R}}"  shape=Mrecord]
+dvina[label="{ {}|DVINA| {<_out> OUT}}"  shape=Mrecord]
+microcosm[label="{ {<_in> IN}|MICROCOSM| {<_outlr> OUT L/R}}"  shape=Mrecord]
+mixer[label="{ {<_dronechannellr> DRONE CHANNEL L/R | <_melodychannellr> MELODY CHANNEL L/R}|MIXER| {}}"  shape=Mrecord]
+particle[label="{ {<_in> IN}|PARTICLE| {<_out> OUT}}"  shape=Mrecord]
+plus[label="{ {<_in> IN}|PLUS| {<_dryout> DRY OUT | <_wetout> WET OUT}}"  shape=Mrecord]
+tuner[label="{ {<_in> IN}|TUNER| {<_out> OUT}}"  shape=Mrecord]
+context:_outlr:e  -> mixer:_dronechannellr:w  [style=bold]
+dvina:_out:e  -> tuner:_in:w  [style=bold]
+plus:_dryout:e  -> microcosm:_in:w  [style=bold]
+plus:_wetout:e  -> particle:_in:w  [style=bold]
+tuner:_out:e  -> plus:_in:w  [style=bold]
+particle:_out:e  -> deluxememoryman:_inl:w  [style=bold]
+microcosm:_outlr:e  -> context:_inlr:w  [style=bold]
+deluxememoryman:_outlr:e  -> mixer:_melodychannellr:w  [style=bold]
+}
