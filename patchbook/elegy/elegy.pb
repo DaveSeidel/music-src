@@ -62,3 +62,19 @@ ELEGY:
   - Maths (3:out) p> uTune (a:cv in)
   - uTune (a:cv out) p> Mult (3)
   
+  * uTune:
+  | Tune = Marwa Extended
+  
+  * Rene:
+  | X notes = Marwa 1 (1-6), Marwa 2 (7-12)
+  | X quantizer = same
+  | Y notes = Marwa 1 (1-6), Marwa 2 (7-12)
+  | Y quantizer = same
+  
+  * SWN:
+  | Preset = 3 (Marwa 1)
+  
+  * Mimeophon:
+  | Zone = 1
+  | Repeats = 9:30
+  

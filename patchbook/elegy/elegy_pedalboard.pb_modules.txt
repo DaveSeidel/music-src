@@ -52,6 +52,9 @@ Outputs:
 Out > Deluxe Memory Man (In L)  - Audio - PEDALBOARD
 
 Parameters:
+Mode = Pitch/Dens
+Pitch = -0% (1 oct)
+Param = 100%
 
 -------
 Showing information for module: CONTEXT
@@ -85,4 +88,5 @@ Outputs:
 Out L/R > Mixer (Melody Channel L/R)  - Audio - PEDALBOARD
 
 Parameters:
+Mode = Echo/300ms+mod (flanger)
 

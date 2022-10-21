@@ -10,6 +10,7 @@ Outputs:
 Out L/R > Prism (In L/R)  - Audio - ELEGY
 
 Parameters:
+Preset = 3 (Marwa 1)
 
 -------
 Showing information for module: PRISM
@@ -151,6 +152,10 @@ X:Cv Out > Utune (1:Cv In)  - Pitch - ELEGY
 Y:Cv Out > Utune (2:Cv In)  - Pitch - ELEGY
 
 Parameters:
+X Notes = Marwa 1 (1-6), Marwa 2 (7-12)
+X Quantizer = same
+Y Notes = Marwa 1 (1-6), Marwa 2 (7-12)
+Y Quantizer = same
 
 -------
 Showing information for module: DIODE CHAOS
@@ -180,6 +185,7 @@ Outputs:
 A:Cv Out > Mult (3)  - Pitch - ELEGY
 
 Parameters:
+Tune = Marwa Extended
 
 -------
 Showing information for module: WOGGLEBUG
@@ -236,6 +242,8 @@ Outputs:
 Out L/R > Mixer (Ch 8)  - Audio - ELEGY
 
 Parameters:
+Zone = 1
+Repeats = 9:30
 
 -------
 Showing information for module: QPAS

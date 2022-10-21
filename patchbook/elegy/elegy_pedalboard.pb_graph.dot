@@ -3,11 +3,11 @@ rankdir = LR;
 splines = polyline;
 ordering=out;
 context[label="{ {<_inlr> IN L/R}|CONTEXT| {<_outlr> OUT L/R}}"  shape=Mrecord]
-deluxememoryman[label="{ {<_inl> IN L}|DELUXE MEMORY MAN| {<_outlr> OUT L/R}}"  shape=Mrecord]
+deluxememoryman[label="{ {<_inl> IN L}|{{DELUXE MEMORY MAN}|{Mode = Echo/300ms+mod (flanger)}}| {<_outlr> OUT L/R}}"  shape=Mrecord]
 dvina[label="{ {}|DVINA| {<_out> OUT}}"  shape=Mrecord]
 microcosm[label="{ {<_in> IN}|MICROCOSM| {<_outlr> OUT L/R}}"  shape=Mrecord]
 mixer[label="{ {<_dronechannellr> DRONE CHANNEL L/R | <_melodychannellr> MELODY CHANNEL L/R}|MIXER| {}}"  shape=Mrecord]
-particle[label="{ {<_in> IN}|PARTICLE| {<_out> OUT}}"  shape=Mrecord]
+particle[label="{ {<_in> IN}|{{PARTICLE}|{Mode = Pitch/Dens\nParam = 100%\nPitch = -0% (1 oct)}}| {<_out> OUT}}"  shape=Mrecord]
 plus[label="{ {<_in> IN}|PLUS| {<_dryout> DRY OUT | <_wetout> WET OUT}}"  shape=Mrecord]
 tuner[label="{ {<_in> IN}|TUNER| {<_out> OUT}}"  shape=Mrecord]
 context:_outlr:e  -> mixer:_dronechannellr:w  [style=bold]
