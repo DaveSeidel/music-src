@@ -29,11 +29,9 @@
     koff3 init 3 * 0.001
     koff4 init 5 * 0.001
     koffa = scale2(chnget:k("P1"), 0.001, 0.1, -10, 10)
-    kin1con = chnget:k("IN1CON")
-    if (kin1con == 1) then
+    if (chnget:k("IN1CON") == 1) then
       koffb = scale2(chnget:k("IN1C1"), 0.001, 0.1, 0, 10)
       koff = koffa + koffb
-      ; printks("koff=%f koffa=%f koffb=%f\n", 1, koff, koffa, koffb)
     else
       koff = koffa
     endif
@@ -45,11 +43,9 @@
     itbl = giMorf
     kndx init 0
     kndxa = scale2(chnget:k("P2"), 0, giNumTables-1.01, -10, 10)
-    kin2con = chnget:k("IN2CON")
-    if (kin2con == 1) then
+    if (chnget:k("IN2CON") == 1) then
       kndxb = scale2(chnget:k("IN2C1"), 0, giNumTables-1.01, 0, 10)
       kndx = kndxa + kndxb
-      ; printks("kndx=%f kndxa+kndxb=%f kndxa=%f kndxb=%f\n", 1, kndx, kndxa+kndxb, kndxa, kndxb)
     else
       kndx = kndxa
     endif
@@ -69,8 +65,7 @@
 
     kdst init 0
     kdsta = scale2(chnget:k("P3"), 0, 10, -10, 10)
-    kin3con = chnget:k("IN3CON")
-    if (kin3con == 1) then
+    if (chnget:k("IN3CON") == 1) then
       kdstb = scale2(chnget:k("IN3C1"), 0, 10, 0, 10)
       kdst = kdsta + kdstb
     else
@@ -83,8 +78,7 @@
     aoutR = aR + distort1(aR, kdst, 0.1, 0, 0)
 
     kpana = scale2(chnget:k("P4"), 0, 7, -10, 10)
-    kin4con = chnget:k("IN4CON")
-    if (kin4con == 1) then
+    if (chnget:k("IN4CON") == 1) then
       kpanb = scale2(chnget:k("IN4C1"), 0, 5, 0, 10)
       kpan = kpana + kpanb
     else
