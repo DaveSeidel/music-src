@@ -98,5 +98,6 @@
     aoutL = aoutL1+aoutL2
     aoutR = aoutR1+aoutR2
 
-    outs aoutL, aoutR
+    aenv madsr 0.07,0,1,0.7
+    outs aoutL*aenv, aoutR*aenv
   endin
