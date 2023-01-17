@@ -1,6 +1,8 @@
 # Risset Harmonic Oscillator for VCV Rack
 
-I took the [Risset Harmonic Oscillator](https://github.com/DaveSeidel/music-src/tree/master/Nebulae/instr/Risset_Harmonic_Oscillator) instrument I designed for the Nebulae nodule and ported it to work in the context of DocB's great Csound module for VCV Rack, aka [dbCsound](https://github.com/docb/dbRackCsound). This is a great way to prototype Csound code. **NB: this requires v2.0.5 of dbCsound, which has not yet been released in binary form (but is available as source.)** This version of the instrument has slightly different features compared to the Nebulae version.
+I took the [Risset Harmonic Oscillator](https://github.com/DaveSeidel/music-src/tree/master/Nebulae/instr/Risset_Harmonic_Oscillator) instrument I designed for the Nebulae nodule and ported it to work in the context of DocB's great Csound module for VCV Rack, aka [dbRackCsound](https://github.com/docb/dbRackCsound). This is a great way to prototype Csound code. This version of the instrument has slightly different features compared to the Nebulae version.
+
+**NB: Requires v2.0.5 or higher of dbRackCsound.**
 
 The instrument generates audio output using Risset's harmonic arpeggio technique. The controls are mapped as follows:
 

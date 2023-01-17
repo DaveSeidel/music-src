@@ -75,7 +75,7 @@
     kndx = handleControl(2, 1, 0, giNumTables-1.01, 1) 
     ftmorf kndx, giList, giMorf 
  
-    kamp init 0.8/9 
+    kamp init 0.8/8 
  
     ; a1 oscil3 kamp, kfreq, itbl 
     a2 oscil3 kamp, kfreq+koff1, itbl 
