@@ -31,7 +31,7 @@ def print_chords(chords, note_char=BLOCK):
     row = ["%s%s" % (i, ' ')]
     for j in range(len(out)):
       row.append(out[j][i])
-    print ''.join(row)
+    print(''.join(row))
 
 def build_section(start, score, chords, chord_dur, amp, preset, scale_size, lilypond=True):
     # take the same notes that appear in adjacent chords and tie them together
@@ -40,10 +40,10 @@ def build_section(start, score, chords, chord_dur, amp, preset, scale_size, lily
         for i in range(scale_size)
     ]
 
-    # print "Starting section at %s" % start
+    # print("Starting section at %s" % start)
 
     for v in voices:
-        # print pformat(v)
+        # print(pformat(v))
         p2 = start
         for segment in v:
             idx = segment[0]
@@ -68,8 +68,8 @@ def build_score(text, sort=None, reverse=False, quiet=True, section_duration=13.
     chord_dur = total_dur / len(chords)
 
     if not quiet:
-      print "scale size: %s\n%s combinations\nchord duration: %fs\ntotal duration: %f" % \
-            (scale_size, len(chords), chord_dur, total_dur)
+      print("scale size: %s\n%s combinations\nchord duration: %fs\ntotal duration: %f" % \
+            (scale_size, len(chords), chord_dur, total_dur))
 
     score = Score()
     score.append([
@@ -78,20 +78,20 @@ def build_score(text, sort=None, reverse=False, quiet=True, section_duration=13.
     ])
 
     if not quiet:
-      print text
+      print(text)
 
-    if sort is None:
-        if reverse:
-            chords = list(reversed(chords))
-    elif sort == "asc":
-        chords = sorted(chords, reverse=reverse)
-    elif sort == "desc_last":
-        chords = sorted(chords, key=lambda x: x[-1], reverse=reverse)
-    elif sort == "desc_all":
-        chords = sorted(chords, key=lambda x: sorted(x, reverse=True), reverse=reverse)
+    # if sort is None:
+    #     if reverse:
+    #         chords = list(reversed(chords))
+    # elif sort == "asc":
+    #     chords = sorted(chords, reverse=reverse)
+    # elif sort == "desc_last":
+    #     chords = sorted(chords, key=lambda x: x[-1], reverse=reverse)
+    # elif sort == "desc_all":
+    #     chords = sorted(chords, key=lambda x: sorted(x, reverse=True), reverse=reverse)
 
     if gfx:
-      # print pformat(chords)
+      # print(pformat(chords))
       print_chords(chords)
 
     # print output

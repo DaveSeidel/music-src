@@ -1,7 +1,8 @@
 ;
 ; Binaural Reanimator
 ; An effect/instrument for the Qu-Bit Nebulae v2
-; Dave Seidel, July 2020
+; Dave Seidel
+; v1.1 August 2020
 ;
 
 ; tables for LFOs and internal oscillators
@@ -35,10 +36,19 @@ opcode map_controls, 0, 0
 
   ; buttons
   gk_mode   = gkrecord
+  gk_beat_range = gkfreeze
 endop
 
-#define FX_MODE    #0#
-#define INSTR_MODE #1#
+; values for gk_mode button
+#define MODE_FX    #0#
+#define MODE_INSTR #1#
+
+; values for gk_beat_range button
+#define RANGE_DEFAULT   #0#
+#define RANGE_EXTENDED  #1#
+
+#define DEFAULT_BEAT_MAX  #3#
+#define EXTENDED_BEAT_MAX #30
 
 opcode binauralize, aa, ak
   ain,kdiff xin
@@ -112,19 +122,28 @@ instr 1
   aoutL2 init 0
   aoutR2 init 0
 
+  ; two ranges for beating speed, default is 0-3 Hz
+  ; use Freeze button to set to extended range: 0-30 Hz
+  kratemax init $DEFAULT_BEAT_MAX
+  if gk_beat_range == $RANGE_EXTENDED then
+    kratemax = $EXTENDED_BEAT_MAX
+  else
+    kratemax = $DEFAULT_BEAT_MAX
+  endif
+
   ; beating speed, controlled by Density & Overlap knobs/inputs
-  krate1 scale gk_rate1, 30, 0
-  krate2 scale gk_rate2, 30, 0
+  krate1 scale gk_rate1, kratemax, 0
+  krate2 scale gk_rate2, kratemax, 0
 
   kmix init 0.5
   kmix scale gk_mix, 1, 0
 
   ; by default, process audio input; if Record is set,
   ; generate sine/triangle waveforms internally using pitch input
-  if gk_mode == $FX_MODE then
+  if gk_mode == $MODE_FX then
     ain1, ain2 inch 1, 2
     ; kampmax = 0.9
-  elseif gk_mode == $INSTR_MODE then
+  elseif gk_mode == $MODE_INSTR then
     ; make pitch 1v/octave
     kfreq scale gk_pitch, 11, 6
     kfreq pow 2, kfreq
@@ -151,7 +170,7 @@ instr 1
     aoutR = (kamp1*aoutR1)+(kamp2*aoutR2)
 
   ; cross-panning "tremolo", speed controlled by Window knob/input
-  kpan scale gk_pan, 11.0, 0.0
+  kpan scale gk_pan, 7.0, 0.0
   aoutL, aoutR cross_panner aoutL, aoutR, kpan
 
   outs (aoutL * kmix) + (ain1 * (1 - kmix)),
