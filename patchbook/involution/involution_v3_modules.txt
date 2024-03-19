@@ -1,14 +1,26 @@
 -------
+Showing information for module: CLK
+
+Inputs:
+
+Outputs:
+Out > Tempi (Tempo)  - Clock - INVOLUTION
+
+Parameters:
+
+-------
 Showing information for module: TEMPI
 
 Inputs:
+Clk (Out) > Tempo - Clock
 Lol (O Out) > Mod - Gate
 
 Outputs:
-Ch3 > Rene (X Clk)  - Clock - INVOLUTION
-Ch3 > Maths (Trigger 1)  - Trigger - INVOLUTION
-Ch4 > Rene (Y Clk)  - Clock - INVOLUTION
-Ch4 > Maths (Trigger 4)  - Trigger - INVOLUTION
+Ch5 > Rene (X Clk)  - Clock - INVOLUTION
+Ch5 > Maths (Trigger 1)  - Trigger - INVOLUTION
+Ch6 > Rene (Y Clk)  - Clock - INVOLUTION
+Ch6 > Maths (Trigger 4)  - Trigger - INVOLUTION
+Ch3 > Rnd (Clk)  - Clock - INVOLUTION
 
 Parameters:
 Run/Stop All = Enabled
@@ -25,18 +37,16 @@ Ch 6 = ÷31
 Showing information for module: RENE
 
 Inputs:
-Tempi (Ch3) > X Clk - Clock
-Tempi (Ch4) > Y Clk - Clock
+Tempi (Ch5) > X Clk - Clock
+Tempi (Ch6) > Y Clk - Clock
 Lol (O Out) > X Mod - Gate
 Lol (O Out) > Y Mod - Gate
-Ochd (8) > X Cv - Cv
-Ochd (8) > Y Cv - Cv
+Rnd (Quant) > X Cv In - Cv
+Rnd (Quant) > Y Cv In - Cv
 
 Outputs:
-X Gate > Adsr 1 (Gate)  - Gate - INVOLUTION
-Y Gate > Adsr 2 (Gate)  - Gate - INVOLUTION
-X Cv > Utune (Cv 1)  - Pitch - INVOLUTION
-Y Cv > Utune (Cv 2)  - Pitch - INVOLUTION
+X Cv Out > Utune (Cv 1)  - Pitch - INVOLUTION
+Y Cv Out > Utune (Cv 2)  - Pitch - INVOLUTION
 
 Parameters:
 X Quant = MOS-5 or MOS-7 per state
@@ -53,8 +63,8 @@ State 3 = X:MOS-5 + Y:MOS-5
 Showing information for module: MATHS
 
 Inputs:
-Tempi (Ch3) > Trigger 1 - Trigger
-Tempi (Ch4) > Trigger 4 - Trigger
+Tempi (Ch5) > Trigger 1 - Trigger
+Tempi (Ch6) > Trigger 4 - Trigger
 
 Outputs:
 Out 1 > Cv Bus 1 (In)  - Cv - INVOLUTION
@@ -76,12 +86,26 @@ Ch 3 Attenuverter = 55%
 Ch 4 Attenuverter = 100%
 
 -------
+Showing information for module: RND
+
+Inputs:
+Tempi (Ch3) > Clk - Clock
+
+Outputs:
+Quant > Rene (X Cv In)  - Cv - INVOLUTION
+Quant > Rene (Y Cv In)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
 Showing information for module: CV BUS 1
 
 Inputs:
 Maths (Out 1) > In - Cv
 
 Outputs:
+Out > Utune (Gate In 1)  - Cv - INVOLUTION
+Out > Synthbt Gate Comb (In 1)  - Cv - INVOLUTION
 Out > Dplpg (Cv 1)  - Cv - INVOLUTION
 Out > Optomix (Ctrl 2)  - Cv - INVOLUTION
 
@@ -95,6 +119,8 @@ Maths (Out 4) > In - Cv
 
 Outputs:
 Out > Optomix (Ctrl 1)  - Cv - INVOLUTION
+Out > Utune (Gate In 2)  - Cv - INVOLUTION
+Out > Synthbt Gate Comb (In 2)  - Cv - INVOLUTION
 Out > Dplpg (Cv 2)  - Cv - INVOLUTION
 
 Parameters:
@@ -110,32 +136,30 @@ Outputs:
 O Out > Tempi (Mod)  - Gate - INVOLUTION
 O Out > Rene (X Mod)  - Gate - INVOLUTION
 O Out > Rene (Y Mod)  - Gate - INVOLUTION
+M Out > Tuning (Gate)  - Gate - INVOLUTION
+G Out > Tuning (Pitch)  - Gate - INVOLUTION
 
 Parameters:
 
 -------
-Showing information for module: ADSR 1
+Showing information for module: TUNING
 
 Inputs:
-Rene (X Gate) > Gate - Gate
+Lol (M Out) > Gate - Gate
+Lol (G Out) > Pitch - Gate
 
 Outputs:
-Out > Utune (Gate 1)  - Cv - INVOLUTION
 
 Parameters:
-A = 0%
-D = 0%
-S = 100%
-R = ~75%
 
 -------
 Showing information for module: UTUNE
 
 Inputs:
-Adsr 1 (Out) > Gate 1 - Cv
-Adsr 2 (Uut) > Gate 2 - Cv
-Rene (X Cv) > Cv 1 - Pitch
-Rene (Y Cv) > Cv 2 - Pitch
+Rene (X Cv Out) > Cv 1 - Pitch
+Rene (Y Cv Out) > Cv 2 - Pitch
+Cv Bus 1 (Out) > Gate In 1 - Cv
+Cv Bus 2 (Out) > Gate In 2 - Cv
 
 Outputs:
 Cv Out 1 > Cv Bus 3 (In)  - Pitch - INVOLUTION
@@ -143,21 +167,6 @@ Cv Out 2 > Cv Bus 4 (In)  - Pitch - INVOLUTION
 
 Parameters:
 Scale = Centaur
-
--------
-Showing information for module: ADSR 2
-
-Inputs:
-Rene (Y Gate) > Gate - Gate
-
-Outputs:
-Uut > Utune (Gate 2)  - Cv - INVOLUTION
-
-Parameters:
-A = 0%
-D = 0%
-S = 100%
-R = ~75%
 
 -------
 Showing information for module: CV BUS 3
@@ -259,6 +268,7 @@ Inputs:
 Switch (Out) > Urate - Pitch
 Xpan (L Out) > In L - Audio
 Xpan (R Out) > In R - Audio
+Ochd (4) > Color - Cv
 
 Outputs:
 Out L > Audio Output Bus (L)  - Audio - INVOLUTION
@@ -282,7 +292,7 @@ Dpo B (Sine) > Pan 2 - Audio
 Optomix (Out 2) > In 2 R - Audio
 Dplpg (Out 1) > Aux L - Audio
 Dplpg (Out 2) > Aux-R - Audio
-Wogglebug (Smooth) > Aux Level - Cv
+Synthbt Gate Comb (Out) > Aux Level - Cv
 
 Outputs:
 L Out > Mimeophon (In L)  - Audio - INVOLUTION
@@ -301,6 +311,7 @@ Showing information for module: QPAS
 Inputs:
 Dpo A (Saw) > R-In - Audio
 Dpo B (Final) > L-In - Audio
+Synthbt Gate Comb (Out) > Mix - Cv
 Ochd (6) > Radiate-R - Cv
 Ochd (7) > Radiate-L - Cv
 
@@ -379,6 +390,19 @@ Outputs:
 Parameters:
 
 -------
+Showing information for module: SYNTHBT GATE COMB
+
+Inputs:
+Cv Bus 1 (Out) > In 1 - Cv
+Cv Bus 2 (Out) > In 2 - Cv
+
+Outputs:
+Out > Qpas (Mix)  - Cv - INVOLUTION
+Out > Xpan (Aux Level)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
 Showing information for module: OCHD
 
 Inputs:
@@ -387,11 +411,10 @@ Outputs:
 2 > Dual Oscillator 258T B (Waveform)  - Cv - INVOLUTION
 3 > Dual Oscillator 258T A (Waveform)  - Cv - INVOLUTION
 4 > Dpo B (Shape)  - Cv - INVOLUTION
+4 > Mimeophon (Color)  - Cv - INVOLUTION
 5 > Dpo B (Angle)  - Cv - INVOLUTION
 6 > Qpas (Radiate-R)  - Cv - INVOLUTION
 7 > Qpas (Radiate-L)  - Cv - INVOLUTION
-8 > Rene (X Cv)  - Cv - INVOLUTION
-8 > Rene (Y Cv)  - Cv - INVOLUTION
 
 Parameters:
 
@@ -403,7 +426,6 @@ Wogglebug (Stepped) > Speed - Cv
 
 Outputs:
 Stepped > Wogglebug (Speed)  - Cv - INVOLUTION
-Smooth > Xpan (Aux Level)  - Cv - INVOLUTION
 Int Clock > Switch (Sel)  - Gate - INVOLUTION
 
 Parameters:

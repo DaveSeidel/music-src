@@ -1,9 +1,12 @@
 INVOLUTION:
 
- - Tempi (Ch3) c> Rene (X Clk)
- - Tempi (Ch3) t> Maths (Trigger 1)
- - Tempi (Ch4) c> Rene (Y Clk)
- - Tempi (Ch4) t> Maths (Trigger 4)
+ - Clk (Out) c> Tempi (Tempo) 
+
+ - Tempi (Ch5) c> Rene (X Clk)
+ - Tempi (Ch5) t> Maths (Trigger 1)
+ - Tempi (Ch6) c> Rene (Y Clk)
+ - Tempi (Ch6) t> Maths (Trigger 4)
+ - Tempi (Ch3) c> Rnd (Clk)
 
  - Maths (Out 1) >> CV Bus 1 (In)
  - Maths (Out 4) >> CV Bus 2 (In)
@@ -14,18 +17,13 @@ INVOLUTION:
  - LOL (O Out) g> Rene (X Mod)
  - LOL (O Out) g> Rene (Y Mod)
 
- // - LOL (M Out) g> Tuning/Gate
- // - LOL (G Out) g> Tuning/Pitch
-
- - Rene (X Gate) g> ADSR 1 (Gate)
- - ADSR 1 (Out) >> uTune (Gate 1)
-
- - Rene (Y Gate) g> ADSR 2 (Gate)
- - ADSR 2 (Uut) >> uTune (Gate 2)
+// tuning only
+ - LOL (M Out) g> Tuning (Gate)
+ - LOL (G Out) g> Tuning (Pitch)
 
 // pitch sources
- - Rene (X CV) p> uTune (CV 1)
- - Rene (Y CV) p> uTune (CV 2)
+ - Rene (X CV Out) p> uTune (CV 1)
+ - Rene (Y CV Out) p> uTune (CV 2)
  - uTune (CV Out 1) p> CV Bus 3 (In)
  - uTune (CV Out 2) p> CV Bus 4 (In)
 
@@ -75,26 +73,34 @@ INVOLUTION:
  - Mimeophon (Out R) -> Audio Output Bus (R)
 
 // Gate/envelope for left channel
+ - CV Bus 1 (Out) >> uTune (Gate In 1)
+ - CV Bus 1 (Out) >> SynthBT Gate Comb (In 1)
  - CV Bus 2 (Out) >> Optomix (Ctrl 1)
  - CV Bus 1 (Out) >> DPLPG (CV 1)
 
 // Gate/envelope for right channel
+ - CV Bus 2 (Out) >> uTune (Gate In 2)
+ - CV Bus 2 (Out) >> SynthBT Gate Comb (In 2)
  - CV Bus 1 (Out) >> Optomix (Ctrl 2)
  - CV Bus 2 (Out) >> DPLPG (CV 2)
+
+ - SynthBT Gate Comb (Out) >> QPas (Mix)
+ - SynthBT Gate Comb (Out) >> XPan (Aux Level)
 
 // Modulation
  - Ochd (2) >> Dual Oscillator 258t B (Waveform)
  - Ochd (3) >> Dual Oscillator 258t A (Waveform)
  - Ochd (4) >> DPO B (Shape)
+ - Ochd (4) >> Mimeophon (Color)
  - Ochd (5) >> DPO B (Angle)
  - Ochd (6) >> QPas (Radiate-R)
  - Ochd (7) >> Qpas (Radiate-L)
- - Ochd (8) >> Rene (X CV)
- - Ochd (8) >> Rene (Y CV)
-
+ 
  - Wogglebug (Stepped) >> Wogglebug (Speed)
- - Wogglebug (Smooth) >> XPan (Aux Level)
  - Wogglebug (Int Clock) g> Switch (Sel)
+
+ - Rnd (Quant) >> Rene (X CV In)
+ - Rnd (Quant) >> Rene (Y CV In)
 
  // Module settings
 
@@ -126,18 +132,6 @@ INVOLUTION:
   | State 1 = X:MOS-7 + Y:MOS-7
   | State 2 = X:MOS-7 + Y:MOS-5
   | State 3 = X:MOS-5 + Y:MOS-5
-
-  * ADSR 1:
-  | A = 0%
-  | D = 0%
-  | S = 100%
-  | R = ~75%
-
-  * ADSR 2:
-  | A = 0%
-  | D = 0%
-  | S = 100%
-  | R = ~75%
 
   * Mimeophon:
   | Zone = 1
