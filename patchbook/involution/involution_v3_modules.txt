@@ -1,0 +1,432 @@
+-------
+Showing information for module: CLK
+
+Inputs:
+
+Outputs:
+Out > Tempi (Tempo)  - Clock - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: TEMPI
+
+Inputs:
+Clk (Out) > Tempo - Clock
+Lol (O Out) > Mod - Gate
+
+Outputs:
+Ch5 > Rene (X Clk)  - Clock - INVOLUTION
+Ch5 > Maths (Trigger 1)  - Trigger - INVOLUTION
+Ch6 > Rene (Y Clk)  - Clock - INVOLUTION
+Ch6 > Maths (Trigger 4)  - Trigger - INVOLUTION
+Ch3 > Rnd (Clk)  - Clock - INVOLUTION
+
+Parameters:
+Run/Stop All = Enabled
+Run/Stop Toggle = Enabled
+State = 1
+Ch 1 = ×5
+Ch 2 = ÷5
+Ch 3 = ÷7
+Ch 4 = ÷11
+Ch 5 = ÷29
+Ch 6 = ÷31
+
+-------
+Showing information for module: RENE
+
+Inputs:
+Tempi (Ch5) > X Clk - Clock
+Tempi (Ch6) > Y Clk - Clock
+Lol (O Out) > X Mod - Gate
+Lol (O Out) > Y Mod - Gate
+Rnd (Quant) > X Cv In - Cv
+Rnd (Quant) > Y Cv In - Cv
+
+Outputs:
+X Cv Out > Utune (Cv 1)  - Pitch - INVOLUTION
+Y Cv Out > Utune (Cv 2)  - Pitch - INVOLUTION
+
+Parameters:
+X Quant = MOS-5 or MOS-7 per state
+X Quant Range = 4 8ves
+Y Quant = MOS-5 or MOS-7 per state
+Y Quant Range = 3 8ves
+X Fun.Mod.Reset = On
+Y Fun.Mod.Reset = On
+State 1 = X:MOS-7 + Y:MOS-7
+State 2 = X:MOS-7 + Y:MOS-5
+State 3 = X:MOS-5 + Y:MOS-5
+
+-------
+Showing information for module: MATHS
+
+Inputs:
+Tempi (Ch5) > Trigger 1 - Trigger
+Tempi (Ch6) > Trigger 4 - Trigger
+
+Outputs:
+Out 1 > Cv Bus 1 (In)  - Cv - INVOLUTION
+Out 4 > Cv Bus 2 (In)  - Cv - INVOLUTION
+Out 2 > Lol (O In)  - Gate - INVOLUTION
+Out 3 > Lol (G In)  - Gate - INVOLUTION
+
+Parameters:
+Cycling = Off
+Rise 1 = 60%
+Fall 1 = 60%
+Vari-Response 1 = Lin/Log
+Rise 2 = 70%
+Fall 2 = 70%
+Vari-Response 2 = Lin/Log
+Ch 1 Attenuverter = 100%
+Ch 2 Attenuverter = 60%
+Ch 3 Attenuverter = 55%
+Ch 4 Attenuverter = 100%
+
+-------
+Showing information for module: RND
+
+Inputs:
+Tempi (Ch3) > Clk - Clock
+
+Outputs:
+Quant > Rene (X Cv In)  - Cv - INVOLUTION
+Quant > Rene (Y Cv In)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: CV BUS 1
+
+Inputs:
+Maths (Out 1) > In - Cv
+
+Outputs:
+Out > Utune (Gate In 1)  - Cv - INVOLUTION
+Out > Synthbt Gate Comb (In 1)  - Cv - INVOLUTION
+Out > Dplpg (Cv 1)  - Cv - INVOLUTION
+Out > Optomix (Ctrl 2)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: CV BUS 2
+
+Inputs:
+Maths (Out 4) > In - Cv
+
+Outputs:
+Out > Optomix (Ctrl 1)  - Cv - INVOLUTION
+Out > Utune (Gate In 2)  - Cv - INVOLUTION
+Out > Synthbt Gate Comb (In 2)  - Cv - INVOLUTION
+Out > Dplpg (Cv 2)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: LOL
+
+Inputs:
+Maths (Out 2) > O In - Gate
+Maths (Out 3) > G In - Gate
+
+Outputs:
+O Out > Tempi (Mod)  - Gate - INVOLUTION
+O Out > Rene (X Mod)  - Gate - INVOLUTION
+O Out > Rene (Y Mod)  - Gate - INVOLUTION
+M Out > Tuning (Gate)  - Gate - INVOLUTION
+G Out > Tuning (Pitch)  - Gate - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: TUNING
+
+Inputs:
+Lol (M Out) > Gate - Gate
+Lol (G Out) > Pitch - Gate
+
+Outputs:
+
+Parameters:
+
+-------
+Showing information for module: UTUNE
+
+Inputs:
+Rene (X Cv Out) > Cv 1 - Pitch
+Rene (Y Cv Out) > Cv 2 - Pitch
+Cv Bus 1 (Out) > Gate In 1 - Cv
+Cv Bus 2 (Out) > Gate In 2 - Cv
+
+Outputs:
+Cv Out 1 > Cv Bus 3 (In)  - Pitch - INVOLUTION
+Cv Out 2 > Cv Bus 4 (In)  - Pitch - INVOLUTION
+
+Parameters:
+Scale = Centaur
+
+-------
+Showing information for module: CV BUS 3
+
+Inputs:
+Utune (Cv Out 1) > In - Pitch
+
+Outputs:
+Out > Switch (In 1)  - Pitch - INVOLUTION
+Out > Dpo A (1V/Oct)  - Pitch - INVOLUTION
+Out > Dual Oscillator 258T A (Iv/Oct)  - Pitch - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: CV BUS 4
+
+Inputs:
+Utune (Cv Out 2) > In - Pitch
+
+Outputs:
+Out > Switch (In 4)  - Pitch - INVOLUTION
+Out > Dpo B (1V/Oct)  - Pitch - INVOLUTION
+Out > Dual Oscillator 258T B (Iv/Oct)  - Pitch - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: SWITCH
+
+Inputs:
+Cv Bus 3 (Out) > In 1 - Pitch
+Cv Bus 4 (Out) > In 4 - Pitch
+Wogglebug (Int Clock) > Sel - Gate
+
+Outputs:
+Out > Mimeophon (Urate)  - Pitch - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: DPO A
+
+Inputs:
+Cv Bus 3 (Out) > 1V/Oct - Pitch
+
+Outputs:
+Sine > Xpan (Pan 1)  - Audio - INVOLUTION
+Triangle > Xpan (X-Fade 2)  - Audio - INVOLUTION
+Saw > Qpas (R-In)  - Audio - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: DUAL OSCILLATOR 258T A
+
+Inputs:
+Cv Bus 3 (Out) > Iv/Oct - Pitch
+Ochd (3) > Waveform - Cv
+
+Outputs:
+Out 1 > Moddemix (In 1)  - Audio - INVOLUTION
+Out 2 > Moddemix (Carrier 2)  - Audio - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: DPO B
+
+Inputs:
+Cv Bus 4 (Out) > 1V/Oct - Pitch
+Ochd (4) > Shape - Cv
+Ochd (5) > Angle - Cv
+
+Outputs:
+Sine > Xpan (Pan 2)  - Audio - INVOLUTION
+Square > Xpan (X-Fade 2)  - Audio - INVOLUTION
+Final > Qpas (L-In)  - Audio - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: DUAL OSCILLATOR 258T B
+
+Inputs:
+Cv Bus 4 (Out) > Iv/Oct - Pitch
+Ochd (2) > Waveform - Cv
+
+Outputs:
+Out 1 > Moddemix (In 2)  - Audio - INVOLUTION
+Out 2 > Moddemix (Carrier 1)  - Audio - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: MIMEOPHON
+
+Inputs:
+Switch (Out) > Urate - Pitch
+Xpan (L Out) > In L - Audio
+Xpan (R Out) > In R - Audio
+Ochd (4) > Color - Cv
+
+Outputs:
+Out L > Audio Output Bus (L)  - Audio - INVOLUTION
+Out R > Audio Output Bus (R)  - Audio - INVOLUTION
+
+Parameters:
+Zone = 1
+Repeats = 65%
+Rate = 12:00
+Mix = 30%
+Skew = On
+
+-------
+Showing information for module: XPAN
+
+Inputs:
+Dpo A (Sine) > Pan 1 - Audio
+Dpo B (Square) > X-Fade 2 - Audio
+Optomix (Out 1) > In 1 R - Audio
+Dpo B (Sine) > Pan 2 - Audio
+Optomix (Out 2) > In 2 R - Audio
+Dplpg (Out 1) > Aux L - Audio
+Dplpg (Out 2) > Aux-R - Audio
+Synthbt Gate Comb (Out) > Aux Level - Cv
+
+Outputs:
+L Out > Mimeophon (In L)  - Audio - INVOLUTION
+R Out > Mimeophon (In R)  - Audio - INVOLUTION
+
+Parameters:
+1 X-Fade = 100%
+1 Pan = 100%
+2 X-Fade = 100%
+2 Pan = 100%
+Aux Level = 30-40%
+
+-------
+Showing information for module: QPAS
+
+Inputs:
+Dpo A (Saw) > R-In - Audio
+Dpo B (Final) > L-In - Audio
+Synthbt Gate Comb (Out) > Mix - Cv
+Ochd (6) > Radiate-R - Cv
+Ochd (7) > Radiate-L - Cv
+
+Outputs:
+Lp L > Optomix (In 1)  - Audio - INVOLUTION
+Lp R > Optomix (In 2)  - Audio - INVOLUTION
+
+Parameters:
+Freq = 40-60%
+Q = 30-40%
+Radiate-L = 15%
+Radiate-L Attenuverter = +10%
+Radiate-R = 15%
+Radiate-R Attenuverter = +10%
+
+-------
+Showing information for module: OPTOMIX
+
+Inputs:
+Qpas (Lp L) > In 1 - Audio
+Qpas (Lp R) > In 2 - Audio
+Cv Bus 2 (Out) > Ctrl 1 - Cv
+Cv Bus 1 (Out) > Ctrl 2 - Cv
+
+Outputs:
+Out 1 > Xpan (In 1 R)  - Audio - INVOLUTION
+Out 2 > Xpan (In 2 R)  - Audio - INVOLUTION
+
+Parameters:
+Damp 1 = 0%
+Damp 2 = 0%
+Ctrl 1 = 100%
+Ctrl 2 = 100%
+
+-------
+Showing information for module: MODDEMIX
+
+Inputs:
+Dual Oscillator 258T A (Out 1) > In 1 - Audio
+Dual Oscillator 258T A (Out 2) > Carrier 2 - Audio
+Dual Oscillator 258T B (Out 1) > In 2 - Audio
+Dual Oscillator 258T B (Out 2) > Carrier 1 - Audio
+
+Outputs:
+Out 1 > Dplpg (In 1)  - Audio - INVOLUTION
+Out 2 > Dplpg (In 2)  - Audio - INVOLUTION
+
+Parameters:
+Strength 1 = 100%
+Strength 2 = 100%
+
+-------
+Showing information for module: DPLPG
+
+Inputs:
+Moddemix (Out 1) > In 1 - Audio
+Moddemix (Out 2) > In 2 - Audio
+Cv Bus 1 (Out) > Cv 1 - Cv
+Cv Bus 2 (Out) > Cv 2 - Cv
+
+Outputs:
+Out 1 > Xpan (Aux L)  - Audio - INVOLUTION
+Out 2 > Xpan (Aux-R)  - Audio - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: AUDIO OUTPUT BUS
+
+Inputs:
+Mimeophon (Out L) > L - Audio
+Mimeophon (Out R) > R - Audio
+
+Outputs:
+
+Parameters:
+
+-------
+Showing information for module: SYNTHBT GATE COMB
+
+Inputs:
+Cv Bus 1 (Out) > In 1 - Cv
+Cv Bus 2 (Out) > In 2 - Cv
+
+Outputs:
+Out > Qpas (Mix)  - Cv - INVOLUTION
+Out > Xpan (Aux Level)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: OCHD
+
+Inputs:
+
+Outputs:
+2 > Dual Oscillator 258T B (Waveform)  - Cv - INVOLUTION
+3 > Dual Oscillator 258T A (Waveform)  - Cv - INVOLUTION
+4 > Dpo B (Shape)  - Cv - INVOLUTION
+4 > Mimeophon (Color)  - Cv - INVOLUTION
+5 > Dpo B (Angle)  - Cv - INVOLUTION
+6 > Qpas (Radiate-R)  - Cv - INVOLUTION
+7 > Qpas (Radiate-L)  - Cv - INVOLUTION
+
+Parameters:
+
+-------
+Showing information for module: WOGGLEBUG
+
+Inputs:
+Wogglebug (Stepped) > Speed - Cv
+
+Outputs:
+Stepped > Wogglebug (Speed)  - Cv - INVOLUTION
+Int Clock > Switch (Sel)  - Gate - INVOLUTION
+
+Parameters:
+

@@ -104,6 +104,6 @@ def print_lilypad_score(text, voices, make_parts=False):
     output.append(BOOKPART % (sectionNum, sectionNum))
 
     filename = "%s_%s.ly" % (text.replace(' ', '_'), 'parts' if make_parts else 'score')
-    print "Writing Lilypond score to " + filename
+    # print("Writing Lilypond score to " + str(filename))
     with open(filename, "w") as fh:
         fh.write('\n'.join(output))

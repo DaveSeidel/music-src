@@ -1,12 +1,16 @@
-from itertools import chain, imap
-
+from itertools import chain
+try:
+    from itertools import imap
+except ImportError:
+    # Python 3...
+    imap=map
 
 class Score(object):
     def __init__(self):
         self._score = []
         
     def append(self, s):
-        if isinstance(s, basestring):
+        if isinstance(s, str):
             self._score.append(s)
         else:
             self._score.extend(s)

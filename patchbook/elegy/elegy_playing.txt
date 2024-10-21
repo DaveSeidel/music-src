@@ -1,0 +1,22 @@
+START (0-2m)        1. Start dvina drone
+                    2. Start harmonium
+                    3. Start obligato
+                    4. Start bass
+                    
+SEC 1 (2-9)         Play high melody loop
+                    Play high C/F# alternating, 3x each
+                    
+SEC 2 (9-16)        Rene X: add bass notes
+                    Play low melody loop (offset from high loop)
+                    Play low F#/C (open) alternating, 3x each
+
+SEC 3 (16-23)       Rene X: remove added notes
+                    Play high melody loop again
+                    Play high-to-low scale notes, 5x each
+                    Play low-to-high scale notes, 5x each
+                    
+END (23-25)         Fade out bass
+                             melody loop
+                             obligato
+                             harmonium
+                             dvina drone
