@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+_type=PS
+if [ -n "$1" ]; then
+  _type=$1
+fi
+
+
+#csound --devices 2>&1 | grep -E '\(PS-' | grep -Eo 'dac:hw:[[:digit:]],[[:digit:]]'
+csound --devices 2>&1 | grep -E "\(${_type}" | grep -Eo 'dac:hw:[[:digit:]],[[:digit:]]'
+

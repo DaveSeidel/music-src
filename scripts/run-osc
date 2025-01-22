@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd /home/pi/src/open-stage-control
+node /home/pi/src/open-stage-control/app --no-gui --port 8080 --send 192.168.1.247:7777 127.0.0.1:7777 --load /home/pi/work/open-stage-control/implication_organ.json $*
+
+

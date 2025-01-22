@@ -1,0 +1,9 @@
+set -e
+
+dispel_daemon() {
+  start-stop-daemon -o --stop --pidfile $_d_pidfile
+}
+
+invoke_daemon() {
+  start-stop-daemon --start --make-pidfile --background --pidfile $_d_pidfile --exec $_d_prog -- $_d_args
+}

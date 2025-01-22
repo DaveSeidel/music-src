@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+csound -+rtmidi=portmidi --midi-devices=out 2>&1 | grep "(Launch Control XL MIDI 1)" | grep -o "^ ."
+ 
