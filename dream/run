@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+_flags=
+if [ -n "$*" ]; then
+  _flags=$*
+fi
+
+_dac=$(../scripts/get-dac "USB")
+if [ -z "$_dac" ]; then
+  echo "No USB output device"
+  exit 1
+fi
+echo "Using DAC ${_dac}"
+# exit 0
+
+# set -x
+_csound="csound $_flags -+rtaudio=alsa -o$_dac -+rtmidi=portmidi dream.csd"
+echo $_csound
+$_csound
+
+
