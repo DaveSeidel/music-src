@@ -1,0 +1,1 @@
+Note that the [recorded version of this piece](https://postorientalism.bandcamp.com/track/08-dave-seidel-threnody) adds both reverb and mastering in post-processing, so although this is the complete piece from a compositional perspective, it does not represent the finished product.
