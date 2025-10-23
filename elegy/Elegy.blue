@@ -1,0 +1,2124 @@
+<blueData version='2.9.2'>
+  <projectProperties>
+    <title>Elegy, for Jon</title>
+    <author>Dave Seidel</author>
+    <notes>In memory of Jonathan Gams, 1951-2009
+
+Based on &quot;Solar Midnight&quot; from Complex Silence 4 (Timetheory netlabel). 
+
+Copyright 2009 Dave Seidel, some rights reserved.  This work is licensed under a
+Creative Commons Attribution-Noncommercial License (see http://creativecommons.org/licenses/by-nc/3.0/).
+
+For more information, go to http://mysterybear.net/
+
+Add the following lines after &lt;CsoundSynthesizer&gt; and before &lt;CsInstruments&gt; below,
+uncomment by removing the leading semicolons, then edit as desired.
+
+*** START OF OPTIONS ***
+&lt;CsOptions&gt;
+;; 96K/24-bit
+;--sample-rate=96000 --control-rate=96000 --format=wav:24bit -o &quot;Elegy.wav&quot;
+;; 44.1K/16-bit
+--sample-rate=44100 --control-rate=44100 --format=wav:short -o &quot;Elegy.wav&quot;
+&lt;/CsOptions&gt;
+*** END OF OPTIONS ***
+</notes>
+    <sampleRate>48000</sampleRate>
+    <ksmps>100</ksmps>
+    <channels>2</channels>
+    <useZeroDbFS>true</useZeroDbFS>
+    <zeroDbFS>1</zeroDbFS>
+    <diskSampleRate>48000</diskSampleRate>
+    <diskKsmps>1</diskKsmps>
+    <diskChannels>2</diskChannels>
+    <diskUseZeroDbFS>true</diskUseZeroDbFS>
+    <diskZeroDbFS>1</diskZeroDbFS>
+    <useAudioOut>true</useAudioOut>
+    <useAudioIn>false</useAudioIn>
+    <useMidiIn>false</useMidiIn>
+    <useMidiOut>false</useMidiOut>
+    <noteAmpsEnabled>true</noteAmpsEnabled>
+    <outOfRangeEnabled>true</outOfRangeEnabled>
+    <warningsEnabled>true</warningsEnabled>
+    <benchmarkEnabled>true</benchmarkEnabled>
+    <advancedSettings></advancedSettings>
+    <completeOverride>false</completeOverride>
+    <fileName>Elegy.wav</fileName>
+    <askOnRender>false</askOnRender>
+    <diskNoteAmpsEnabled>true</diskNoteAmpsEnabled>
+    <diskOutOfRangeEnabled>true</diskOutOfRangeEnabled>
+    <diskWarningsEnabled>true</diskWarningsEnabled>
+    <diskBenchmarkEnabled>true</diskBenchmarkEnabled>
+    <diskAdvancedSettings></diskAdvancedSettings>
+    <diskCompleteOverride>false</diskCompleteOverride>
+    <diskAlwaysRenderEntireProject>false</diskAlwaysRenderEntireProject>
+    <mediaFolder></mediaFolder>
+    <copyToMediaFileOnImport>true</copyToMediaFileOnImport>
+  </projectProperties>
+  <arrangement>
+    <instrumentAssignment arrangementId='3' isEnabled='false'>
+      <instrument type='blue.orchestra.GenericInstrument'>
+        <name>golden resonator (streson)</name>
+        <comment></comment>
+        <globalOrc></globalOrc>
+        <globalSco></globalSco>
+        <instrumentText>if p7 == 0 igoto NOEXTRA
+p3	=	p3 * 1.05
+NOEXTRA:
+idur	=	p3
+ipch 	getFrequency p4
+iamp	=	ampdb(p5)
+ipan	=	p6
+
+; triggering signal with envelope
+aenv    linen   iamp, 5, idur, 2
+aexc	poscil3	aenv, ipch, 3
+
+iQ = 0.1
+
+aout0	streson	aexc, ipch,          iQ
+aout1	streson	aexc, ipch *  1.618, iQ * (1/1.618)
+aout2	streson	aexc, ipch *  3.236, iQ * (1/3.236)
+aout3	streson	aexc, ipch *  4.484, iQ * (1/4.484)
+aout4	streson	aexc, ipch *  6.472, iQ * (1/6.472)
+aout5	streson	aexc, ipch *  8.09,  iQ * (1/8.09)
+aout6	streson	aexc, ipch *  9.708, iQ * (1/9.708)
+aout7	streson	aexc, ipch * 11.326, iQ * (1/11.326)
+aout8	streson	aexc, ipch * 12.944, iQ * (1/12.944)
+aout9	streson	aexc, ipch * 14.562, iQ * (1/14.562)
+aout10	streson	aexc, ipch * 16.18,  iQ * (1/16.18)
+aout11	streson	aexc, ipch * 17.798, iQ * (1/17.798)
+;aout12	streson	aexc, ipch * 19.416, iQ * (1/19.416)
+;aout13	streson	aexc, ipch * 21.034, iQ * (1/21.034)
+;aout14	streson	aexc, ipch * 22.652, iQ * (1/22.652)
+;aout15	streson	aexc, ipch * 24.27,  iQ * (1/24.27)
+
+aout	sum	aout0, aout1, aout2, aout3, aout4, aout5, aout6, aout7, aout8, aout9, aout10, aout11;, aout12, aout13, aout14, aout15
+;aout	clip	aout, 1, iamp
+aout	dcblock2	aout
+
+;aLeft, aRight	pan_equal_power aout, ipan
+aLeft, aRight	pan2 aout, ipan
+blueMixerOut aLeft, aRight
+</instrumentText>
+        <opcodeList/>
+      </instrument>
+    </instrumentAssignment>
+    <instrumentAssignment arrangementId='4' isEnabled='true'>
+      <instrument type='blue.orchestra.GenericInstrument'>
+        <name>golden resonator (mode)</name>
+        <comment></comment>
+        <globalOrc></globalOrc>
+        <globalSco></globalSco>
+        <instrumentText>if p7 == 0 igoto NOEXTRA
+p3	=	p3 * 1.05
+NOEXTRA:
+idur	=	p3
+ipch 	getFrequency p4
+iamp	=	ampdb(p5)
+ipan	=	p6
+ilfo_rate = p8
+
+; triggering signal with envelope
+aenv    linen   iamp, 5, idur, 2
+aexc	poscil3	aenv, ipch, 3
+
+iQ = 0.1
+
+aout0	mode	aexc, ipch,          iQ
+aout1	mode	aexc, ipch *  1.618, iQ * (1/1.618)
+aout2	mode	aexc, ipch *  3.236, iQ * (1/3.236)
+aout3	mode	aexc, ipch *  4.484, iQ * (1/4.484)
+aout4	mode	aexc, ipch *  6.472, iQ * (1/6.472)
+aout5	mode	aexc, ipch *  8.09,  iQ * (1/8.09)
+aout6	mode	aexc, ipch *  9.708, iQ * (1/9.708)
+aout7	mode	aexc, ipch * 11.326, iQ * (1/11.326)
+aout8	mode	aexc, ipch * 12.944, iQ * (1/12.944)
+aout9	mode	aexc, ipch * 14.562, iQ * (1/14.562)
+aout10	mode	aexc, ipch * 16.18,  iQ * (1/16.18)
+aout11	mode	aexc, ipch * 17.798, iQ * (1/17.798)
+;aout12	mode	aexc, ipch * 19.416, iQ * (1/19.416)
+;aout13	mode	aexc, ipch * 21.034, iQ * (1/21.034)
+;aout14	mode	aexc, ipch * 22.652, iQ * (1/22.652)
+;aout15	mode	aexc, ipch * 24.27,  iQ * (1/24.27)
+
+aout	sum	aout0, aout1, aout2, aout3, aout4, aout5, aout6, aout7, aout8, aout9, aout10, aout11;, aout12, aout13, aout14, aout15
+
+klfo = oscili(2, ilfo_rate)
+aout = distort1(aout, klfo*1.5, 0.5, 0.0, 0.0, 1)
+
+aLeft, aRight	pan2 aout*aenv, ipan
+blueMixerOut aLeft, aRight
+</instrumentText>
+        <opcodeList/>
+      </instrument>
+    </instrumentAssignment>
+    <instrumentAssignment arrangementId='5' isEnabled='true'>
+      <instrument type='blue.orchestra.GenericInstrument'>
+        <name>Risset harmonic arpeggio</name>
+        <comment></comment>
+        <globalOrc></globalOrc>
+        <globalSco></globalSco>
+        <instrumentText>idur	=	p3				; duration
+iamp	=	ampdb(p4)/9			; amplitude
+ifn	=	p5				; function table number (waveform)
+ifreq	=	p6				; pitch
+ioff	=	p7
+ipan	=	p8				; 0.0 = left &lt;-&gt; 1.0 = right
+irise	=	p9
+ifall	=	p10
+
+ioff1	=	ioff
+ioff2	=	2*ioff
+ioff3	=	3*ioff	
+ioff4	=	4*ioff
+
+ke	linen	iamp, irise, idur, ifall	; simple envelope
+
+;a1	poscil3	ke, ifreq, ifn, -1
+a2	poscil3	ke, ifreq+ioff1, ifn, -1	; nine oscillators with the same ae
+a3	poscil3	ke, ifreq+ioff2, ifn, -1	; and waveform, but slightly different
+a4	poscil3	ke, ifreq+ioff3, ifn, -1	; frequencies create harmonic arpeggio
+a5	poscil3	ke, ifreq+ioff4, ifn, -1
+a6	poscil3	ke, ifreq-ioff1, ifn, -1
+a7	poscil3	ke, ifreq-ioff2, ifn, -1
+a8	poscil3	ke, ifreq-ioff3, ifn, -1
+a9	poscil3	ke, ifreq-ioff4, ifn, -1
+
+aLeft	sum	a2,a3,a4,a5
+aRight	sum	a6,a7,a8,a9
+
+;aLeft, aRight	pan2 asig, ipan
+
+blueMixerOut aLeft, aRight
+</instrumentText>
+        <opcodeList/>
+      </instrument>
+    </instrumentAssignment>
+  </arrangement>
+  <mixer>
+    <enabled>true</enabled>
+    <extraRenderTime>3.0</extraRenderTime>
+    <channelList listName='Orchestra' list='channels'>
+      <channel>
+        <name>3</name>
+        <outChannel>SubChannel1</outChannel>
+        <level>-8.0</level>
+        <muted>false</muted>
+        <solo>false</solo>
+        <effectsChain bin='pre'/>
+        <effectsChain bin='post'/>
+        <parameter uniqueId='-921942645' name='Volume' label='dB' min='-96.0' max='12.0' bdresolution='-1' automationEnabled='false' value='-8.0'>
+          <line name='' version='2' max='12.0' min='-96.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+            <linePoint x='0.0' y='-8.0'/>
+          </line>
+        </parameter>
+      </channel>
+      <channel>
+        <name>4</name>
+        <outChannel>SubChannel1</outChannel>
+        <level>-8.0</level>
+        <muted>false</muted>
+        <solo>false</solo>
+        <effectsChain bin='pre'/>
+        <effectsChain bin='post'/>
+        <parameter uniqueId='-921942631' name='Volume' label='dB' min='-96.0' max='12.0' bdresolution='-1' automationEnabled='false' value='-8.0'>
+          <line name='' version='2' max='12.0' min='-96.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+            <linePoint x='0.0' y='-8.0'/>
+          </line>
+        </parameter>
+      </channel>
+      <channel>
+        <name>5</name>
+        <outChannel>Master</outChannel>
+        <level>-1.0</level>
+        <muted>false</muted>
+        <solo>false</solo>
+        <effectsChain bin='pre'/>
+        <effectsChain bin='post'/>
+        <parameter uniqueId='511759680' name='Volume' label='dB' min='-96.0' max='12.0' bdresolution='-1' automationEnabled='false' value='-1.0'>
+          <line name='' version='2' max='12.0' min='-96.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+            <linePoint x='0.0' y='-1.0'/>
+          </line>
+        </parameter>
+      </channel>
+    </channelList>
+    <channelList listName='SubChannels' list='subChannels'>
+      <channel>
+        <name>SubChannel1</name>
+        <outChannel>Master</outChannel>
+        <level>0.0</level>
+        <muted>false</muted>
+        <solo>false</solo>
+        <effectsChain bin='pre'/>
+        <effectsChain bin='post'>
+          <effect>
+            <name>AudaxEQ</name>
+            <enabled>true</enabled>
+            <numIns>2</numIns>
+            <numOuts>2</numOuts>
+            <code>if (&lt;AudaxON&gt; == 1) then
+
+    aout1 audaciouseq ain1, &lt;31.25&gt;, &lt;52.6&gt;, &lt;125&gt;, &lt;250&gt;, &lt;500&gt;, &lt;1000&gt;, &lt;2000&gt;, &lt;4000&gt;, &lt;8000&gt;, &lt;16000&gt;
+    aout2 audaciouseq ain2, &lt;31.25&gt;, &lt;52.6&gt;, &lt;125&gt;, &lt;250&gt;, &lt;500&gt;, &lt;1000&gt;, &lt;2000&gt;, &lt;4000&gt;, &lt;8000&gt;, &lt;16000&gt;
+
+else
+    aout1   =   ain1
+    aout2   =   ain2
+endif</code>
+            <comments>
+DESCRIPTION:
+
+a 10-band EQ  equalizer, using the UDO from Steven Yi: https://github.com/kunstmusik/libsyi/blob/master/audaciouseq.udo
+that, in turn, is a Csound UDO implementation of Audacious&apos; EQ:
+https://github.com/audacious-media-player/audacious/blob/master/src/libaudcore/equalizer.cc
+
+CONTROLLERS:
+
+please check the help balloons, that can be viewed when hoovering overthe BSB elements.
+
+---
+
+version 1.0, October 2021
+- initial version by Menno Knevel</comments>
+            <opcodeList>
+              <udo>
+                <opcodeName>audacious_bp2</opcodeName>
+                <outTypes>k</outTypes>
+                <inTypes>kik</inTypes>
+                <codeBody>#define Q # 1.2247449 #
+/* single-sample, 2nd order IIR filter */
+
+kin, ifC, kgain xin
+
+;; Calc Coefficients
+ith = 2 * $M_PI * (ifC / sr)
+iC  = (1 - tan(ith * $Q / 2)) / (1 + tan(ith * $Q / 2))
+
+ia0 = (1 + iC) * cos(ith)
+ia1 = -iC 
+ib0 = (1 - iC) / 2 
+ib1 = -1.005
+
+kout init 0
+kwq0 init 0
+kwq1 init 0
+
+kG = pow(10, kgain / 20)  - 1
+
+;; Filter Code
+kyt = kin 
+kw = kyt * ib0 + kwq0 * ia0 + kwq1 * ia1
+kyt += (kw + kwq1 * ib1) * kG 
+
+;; Memory
+kwq1 = kwq0
+kwq0 = kw
+
+xout kyt </codeBody>
+                <comments>/* audaciouseq - multi-band equalizer 
+   
+   A Csound UDO implementation of Audacious&apos; EQ:
+   https://github.com/audacious-media-player/audacious/blob/master/src/libaudcore/equalizer.cc
+*/
+
+
+/* Q value for band-pass filters 1.2247 = (3/2)^(1/2)
+ * Gives 4 dB suppression at Fc*2 and Fc/2 */</comments>
+              </udo>
+              <udo>
+                <opcodeName>audaciouseq</opcodeName>
+                <outTypes>a</outTypes>
+                <inTypes>akkkkkkkkkk</inTypes>
+                <codeBody>ain, kgain1, kgain2, kgain3, kgain4, kgain5, \
+     kgain6, kgain7, kgain8, kgain9, kgain10 xin
+aout = 0
+kndx = 0
+while (kndx &lt; ksmps) do
+  ksamp audacious_bp2 ain[kndx], 31.25, kgain1
+  ksamp audacious_bp2 ksamp, 62.5, kgain2
+  ksamp audacious_bp2 ksamp, 125, kgain3
+  ksamp audacious_bp2 ksamp, 250, kgain4
+  ksamp audacious_bp2 ksamp, 500, kgain5
+  ksamp audacious_bp2 ksamp, 1000, kgain6
+  ksamp audacious_bp2 ksamp, 2000, kgain7
+  ksamp audacious_bp2 ksamp, 4000, kgain8
+  ksamp audacious_bp2 ksamp, 8000, kgain9
+  aout[kndx] audacious_bp2 ksamp, 16000, kgain10
+  kndx += 1
+od
+xout aout
+</codeBody>
+                <comments>/* 10-band EQ 
+   Input: asig, kgain1, kgain2, ...
+   Output: aout
+   10 kgain arguments maps to each band
+   Bands are: 31.25, 52.6, 125, 250, 500, 1000, 
+              2000, 4000, 8000, 16000 
+*/</comments>
+              </udo>
+            </opcodeList>
+            <graphicInterface editEnabled='false'>
+              <gridSettings>
+                <width>5</width>
+                <height>5</height>
+                <gridStyle>DOT</gridStyle>
+                <snapGridEnabled>true</snapGridEnabled>
+              </gridSettings>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBGroup'>
+                <objectName></objectName>
+                <x>0</x>
+                <y>0</y>
+                <groupName>Group</groupName>
+                <backgroundColor>0x00000033</backgroundColor>
+                <borderColor>0x000000ff</borderColor>
+                <labelTextColor>0xffffffff</labelTextColor>
+                <titleEnabled>true</titleEnabled>
+                <width>20</width>
+                <height>20</height>
+                <font>
+                  <name>Roboto</name>
+                  <size>12.0</size>
+                  <style>0</style>
+                </font>
+                <bsbObject type='blue.orchestra.blueSynthBuilder.BSBCheckBox'>
+                  <objectName>AudaxON</objectName>
+                  <x>0</x>
+                  <y>0</y>
+                  <comment>turn effect ON/OFF</comment>
+                  <automationAllowed>true</automationAllowed>
+                  <label/>
+                  <selected>true</selected>
+                  <randomizable>true</randomizable>
+                </bsbObject>
+                <bsbObject type='blue.orchestra.blueSynthBuilder.BSBGroup'>
+                  <objectName></objectName>
+                  <x>10</x>
+                  <y>10</y>
+                  <groupName>Group</groupName>
+                  <backgroundColor>0x4d8080ff</backgroundColor>
+                  <borderColor>0x000000ff</borderColor>
+                  <labelTextColor>0xffffffff</labelTextColor>
+                  <titleEnabled>false</titleEnabled>
+                  <width>20</width>
+                  <height>20</height>
+                  <font>
+                    <name>Roboto</name>
+                    <size>12.0</size>
+                    <style>0</style>
+                  </font>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>317</x>
+                    <y>10</y>
+                    <label>2000</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>16000</objectName>
+                    <x>457</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>-2.5999999999999996</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>8000</objectName>
+                    <x>407</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>-2.0</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>1000</objectName>
+                    <x>260</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>0.0</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>464</x>
+                    <y>10</y>
+                    <label>16000</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>267</x>
+                    <y>10</y>
+                    <label>1000</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>4000</objectName>
+                    <x>357</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>0.0</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>172</x>
+                    <y>10</y>
+                    <label>250</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>31.25</objectName>
+                    <x>13</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>4.0</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>369</x>
+                    <y>10</y>
+                    <label>4000</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>72</x>
+                    <y>10</y>
+                    <label>52.6</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>20</x>
+                    <y>10</y>
+                    <label>31.25</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>500</objectName>
+                    <x>210</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>1.4000000000000004</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>419</x>
+                    <y>10</y>
+                    <label>8000</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>122</x>
+                    <y>10</y>
+                    <label>125</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>52.6</objectName>
+                    <x>60</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>8.399999999999999</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>250</objectName>
+                    <x>160</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>4.600000000000001</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>2000</objectName>
+                    <x>310</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>0.0</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBVSlider' version='2'>
+                    <objectName>125</objectName>
+                    <x>110</x>
+                    <y>20</y>
+                    <automationAllowed>true</automationAllowed>
+                    <minimum>-12.0</minimum>
+                    <maximum>12.0</maximum>
+                    <bdresolution>0.2</bdresolution>
+                    <value>7.199999999999999</value>
+                    <sliderHeight>150</sliderHeight>
+                    <randomizable>true</randomizable>
+                    <valueDisplayEnabled>true</valueDisplayEnabled>
+                  </bsbObject>
+                  <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                    <objectName></objectName>
+                    <x>222</x>
+                    <y>10</y>
+                    <label>500</label>
+                    <font>
+                      <name>Roboto</name>
+                      <size>12.0</size>
+                      <style>1</style>
+                    </font>
+                  </bsbObject>
+                </bsbObject>
+              </bsbObject>
+            </graphicInterface>
+            <parameterList>
+              <parameter uniqueId='128591774' name='52.6' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='8.399999999999999'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='8.399999999999999'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591776' name='4000' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='0.0'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='0.0'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591778' name='1000' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='0.0'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='0.0'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591780' name='250' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='4.600000000000001'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='4.600000000000001'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591782' name='8000' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='-2.0'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='-2.0'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591784' name='2000' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='0.0'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='0.0'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591786' name='31.25' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='4.0'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='4.0'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591788' name='500' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='1.4000000000000004'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='1.4000000000000004'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591790' name='125' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='7.199999999999999'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='7.199999999999999'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591792' name='16000' label='' min='-12.0' max='12.0' bdresolution='0.2' automationEnabled='false' value='-2.5999999999999996'>
+                <line name='' version='2' max='12.0' min='-12.0' bdresolution='0.2' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='-2.5999999999999996'/>
+                </line>
+              </parameter>
+              <parameter uniqueId='128591794' name='AudaxON' label='' min='0.0' max='1.0' bdresolution='1' automationEnabled='false' value='1.0'>
+                <line name='' version='2' max='1.0' min='0.0' bdresolution='1' color='-8355712' rightBound='false' endPointsLinked='false'>
+                  <linePoint x='0.0' y='1.0'/>
+                </line>
+              </parameter>
+            </parameterList>
+          </effect>
+        </effectsChain>
+        <parameter uniqueId='128591772' name='Volume' label='dB' min='-96.0' max='12.0' bdresolution='-1' automationEnabled='false' value='0.0'>
+          <line name='' version='2' max='12.0' min='-96.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+            <linePoint x='0.0' y='0.0'/>
+          </line>
+        </parameter>
+      </channel>
+    </channelList>
+    <channel>
+      <name>Master</name>
+      <outChannel>Master</outChannel>
+      <level>0.0</level>
+      <muted>false</muted>
+      <solo>false</solo>
+      <effectsChain bin='pre'>
+        <effect>
+          <name>ReverbSC</name>
+          <enabled>true</enabled>
+          <numIns>2</numIns>
+          <numOuts>2</numOuts>
+          <code>aout1, aout2  reverbsc ain1, ain2, &lt;feedback&gt;, &lt;cutoff&gt;
+
+aout1 = (ain1 * &lt;wetdry&gt;) + (aout1 * (1 - &lt;wetdry&gt;))
+aout2 = (ain2 * &lt;wetdry&gt;) + (aout2 * (1 - &lt;wetdry&gt;))
+
+</code>
+          <comments/>
+          <opcodeList/>
+          <graphicInterface editEnabled='false'>
+            <gridSettings>
+              <width>10</width>
+              <height>10</height>
+              <gridStyle>NONE</gridStyle>
+              <snapGridEnabled>false</snapGridEnabled>
+            </gridSettings>
+            <bsbObject type='blue.orchestra.blueSynthBuilder.BSBGroup'>
+              <objectName></objectName>
+              <x>0</x>
+              <y>0</y>
+              <groupName>Group</groupName>
+              <backgroundColor>0x00000033</backgroundColor>
+              <borderColor>0x000000ff</borderColor>
+              <labelTextColor>0xffffffff</labelTextColor>
+              <titleEnabled>true</titleEnabled>
+              <width>20</width>
+              <height>20</height>
+              <font>
+                <name>Roboto</name>
+                <size>12.0</size>
+                <style>0</style>
+              </font>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                <objectName></objectName>
+                <x>7</x>
+                <y>7</y>
+                <label>ReverbSC</label>
+                <font>
+                  <name>Roboto</name>
+                  <size>18.0</size>
+                  <style>1</style>
+                </font>
+              </bsbObject>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                <objectName></objectName>
+                <x>139</x>
+                <y>36</y>
+                <label>Wet/Dry</label>
+                <font>
+                  <name>Roboto</name>
+                  <size>12.0</size>
+                  <style>0</style>
+                </font>
+              </bsbObject>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                <objectName></objectName>
+                <x>11</x>
+                <y>36</y>
+                <label>Feedback</label>
+                <font>
+                  <name>Roboto</name>
+                  <size>12.0</size>
+                  <style>0</style>
+                </font>
+              </bsbObject>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBKnob' version='2'>
+                <objectName>feedback</objectName>
+                <x>8</x>
+                <y>55</y>
+                <automationAllowed>true</automationAllowed>
+                <minimum>0.0</minimum>
+                <maximum>1.0</maximum>
+                <value>0.9</value>
+                <knobWidth>60</knobWidth>
+                <randomizable>true</randomizable>
+                <valueDisplayEnabled>true</valueDisplayEnabled>
+                <label>label</label>
+                <labelEnabled>false</labelEnabled>
+                <font>
+                  <name>Roboto</name>
+                  <size>12.0</size>
+                  <style>0</style>
+                </font>
+              </bsbObject>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBKnob' version='2'>
+                <objectName>cutoff</objectName>
+                <x>72</x>
+                <y>55</y>
+                <automationAllowed>true</automationAllowed>
+                <minimum>20.0</minimum>
+                <maximum>20000.0</maximum>
+                <value>8000.0</value>
+                <knobWidth>60</knobWidth>
+                <randomizable>true</randomizable>
+                <valueDisplayEnabled>true</valueDisplayEnabled>
+                <label>label</label>
+                <labelEnabled>false</labelEnabled>
+                <font>
+                  <name>Roboto</name>
+                  <size>12.0</size>
+                  <style>0</style>
+                </font>
+              </bsbObject>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBKnob' version='2'>
+                <objectName>wetdry</objectName>
+                <x>136</x>
+                <y>55</y>
+                <automationAllowed>true</automationAllowed>
+                <minimum>0.0</minimum>
+                <maximum>1.0</maximum>
+                <value>0.45</value>
+                <knobWidth>60</knobWidth>
+                <randomizable>true</randomizable>
+                <valueDisplayEnabled>true</valueDisplayEnabled>
+                <label>label</label>
+                <labelEnabled>false</labelEnabled>
+                <font>
+                  <name>Roboto</name>
+                  <size>12.0</size>
+                  <style>0</style>
+                </font>
+              </bsbObject>
+              <bsbObject type='blue.orchestra.blueSynthBuilder.BSBLabel' version='2'>
+                <objectName></objectName>
+                <x>80</x>
+                <y>36</y>
+                <label>Cut-Off</label>
+                <font>
+                  <name>Roboto</name>
+                  <size>12.0</size>
+                  <style>0</style>
+                </font>
+              </bsbObject>
+            </bsbObject>
+          </graphicInterface>
+          <parameterList>
+            <parameter uniqueId='-921942649' name='cutoff' label='' min='20.0' max='20000.0' bdresolution='-1' automationEnabled='false' value='8000.0'>
+              <line name='' version='2' max='20000.0' min='20.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+                <linePoint x='0.0' y='8000.0'/>
+              </line>
+            </parameter>
+            <parameter uniqueId='-921942651' name='feedback' label='' min='0.0' max='1.0' bdresolution='-1' automationEnabled='false' value='0.9'>
+              <line name='' version='2' max='1.0' min='0.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+                <linePoint x='0.0' y='0.9'/>
+              </line>
+            </parameter>
+            <parameter uniqueId='-921942647' name='wetdry' label='' min='0.0' max='1.0' bdresolution='-1' automationEnabled='false' value='0.45'>
+              <line name='' version='2' max='1.0' min='0.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+                <linePoint x='0.0' y='0.45'/>
+              </line>
+            </parameter>
+          </parameterList>
+        </effect>
+      </effectsChain>
+      <effectsChain bin='post'/>
+      <parameter uniqueId='-921942664' name='Volume' label='dB' min='-96.0' max='12.0' bdresolution='-1' automationEnabled='false' value='0.0'>
+        <line name='' version='2' max='12.0' min='-96.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+          <linePoint x='0.0' y='0.0'/>
+        </line>
+      </parameter>
+    </channel>
+  </mixer>
+  <tables></tables>
+  <soundObjectLibrary/>
+  <globalOrcSco>
+    <globalOrc>
+; sine wave
+giSin   ftgen   2, 0, 1048576, 10, 1
+
+; &quot;golden&quot;
+giFn3	ftgen	3, 0, 1048576, 9,  1,1,0,  1.618,1/1.618,0,  2,1/2,0,  3.236,1/3.326,0,  4,1/4,0,  4.854,1/4854,0,  6.472,1/6.472,0,  8,1/8,0,  8.09,1/8.09,0,  9.708,1/9.708,0,  11.326,1/11.326,0,  12.944,1/12.944,0;,  14.562,1/14.562,0,  16.18,1/16.18,0,  17.798,1/17.798,0,  19.416,1/19.416,0,  21.034,1/21.034,0,  22.652,1/22.652,0,  24.27,1/24.27,0
+
+; &quot;Fibonacci&quot; wave (Mt. Meru A)
+giFn4	ftgen	4, 0, 1048576, 9,  1,1,0,   2,.5,0,   3,.3333,0,  5,.2,0,  8,.125,0,  13,.0769,0;,  21,.0476,0,  34,.0294,0,  55,.0182,0,  89,.0112,0  144,.0069,0
+</globalOrc>
+    <globalSco>t 0 10</globalSco>
+  </globalOrcSco>
+  <opcodeList>
+    <udo>
+      <opcodeName>getFrequency </opcodeName>
+      <outTypes>i</outTypes>
+      <inTypes>i</inTypes>
+      <codeBody>ipch 	xin
+
+iout	= (ipch &lt; 15 ? cpspch(ipch) : ipch)
+	
+	xout	iout
+</codeBody>
+      <comments></comments>
+    </udo>
+  </opcodeList>
+  <liveData>
+    <commandLine>csound -Wdo devaudio -L stdin</commandLine>
+    <commandLineEnabled>false</commandLineEnabled>
+    <commandLineOverride>false</commandLineOverride>
+    <liveObjectBins columns='1' rows='8'>
+      <bin>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+        <null/>
+      </bin>
+    </liveObjectBins>
+    <liveObjectSetList/>
+    <repeat>4</repeat>
+    <tempo>60</tempo>
+    <repeatEnabled>false</repeatEnabled>
+    <liveCodeText></liveCodeText>
+  </liveData>
+  <score>
+    <tempo>
+      <enabled>false</enabled>
+      <visible>false</visible>
+      <line name='' version='2' max='240.0' min='30.0' bdresolution='-1' color='-8355712' rightBound='false' endPointsLinked='false'>
+        <linePoint x='0.0' y='60.0'/>
+      </line>
+    </tempo>
+    <timeState>
+      <zoomIterations>-113</zoomIterations>
+      <snapEnabled>true</snapEnabled>
+      <snapValue>1.0</snapValue>
+      <timeDisplay>1</timeDisplay>
+    </timeState>
+    <noteProcessorChain/>
+    <soundObject type='blue.soundObject.PolyObject'>
+      <subjectiveDuration>2.0</subjectiveDuration>
+      <startTime>0.0</startTime>
+      <name>root</name>
+      <backgroundColor>-10066279</backgroundColor>
+      <timeBehavior>2</timeBehavior>
+      <repeatPoint>-1.0</repeatPoint>
+      <noteProcessorChain/>
+      <defaultHeightIndex>0</defaultHeightIndex>
+      <timeState>
+        <zoomIterations>-20</zoomIterations>
+        <snapEnabled>false</snapEnabled>
+        <snapValue>1.0</snapValue>
+        <timeDisplay>0</timeDisplay>
+      </timeState>
+      <soundLayer name='' muted='false' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>4.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>1</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -8 0.5 1 0.03</noteTemplate>
+          <instrumentId>4</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>66</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>0.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>1.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>2.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>3.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>4.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>5.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>6.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>7.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>8.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>9.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>10.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>6</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>11.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>13.0</start>
+            <duration>3.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 0.1 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>70.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>1</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -8 0.5 1 0.03</noteTemplate>
+          <instrumentId>4</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>72</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>0.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>1.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>2.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>3.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>4.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>5.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>6.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>7.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>8.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>9.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>10.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>6</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>11.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>13.0</start>
+            <duration>3.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 0.1 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+      </soundLayer>
+      <soundLayer name='' muted='false' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>4.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>1</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -8 0.8 1 0.04</noteTemplate>
+          <instrumentId>4</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>36</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>0.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>2.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>4.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>6.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>8.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>10.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>12.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>14.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>16.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>18.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>20.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>6</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>22.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>26.0</start>
+            <duration>6.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 -0.4 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>70.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>1</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -8 0.8 1 0.04</noteTemplate>
+          <instrumentId>4</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>36</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>0.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>2.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>9</scaleDegree>
+            <start>4.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>6.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>8.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>9</scaleDegree>
+            <start>10.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>12.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>14.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>9</scaleDegree>
+            <start>16.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>18.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>20.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>22.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>26.0</start>
+            <duration>6.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 -0.4 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+      </soundLayer>
+      <soundLayer name='' muted='false' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>4.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>2</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -8 0.2 1 0.02</noteTemplate>
+          <instrumentId>4</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>18</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>0.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>4.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>8.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>12.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>16.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>20.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>24.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>28.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>32.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>36.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>40.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>6</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>44.0</start>
+            <duration>8.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>52.0</start>
+            <duration>12.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 0.25 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>70.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>2</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -8 0.2 1 0.02</noteTemplate>
+          <instrumentId>4</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>16</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>0.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>4.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>8.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>12.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>16.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>20.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>9</scaleDegree>
+            <start>24.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>28.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>32.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>36.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>40.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>44.0</start>
+            <duration>8.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>8</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>52.0</start>
+            <duration>12.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 0.25 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+      </soundLayer>
+      <soundLayer name='' muted='false' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.GenericScore'>
+          <subjectiveDuration>138.0</subjectiveDuration>
+          <startTime>0.0</startTime>
+          <name>GenericScore</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>0</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <score>;idur	=	p3				; duration
+;iamp	=	ampdb(p4)/9			; amplitude
+;ifn	=	p5				; function table number (waveform)
+;ifreq	=	p6				; pitch
+;ioff	=	p7
+;ipan	=	p8				; 1.0 = left &lt;-&gt; 0.0 = right
+;irise	=	p8
+;ifall	=	p9
+
+i5 0 1 -9 4  60 0.0075 0.0 5 5
+i5 0 1 .  .  90 0.01   .   . .
+i5 0 1 .  . 120 0.0125 .   . .
+</score>
+        </soundObject>
+      </soundLayer>
+    </soundObject>
+    <soundObject type='blue.soundObject.PolyObject'>
+      <subjectiveDuration>4.0</subjectiveDuration>
+      <startTime>0.0</startTime>
+      <name>streson</name>
+      <backgroundColor>-10066279</backgroundColor>
+      <timeBehavior>2</timeBehavior>
+      <repeatPoint>-1.0</repeatPoint>
+      <noteProcessorChain/>
+      <defaultHeightIndex>0</defaultHeightIndex>
+      <timeState>
+        <zoomIterations>0</zoomIterations>
+        <snapEnabled>false</snapEnabled>
+        <snapValue>1.0</snapValue>
+        <timeDisplay>0</timeDisplay>
+      </timeState>
+      <soundLayer name='' muted='true' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>4.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>1</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -14 0.4 1</noteTemplate>
+          <instrumentId>3</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>66</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>0.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>1.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>2.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>3.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>4.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>5.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>6.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>7.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>8.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>9.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>10.0</start>
+            <duration>1.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>6</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>11.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>13.0</start>
+            <duration>3.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 -0.1 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+      </soundLayer>
+      <soundLayer name='' muted='true' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>4.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>1</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -14 0.3 1</noteTemplate>
+          <instrumentId>3</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>32</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>0.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>2.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>4.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>6.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>8.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>10.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>12.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>14.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>16.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>18.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>20.0</start>
+            <duration>2.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>6</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>22.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>26.0</start>
+            <duration>6.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 0.4 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+      </soundLayer>
+      <soundLayer name='' muted='true' solo='false' heightIndex='0'>
+        <noteProcessorChain/>
+        <soundObject type='blue.soundObject.PianoRoll'>
+          <subjectiveDuration>64.0</subjectiveDuration>
+          <startTime>4.0</startTime>
+          <name>PianoRoll</name>
+          <backgroundColor>-12566464</backgroundColor>
+          <timeBehavior>2</timeBehavior>
+          <repeatPoint>-1.0</repeatPoint>
+          <noteProcessorChain/>
+          <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -14 0.2 1</noteTemplate>
+          <instrumentId>3</instrumentId>
+          <scale>
+            <scaleName>centaur.scl</scaleName>
+            <baseFrequency>240.0</baseFrequency>
+            <octave>2.0</octave>
+            <ratios>
+              <ratio>1.0</ratio>
+              <ratio>1.05</ratio>
+              <ratio>1.125</ratio>
+              <ratio>1.1666666</ratio>
+              <ratio>1.25</ratio>
+              <ratio>1.3333334</ratio>
+              <ratio>1.4</ratio>
+              <ratio>1.5</ratio>
+              <ratio>1.5555556</ratio>
+              <ratio>1.6666666</ratio>
+              <ratio>1.75</ratio>
+              <ratio>1.875</ratio>
+            </ratios>
+          </scale>
+          <pixelSecond>16</pixelSecond>
+          <noteHeight>15</noteHeight>
+          <snapEnabled>true</snapEnabled>
+          <snapValue>1.0</snapValue>
+          <timeDisplay>1</timeDisplay>
+          <timeUnit>5</timeUnit>
+          <pchGenerationMethod>0</pchGenerationMethod>
+          <transposition>0</transposition>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>0.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>4.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>8.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>12.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>16.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>20.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>7</scaleDegree>
+            <start>24.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>5</scaleDegree>
+            <start>28.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>3</scaleDegree>
+            <start>32.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>2</scaleDegree>
+            <start>36.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>40.0</start>
+            <duration>4.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>6</octave>
+            <scaleDegree>11</scaleDegree>
+            <start>44.0</start>
+            <duration>8.0</duration>
+          </pianoNote>
+          <pianoNote>
+            <octave>7</octave>
+            <scaleDegree>0</scaleDegree>
+            <start>52.0</start>
+            <duration>12.0</duration>
+            <noteTemplate>i &lt;INSTR_ID&gt; &lt;START&gt; &lt;DUR&gt; &lt;FREQ&gt; -12 -0.25 0</noteTemplate>
+          </pianoNote>
+        </soundObject>
+      </soundLayer>
+    </soundObject>
+  </score>
+  <scratchPadData>
+    <isWordWrapEnabled>true</isWordWrapEnabled>
+    <scratchText/>
+  </scratchPadData>
+  <noteProcessorChainMap/>
+  <renderStartTime>0.0</renderStartTime>
+  <renderEndTime>-1.0</renderEndTime>
+  <markersList/>
+  <loopRendering>false</loopRendering>
+  <midiInputProcessor>
+    <keyMapping>PCH</keyMapping>
+    <velMapping>MIDI</velMapping>
+    <pitchConstant/>
+    <ampConstant/>
+    <scale>
+      <scaleName>12TET</scaleName>
+      <baseFrequency>261.625565</baseFrequency>
+      <octave>2.0</octave>
+      <ratios>
+        <ratio>1.0</ratio>
+        <ratio>1.0594630943592953</ratio>
+        <ratio>1.122462048309373</ratio>
+        <ratio>1.1892071150027212</ratio>
+        <ratio>1.2599210498948734</ratio>
+        <ratio>1.3348398541700346</ratio>
+        <ratio>1.4142135623730954</ratio>
+        <ratio>1.498307076876682</ratio>
+        <ratio>1.5874010519682</ratio>
+        <ratio>1.6817928305074297</ratio>
+        <ratio>1.7817974362806794</ratio>
+        <ratio>1.887748625363388</ratio>
+      </ratios>
+    </scale>
+  </midiInputProcessor>
+  <pluginData>
+    <blueDataObject bdoType='blue.clojure.project.ClojureProjectData'/>
+  </pluginData>
+</blueData>
