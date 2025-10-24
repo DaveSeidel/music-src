@@ -80,11 +80,9 @@ gk_blue_auto18 init 0
 
 	opcode getFrequency ,i,i
 
-ipch 	xin
-
-iout	= (ipch < 15 ? cpspch(ipch) : ipch)
-	
-	xout	iout
+ipch xin
+iout = (ipch < 15 ? cpspch(ipch) : ipch)
+xout iout
 
 
 	endop
@@ -178,43 +176,43 @@ xout	aout1,aout2
 
 	instr 4	;golden resonator (mode)
 if p7 == 0 igoto NOEXTRA
-p3	=	p3 * 1.05
+p3 = p3 * 1.05
 NOEXTRA:
-idur	=	p3
-ipch 	getFrequency p4
-iamp	=	ampdb(p5)
-ipan	=	p6
+idur	= p3
+ipch 	= getFrequency(p4)
+iamp	= ampdb(p5)
+ipan	= p6
 ilfo_rate = p8
 
 ; triggering signal with envelope
-aenv    linen   iamp, 5, idur, 2
-aexc	poscil3	aenv, ipch, 3
+aenv = linen(iamp, 5, idur, 2)
+aexc = poscil3(aenv, ipch, 3)
 
 iQ = 0.1
 
-aout0	mode	aexc, ipch,          iQ
-aout1	mode	aexc, ipch *  1.618, iQ * (1/1.618)
-aout2	mode	aexc, ipch *  3.236, iQ * (1/3.236)
-aout3	mode	aexc, ipch *  4.484, iQ * (1/4.484)
-aout4	mode	aexc, ipch *  6.472, iQ * (1/6.472)
-aout5	mode	aexc, ipch *  8.09,  iQ * (1/8.09)
-aout6	mode	aexc, ipch *  9.708, iQ * (1/9.708)
-aout7	mode	aexc, ipch * 11.326, iQ * (1/11.326)
-aout8	mode	aexc, ipch * 12.944, iQ * (1/12.944)
-aout9	mode	aexc, ipch * 14.562, iQ * (1/14.562)
-aout10	mode	aexc, ipch * 16.18,  iQ * (1/16.18)
-aout11	mode	aexc, ipch * 17.798, iQ * (1/17.798)
-;aout12	mode	aexc, ipch * 19.416, iQ * (1/19.416)
-;aout13	mode	aexc, ipch * 21.034, iQ * (1/21.034)
-;aout14	mode	aexc, ipch * 22.652, iQ * (1/22.652)
-;aout15	mode	aexc, ipch * 24.27,  iQ * (1/24.27)
+aout0 = mode(aexc, ipch, iQ)
+aout1 = mode(aexc, ipch *  1.618, iQ * (1/1.618))
+aout2 = mode(aexc, ipch *  3.236, iQ * (1/3.236))
+aout3 = mode(aexc, ipch *  4.484, iQ * (1/4.484))
+aout4 = mode(aexc, ipch *  6.472, iQ * (1/6.472))
+aout5 = mode(aexc, ipch *  8.09,  iQ * (1/8.09))
+aout6 = mode(aexc, ipch *  9.708, iQ * (1/9.708))
+aout7 = mode(aexc, ipch * 11.326, iQ * (1/11.326))
+aout8 = mode(aexc, ipch * 12.944, iQ * (1/12.944))
+aout9 = mode(aexc, ipch * 14.562, iQ * (1/14.562))
+aout10 = mode(aexc, ipch * 16.18,  iQ * (1/16.18))
+aout11 = mode(aexc, ipch * 17.798, iQ * (1/17.798))
+;aout12 = mode(aexc, ipch * 19.416, iQ * (1/19.416))
+;aout13 = mode(aexc, ipch * 21.034, iQ * (1/21.034))
+;aout14 = mode(aexc, ipch * 22.652, iQ * (1/22.652))
+;aout15 = mode(aexc, ipch * 24.27,  iQ * (1/24.27)_
 
-aout	sum	aout0, aout1, aout2, aout3, aout4, aout5, aout6, aout7, aout8, aout9, aout10, aout11;, aout12, aout13, aout14, aout15
+aout = sum(aout0, aout1, aout2, aout3, aout4, aout5, aout6, aout7, aout8, aout9, aout10, aout11) ;, aout12, aout13, aout14, aout15
 
 klfo = oscili(2, ilfo_rate)
 aout = distort1(aout, klfo*1.5, 0.5, 0.0, 0.0, 1)
 
-aLeft, aRight	pan2 aout*aenv, ipan
+aLeft, aRight = pan2(aout*aenv, ipan)
 ga_bluemix_1_0 +=  aLeft
 ga_bluemix_1_1 +=  aRight
 
@@ -223,7 +221,7 @@ ga_bluemix_1_1 +=  aRight
 	instr 5	;Risset harmonic arpeggio
 idur	=	p3				; duration
 iamp	=	ampdb(p4)/9			; amplitude
-ifn	=	p5				; function table number (waveform)
+ifn     =	p5				; function table number (waveform)
 ifreq	=	p6				; pitch
 ioff	=	p7
 ipan	=	p8				; 0.0 = left <-> 1.0 = right
@@ -235,22 +233,20 @@ ioff2	=	2*ioff
 ioff3	=	3*ioff	
 ioff4	=	4*ioff
 
-ke	linen	iamp, irise, idur, ifall	; simple envelope
+ke = linen(iamp, irise, idur, ifall)	; simple envelope
 
-;a1	poscil3	ke, ifreq, ifn, -1
-a2	poscil3	ke, ifreq+ioff1, ifn, -1	; nine oscillators with the same ae
-a3	poscil3	ke, ifreq+ioff2, ifn, -1	; and waveform, but slightly different
-a4	poscil3	ke, ifreq+ioff3, ifn, -1	; frequencies create harmonic arpeggio
-a5	poscil3	ke, ifreq+ioff4, ifn, -1
-a6	poscil3	ke, ifreq-ioff1, ifn, -1
-a7	poscil3	ke, ifreq-ioff2, ifn, -1
-a8	poscil3	ke, ifreq-ioff3, ifn, -1
-a9	poscil3	ke, ifreq-ioff4, ifn, -1
+;a1 = poscil3(ke, ifreq, ifn, -1)
+a2 = poscil3(ke, ifreq+ioff1, ifn, -1)	; nine oscillators with the same ae
+a3 = poscil3(ke, ifreq+ioff2, ifn, -1)	; and waveform, but slightly different
+a4 = poscil3(ke, ifreq+ioff3, ifn, -1)	; frequencies create harmonic arpeggio
+a5 = poscil3(ke, ifreq+ioff4, ifn, -1)
+a6 = poscil3(ke, ifreq-ioff1, ifn, -1)
+a7 = poscil3(ke, ifreq-ioff2, ifn, -1)
+a8 = poscil3(ke, ifreq-ioff3, ifn, -1)
+a9 = poscil3(ke, ifreq-ioff4, ifn, -1)
 
-aLeft	sum	a2,a3,a4,a5
-aRight	sum	a6,a7,a8,a9
-
-;aLeft, aRight	pan2 asig, ipan
+aLeft  = sum(a2,a3,a4,a5)
+aRight = sum(a6,a7,a8,a9)
 
 ga_bluemix_2_0 +=  aLeft
 ga_bluemix_2_1 +=  aRight
